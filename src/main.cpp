@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <time.h>
+#include <sstream>
 
 int ClosestObjectIndex(const std::vector<FPType> &intersections)
 {
@@ -87,7 +88,6 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 		finalColor = finalColor.Scalar(cosineAngle);
 		if(cosineAngle > 0)
 		{
-
 			Ray shadowRay(intersectionRayPos, (lightSource->position - intersectionRayPos).Normalize()); // Cast a ray from the first intersection to the light
 
 			std::vector<FPType> secondaryIntersections;
@@ -112,7 +112,6 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 				}
 			}
 		}
-
 	}
 	return finalColor.Clip();
 
@@ -146,18 +145,16 @@ int main()
 	// Position, distance, normal, color 
 	Plane plane(Vector(0, -1, 0), 1, Vector(0, 1, 0), tileFloor);
 	// To place sphere on top of plane: (0 - sphere radius)
-	Sphere sphere1(0.5f, Vector(-1, -0.5, 2.5), maroon);
-	Sphere sphere2(0.3f, Vector(1, -0.3, 1), prettyGreen);
+	Sphere sphere1(0.5, Vector(1, -0.5, 2.5), maroon);
+	Sphere sphere2(0.3, Vector(-1, -0.7, 1.5), prettyGreen);
 
-	// Contains position and color values
+	// Contains position and color values (currently only 1 light source works, 2 = bugs)
 	std::vector<Light*> lightSources;
-	Vector light1Position(plane.center.x - 2.5, plane.center.y + 1.5, plane.center.z + 1.6);
+	Vector light1Position(plane.center.x - 2.5, plane.center.y + 3, plane.center.z + 1.6);
 	Light light1(light1Position, whiteLight);
 	Light light2(Vector(light1Position.x + 6, light1Position.y, light1Position.z - 1), whiteLight);
 	lightSources.push_back(&light1);
-	//lightSources.push_back(&light2);
-
-	// To see where the light is positioned
+	//lightSources.push_back(&light2); 
 
 	// Holds all scene objects
 	std::vector<Object*> sceneObjects;
@@ -224,13 +221,18 @@ int main()
 		}
 	}
 
-	image.save_image("output.bmp");
 	end = clock();
 	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
 
+	std::stringstream stream;
+	stream << diff;
+	//std::string saveString = "C:/Users/mataz23/Desktop/Ray tracer renders/" + std::to_string(int(WIDTH)) + "p " + stream.str() + "s.bmp";
+	std::string saveString = "render.bmp";
+	image.save_image(saveString);
+
 	std::cout << "Render complete in: " << diff << " seconds" << std::endl;
-	//std::cout << "Press enter to exit...";
-	//std::cin.ignore();
+	std::cout << "Press enter to exit...";
+	std::cin.ignore();
 
 	return 0;
 }

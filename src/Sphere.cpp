@@ -40,11 +40,11 @@ FPType Sphere::GetIntersection(Ray ray)
 		//calculate the two values for t
 		FPType t1 = b - sqrt(discriminant);
 		if(t1 > 0) // If t1 is closer to the ray source, return it
-			return t1 - TOLERANCE;
+			return t1;
 		else // If t2 is closer to the ray source, return it
 		{
 			FPType t2 = b + sqrt(discriminant);
-			return t2 - TOLERANCE;
+			return t2;
 		}
 	}
 	else //if it's less than 0, there's no intersection, return -1
