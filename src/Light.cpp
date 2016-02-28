@@ -3,7 +3,7 @@
 
 Light::Light()
 	:position {0, 0, 0}
-	, color {255, 255, 255, 0}
+	, color {255, 255, 255, 0, 0}
 {}
 
 Light::Light(Vector position_, Color color_)

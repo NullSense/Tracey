@@ -5,7 +5,7 @@ Plane::Plane()
 	, normal {1, 0, 0}
 	, center {0, -1, 0}
 {
-	color = Color(0, 0, 255, 0);
+	color = Color(0, 0, 255, 0, 0);
 }
 
 Plane::Plane(Vector center_, FPType distance_, Vector normal_, Color color_)

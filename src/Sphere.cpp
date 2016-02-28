@@ -4,7 +4,7 @@ Sphere::Sphere()
 {
 	radius = 1;
 	position = Vector(1, 1, 1);
-	color = Color(155, 155, 155, 0);
+	color = Color(155, 155, 155, 0, 0);
 }
 
 Sphere::Sphere(FPType radius_, Vector position_, Color color_)

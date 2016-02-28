@@ -17,5 +17,5 @@ Color Object::GetColor()
 {
 	//return color;
 
-	return Color(0, 0, 0, 0);
+	return Color(0, 0, 0, 0, 0);
 }

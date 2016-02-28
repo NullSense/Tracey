@@ -86,6 +86,7 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 		Vector lightDir = (lightSource->position - intersectionRayPos).Normalize(); // Calculate the directional vector towards the lightSource
 		FPType cosineAngle = closestObjectNormal.Dot(lightDir);
 		finalColor = finalColor.Scalar(cosineAngle);
+
 		if(cosineAngle > 0)
 		{
 			Ray shadowRay(intersectionRayPos, (lightSource->position - intersectionRayPos).Normalize()); // Cast a ray from the first intersection to the light
@@ -101,23 +102,28 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 
 			for(const auto &secondaryIntersection : secondaryIntersections)
 			{
-				if(secondaryIntersection > TOLERANCE)
+				if(secondaryIntersection > TOLERANCE && secondaryIntersection <= distanceToLightMagnitude)
 				{
-					if(secondaryIntersection <= distanceToLightMagnitude)
-					{
-						shadowed = true;
-						finalColor = finalColor.Scalar(cosineAngle);
-					}
+					shadowed = true;
+					finalColor = finalColor.Scalar(cosineAngle);
 					break;
+				}
+			}
+			if(shadowed == false && closestObjectColor.specular > 0 && closestObjectColor.specular <= 1)
+			{ // Specular intensity / Phong illumination
+				Vector scalar1 = closestObjectNormal * (closestObjectNormal.Dot(intersectingRayDir.Negative()));
+				Vector resultantReflectionVector = intersectingRayDir.Negative() + ((scalar1 + (intersectingRayDir)) * 2);
+
+				FPType specular = resultantReflectionVector.Dot(lightDir);
+				if(specular > 0 && closestObjectColor.special > 5)
+				{
+					specular = pow(specular, closestObjectColor.special);
+					finalColor = finalColor + (lightSource->color.Scalar(specular*closestObjectColor.specular));
 				}
 			}
 		}
 	}
 	return finalColor.Clip();
-
-	//if(closestObjectColor.special > 0 && closestObjectColor.special <= 1) // Phong illumination
-	//{
-	//}
 }
 
 int main()
@@ -134,26 +140,28 @@ int main()
 	Vector camRight = Vector(0, 1, 0).Cross(camDir).Normalize();
 	Vector camDown = camRight.Cross(camDir);
 
-	Color whiteLight(255, 255, 255, 0);
-	Color prettyGreen(128, 255, 128, 0.5);
-	Color blue(0, 255, 255, 0);
-	Color maroon(128, 64, 64, 0);
-	Color tileFloor(255, 255, 255, 2);
-	Color gray(128, 128, 128, 0);
-	Color orange(245, 77, 15, 0);
+	// R, G, B, Specular, "special" (shininess (>5), lower number, bigger shine radius or tile floor (2))
+	Color tileFloor(255, 255, 255, 0, 2);
+	Color whiteLight(255, 255, 255, 0, 0);
+	Color prettyGreen(128, 255, 128, 0.4, 350);
+	Color blue(0, 255, 255, 0.5, 100);
+	Color maroon(128, 64, 64, 0.2, 50);
+	Color gray(128, 128, 128, 0.5, 20);
+	Color orange(245, 77, 15, 0.5, 150);
 
 	// Position, distance, normal, color 
 	Plane plane(Vector(0, -1, 0), 1, Vector(0, 1, 0), tileFloor);
+
 	// To place sphere on top of plane: (0 - sphere radius)
 	Sphere sphere1(0.5, Vector(1, -0.5, 2.5), maroon);
-	Sphere sphere2(0.3, Vector(-1.8, -0.2, 3.5), prettyGreen);
-	Sphere sphere3(0.2, Vector(sphere1.position.x - 1.5, sphere1.position.y + 0.4, sphere1.position.z - 1.5), blue);
-	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.4), gray);
+	Sphere sphere2(0.5, Vector(-1, -0.5, 5.5), prettyGreen);
+	Sphere sphere3(0.2, Vector(sphere1.position.x - 1, sphere1.position.y + 0.4, sphere1.position.z - 3), blue);
+	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.5), gray);
 	Sphere sphere5(0.4, Vector(plane.center.x - 3.5, -0.5, plane.center.z + 2.9), orange);
 
 	// Contains position and color values (currently only 1 light source works, 2 = bugs)
 	std::vector<Light*> lightSources;
-	Vector light1Position(plane.center.x - 2.5, plane.center.y + 2, plane.center.z + 1.6);
+	Vector light1Position(plane.center.x - 2.5, plane.center.y + 2, plane.center.z + 0.6);
 	Light light1(light1Position, whiteLight);
 	Light light2(Vector(light1Position.x + 6, light1Position.y, light1Position.z - 1), whiteLight);
 	lightSources.push_back(&light1);
@@ -167,7 +175,7 @@ int main()
 	sceneObjects.push_back(&sphere4);
 	sceneObjects.push_back(&sphere5);
 	sceneObjects.push_back(&plane);
-	
+
 	std::vector<FPType> intersections;
 	intersections.reserve(1024);
 
@@ -179,13 +187,13 @@ int main()
 			// No Anti-aliasing
 			if(WIDTH > HEIGHT)
 			{
-				xCamOffset = ((x + 0.5) / WIDTH) * ASPECT_RATIO - (WIDTH - HEIGHT) / HEIGHT / 2;
+				xCamOffset = ((x + 0.5) / WIDTH) * ASPECTRATIO - (WIDTH - HEIGHT) / HEIGHT / 2;
 				yCamOffset = (y + 0.5) / HEIGHT;
 			}
 			else if(HEIGHT > WIDTH)
 			{
 				xCamOffset = (x + 0.5) / WIDTH;
-				yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
+				yCamOffset = ((y + 0.5) / HEIGHT) / ASPECTRATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
 			}
 			else
 			{
@@ -236,8 +244,8 @@ int main()
 	image.save_image(saveString);
 
 	std::cout << "Render complete in: " << diff << " seconds" << std::endl;
-	std::cout << "Press enter to exit...";
-	std::cin.ignore();
+	//std::cout << "Press enter to exit...";
+	//std::cin.ignore();
 
 	return 0;
 }

@@ -16,6 +16,7 @@ public:
 	Vector Cross(const Vector &v);
 	Vector Negative();
 
+	Vector operator*(const Vector &v);
 	Vector operator*(const FPType &s);
 	Vector operator/(const FPType &s);
 	Vector operator-(const Vector &v);
