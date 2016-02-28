@@ -20,7 +20,7 @@ FPType Plane::GetIntersection(Ray ray)
 {
 	FPType denom = normal.Dot(ray.direction);
 	FPType t;
-	if(abs(denom) > ACCURACY) // ACCURACY == 0.000001
+	if(abs(denom) > TOLERANCE) // TOLERANCE == 0.000001
 	{
 		t = (center - ray.origin).Dot(normal) / denom;
 	}

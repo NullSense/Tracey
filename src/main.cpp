@@ -85,30 +85,34 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 		Vector lightDir = (lightSource->position - intersectionRayPos).Normalize(); // Calculate the directional vector towards the lightSource
 		FPType cosineAngle = closestObjectNormal.Dot(lightDir);
 		finalColor = finalColor.Scalar(cosineAngle);
-
-		Ray shadowRay(intersectionRayPos, (lightSource->position - intersectionRayPos).Normalize()); // Cast a ray from the first intersection to the light
-
-		std::vector<FPType> secondaryIntersections;
-		for(const auto &sceneObject : sceneObjects)
+		if(cosineAngle > 0)
 		{
-			secondaryIntersections.push_back(sceneObject->GetIntersection(shadowRay));
-		}
 
-		Vector distanceToLight = lightSource->position + (intersectionRayPos.Negative()).Normalize();
-		FPType distanceToLightMagnitude = distanceToLight.Magnitude();
+			Ray shadowRay(intersectionRayPos, (lightSource->position - intersectionRayPos).Normalize()); // Cast a ray from the first intersection to the light
 
-		for(const auto &secondaryIntersection : secondaryIntersections)
-		{
-			if(secondaryIntersection > ACCURACY)
+			std::vector<FPType> secondaryIntersections;
+			for(const auto &sceneObject : sceneObjects)
 			{
-				if(secondaryIntersection <= distanceToLightMagnitude)
+				secondaryIntersections.push_back(sceneObject->GetIntersection(shadowRay));
+			}
+
+			Vector distanceToLight = lightSource->position + (intersectionRayPos.Negative()).Normalize();
+			FPType distanceToLightMagnitude = distanceToLight.Magnitude();
+
+			for(const auto &secondaryIntersection : secondaryIntersections)
+			{
+				if(secondaryIntersection > TOLERANCE)
 				{
-					shadowed = true;
-					finalColor = finalColor.Scalar(cosineAngle);
+					if(secondaryIntersection <= distanceToLightMagnitude)
+					{
+						shadowed = true;
+						finalColor = finalColor.Scalar(cosineAngle);
+					}
+					break;
 				}
-				break;
 			}
 		}
+
 	}
 	return finalColor.Clip();
 
@@ -143,13 +147,13 @@ int main()
 	Plane plane(Vector(0, -1, 0), 1, Vector(0, 1, 0), tileFloor);
 	// To place sphere on top of plane: (0 - sphere radius)
 	Sphere sphere1(0.5f, Vector(-1, -0.5, 2.5), maroon);
-	Sphere sphere2(0.3f, Vector(1, -0.3, 1), gray);
+	Sphere sphere2(0.3f, Vector(1, -0.3, 1), prettyGreen);
 
 	// Contains position and color values
 	std::vector<Light*> lightSources;
-	Vector light1Position(plane.center.x - 2.5, plane.center.y + 2, plane.center.z + 1.2);
+	Vector light1Position(plane.center.x - 2.5, plane.center.y + 1.5, plane.center.z + 1.6);
 	Light light1(light1Position, whiteLight);
-	Light light2(Vector(light1Position.x + 8, light1Position.y, light1Position.z), whiteLight);
+	Light light2(Vector(light1Position.x + 6, light1Position.y, light1Position.z - 1), whiteLight);
 	lightSources.push_back(&light1);
 	//lightSources.push_back(&light2);
 
@@ -208,7 +212,7 @@ int main()
 			else
 			{
 				// If intersection at that point > accuracy, get color of object
-				if(intersections[indexOfClosestObject] > ACCURACY)
+				if(intersections[indexOfClosestObject] > TOLERANCE)
 				{
 					Vector intersectionRayPos = camera.origin + (camRayDir * intersections[indexOfClosestObject]);
 					Vector intersectionRayDir = camRayDir;
