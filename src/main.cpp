@@ -136,21 +136,24 @@ int main()
 
 	Color whiteLight(255, 255, 255, 0);
 	Color prettyGreen(128, 255, 128, 0.5);
+	Color blue(0, 255, 255, 0);
 	Color maroon(128, 64, 64, 0);
 	Color tileFloor(255, 255, 255, 2);
 	Color gray(128, 128, 128, 0);
-	Color black(0, 0, 0, 0);
-	Color pureRed(255, 0, 0, 0);
+	Color orange(245, 77, 15, 0);
 
 	// Position, distance, normal, color 
 	Plane plane(Vector(0, -1, 0), 1, Vector(0, 1, 0), tileFloor);
 	// To place sphere on top of plane: (0 - sphere radius)
 	Sphere sphere1(0.5, Vector(1, -0.5, 2.5), maroon);
-	Sphere sphere2(0.3, Vector(-1, -0.7, 1.5), prettyGreen);
+	Sphere sphere2(0.3, Vector(-1.8, -0.2, 3.5), prettyGreen);
+	Sphere sphere3(0.2, Vector(sphere1.position.x - 1.5, sphere1.position.y + 0.4, sphere1.position.z - 1.5), blue);
+	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.4), gray);
+	Sphere sphere5(0.4, Vector(plane.center.x - 3.5, -0.5, plane.center.z + 2.9), orange);
 
 	// Contains position and color values (currently only 1 light source works, 2 = bugs)
 	std::vector<Light*> lightSources;
-	Vector light1Position(plane.center.x - 2.5, plane.center.y + 3, plane.center.z + 1.6);
+	Vector light1Position(plane.center.x - 2.5, plane.center.y + 2, plane.center.z + 1.6);
 	Light light1(light1Position, whiteLight);
 	Light light2(Vector(light1Position.x + 6, light1Position.y, light1Position.z - 1), whiteLight);
 	lightSources.push_back(&light1);
@@ -160,13 +163,15 @@ int main()
 	std::vector<Object*> sceneObjects;
 	sceneObjects.push_back(&sphere1);
 	sceneObjects.push_back(&sphere2);
+	sceneObjects.push_back(&sphere3);
+	sceneObjects.push_back(&sphere4);
+	sceneObjects.push_back(&sphere5);
 	sceneObjects.push_back(&plane);
-
+	
 	std::vector<FPType> intersections;
 	intersections.reserve(1024);
 
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)
-
 	for(int x = 0; x < WIDTH; x++)
 	{
 		for(int y = 0; y < HEIGHT; y++)
