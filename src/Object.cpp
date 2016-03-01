@@ -17,5 +17,15 @@ Color Object::GetColor()
 {
 	//return color;
 
-	return Color(0, 0, 0, 0, 0);
+	return material.GetColor();
+}
+
+Material Object::GetMaterial()
+{
+	return material;
+}
+
+void Object::SetMaterial(Material material_)
+{
+	material = material_;
 }

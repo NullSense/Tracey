@@ -125,6 +125,7 @@
     <ClInclude Include="src\Color.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Light.h" />
+    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Plane.h" />
     <ClInclude Include="src\Ray.h" />

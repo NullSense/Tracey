@@ -4,19 +4,12 @@ Sphere::Sphere()
 {
 	radius = 1;
 	position = Vector(1, 1, 1);
-	color = Color(155, 155, 155, 0, 0);
 }
 
-Sphere::Sphere(FPType radius_, Vector position_, Color color_)
+Sphere::Sphere(FPType radius_, Vector position_)
 {
 	radius = radius_;
 	position = position_;
-	color = color_;
-}
-
-Color Sphere::GetColor()
-{
-	return color;
 }
 
 Vector Sphere::GetNormalAt(Vector point)

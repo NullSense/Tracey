@@ -5,6 +5,7 @@
 #include "Sphere.h"
 #include "Plane.h"
 #include "Light.h"
+#include "Material.h"
 #include <vector>
 #include <iostream>
 #include <time.h>
@@ -58,38 +59,31 @@ int ClosestObjectIndex(const std::vector<FPType> &intersections)
 
 Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std::vector<Object*> &sceneObjects, int indexOfClosestObject, const std::vector<Light*> &lightSources)
 {
-	Color closestObjectColor = sceneObjects[indexOfClosestObject]->color;
+	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
 	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(intersectionRayPos);
 
-	if(closestObjectColor.special == 2) // Checkerboard pattern floor
+	if(closestObjectMaterial.GetSpecial() == 2) // Checkerboard pattern floor
 	{
 		int square = int(floor(intersectionRayPos.x)) + int(floor(intersectionRayPos.z)); // (floor() rounds down)
 
 		if(square % 2 == 0) // black tile
-		{
-			closestObjectColor.red = 0;
-			closestObjectColor.green = 0;
-			closestObjectColor.blue = 0;
-		}
+			closestObjectMaterial.SetColor(Color(0, 0, 0));
+
 		else // white tile
-		{
-			closestObjectColor.red = 255;
-			closestObjectColor.green = 255;
-			closestObjectColor.blue = 255;
-		}
+			closestObjectMaterial.SetColor(Color(255, 255, 255));
 	}
 
 	bool shadowed = false;
-	Color finalColor = closestObjectColor.Scalar(AMBIENTLIGHT); // Add ambient light to the calculation
+	Color finalColor = closestObjectMaterial.GetColor() * AMBIENTLIGHT; // Add ambient light to the calculation
 	for(const auto &lightSource : lightSources)
 	{
-		Vector lightDir = (lightSource->position - intersectionRayPos).Normalize(); // Calculate the directional vector towards the lightSource
+		Vector lightDir = (lightSource->GetPosition() - intersectionRayPos).Normalize(); // Calculate the directional vector towards the lightSource
 		FPType cosineAngle = closestObjectNormal.Dot(lightDir);
-		finalColor = finalColor.Scalar(cosineAngle);
+		finalColor *= cosineAngle;
 
 		if(cosineAngle > 0)
 		{
-			Ray shadowRay(intersectionRayPos, (lightSource->position - intersectionRayPos).Normalize()); // Cast a ray from the first intersection to the light
+			Ray shadowRay(intersectionRayPos, (lightSource->GetPosition() - intersectionRayPos).Normalize()); // Cast a ray from the first intersection to the light
 
 			std::vector<FPType> secondaryIntersections;
 			for(const auto &sceneObject : sceneObjects)
@@ -97,7 +91,7 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 				secondaryIntersections.push_back(sceneObject->GetIntersection(shadowRay));
 			}
 
-			Vector distanceToLight = lightSource->position + (intersectionRayPos.Negative()).Normalize();
+			Vector distanceToLight = lightSource->GetPosition() + (intersectionRayPos.Negative()).Normalize();
 			FPType distanceToLightMagnitude = distanceToLight.Magnitude();
 
 			for(const auto &secondaryIntersection : secondaryIntersections)
@@ -105,20 +99,20 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 				if(secondaryIntersection > TOLERANCE && secondaryIntersection <= distanceToLightMagnitude)
 				{
 					shadowed = true;
-					finalColor = finalColor.Scalar(cosineAngle);
+					finalColor *= cosineAngle;
 					break;
 				}
 			}
-			if(shadowed == false && closestObjectColor.specular > 0 && closestObjectColor.specular <= 1)
+			if(shadowed == false && closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 			{ // Specular intensity / Phong illumination
 				Vector scalar1 = closestObjectNormal * (closestObjectNormal.Dot(intersectingRayDir.Negative()));
 				Vector resultantReflectionVector = intersectingRayDir.Negative() + ((scalar1 + (intersectingRayDir)) * 2);
-
 				FPType specular = resultantReflectionVector.Dot(lightDir);
-				if(specular > 0 && closestObjectColor.special > 5)
+				if(specular > 0)
 				{
-					specular = pow(specular, closestObjectColor.special);
-					finalColor = finalColor + (lightSource->color.Scalar(specular*closestObjectColor.specular));
+					// pow(specular, shininess factor (higher shine = more condensed phong light)) 
+					specular = pow(specular, 100);
+					finalColor += (lightSource->GetMaterial().GetColor() * AMBIENTLIGHT) * specular * closestObjectMaterial.GetSpecular();
 				}
 			}
 		}
@@ -140,28 +134,39 @@ int main()
 	Vector camRight = Vector(0, 1, 0).Cross(camDir).Normalize();
 	Vector camDown = camRight.Cross(camDir);
 
-	// R, G, B, Specular, "special" (shininess (>5), lower number, bigger shine radius or tile floor (2))
-	Color tileFloor(255, 255, 255, 0, 2);
-	Color whiteLight(255, 255, 255, 0, 0);
-	Color prettyGreen(128, 255, 128, 0.4, 350);
-	Color blue(0, 255, 255, 0.5, 100);
-	Color maroon(128, 64, 64, 0.2, 50);
-	Color gray(128, 128, 128, 0.5, 20);
-	Color orange(245, 77, 15, 0.5, 150);
+	Color blue(0, 255, 255);
+	Color maroon(128, 64, 64);
+	Color gray(128, 128, 128);
+	Color orange(245, 77, 15);
+
+	// Color, diffusion [0-1] (lower = more intense phong illumination), reflection, special (tile floor)
+	Material tileFloor(Color(255, 255, 255), 0.1, 0, 2);
+	Material whiteLight(Color(255, 255, 255));
+	Material prettyGreen(Color(128, 255, 128), 0.2);
+	Material blueM(blue, 0.6);
+	Material silver(gray);
+	Material orangeM(orange, 0.5);
+	Material maroonM(maroon, 1);
 
 	// Position, distance, normal, color 
-	Plane plane(Vector(0, -1, 0), 1, Vector(0, 1, 0), tileFloor);
+	Plane floorPlane(Vector(0, -1, 0), Vector(0, 1, 0));
+	floorPlane.SetMaterial(tileFloor);
 
 	// To place sphere on top of plane: (0 - sphere radius)
-	Sphere sphere1(0.5, Vector(1, -0.5, 2.5), maroon);
-	Sphere sphere2(0.5, Vector(-1, -0.5, 5.5), prettyGreen);
-	Sphere sphere3(0.2, Vector(sphere1.position.x - 1, sphere1.position.y + 0.4, sphere1.position.z - 3), blue);
-	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.5), gray);
-	Sphere sphere5(0.4, Vector(plane.center.x - 3.5, -0.5, plane.center.z + 2.9), orange);
+	Sphere sphere1(0.5, Vector(1, -0.5, 2.5));
+	sphere1.SetMaterial(maroonM);
+	Sphere sphere2(0.5, Vector(-1.5, -0.5, 4));
+	sphere2.SetMaterial(prettyGreen);
+	Sphere sphere3(0.2, Vector(sphere1.position.x - 1.7, sphere1.position.y - 0.2, sphere1.position.z - 2));
+	sphere3.SetMaterial(blueM);
+	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.7));
+	sphere4.SetMaterial(silver);
+	Sphere sphere5(0.4, Vector(floorPlane.center.x - 3.5, -0.5, floorPlane.center.z + 2.9));
+	sphere5.SetMaterial(orangeM);
 
 	// Contains position and color values (currently only 1 light source works, 2 = bugs)
 	std::vector<Light*> lightSources;
-	Vector light1Position(plane.center.x - 2.5, plane.center.y + 2, plane.center.z + 0.6);
+	Vector light1Position(floorPlane.center.x - 3, floorPlane.center.y + 0.5, floorPlane.center.z + 1.5);
 	Light light1(light1Position, whiteLight);
 	Light light2(Vector(light1Position.x + 6, light1Position.y, light1Position.z - 1), whiteLight);
 	lightSources.push_back(&light1);
@@ -174,7 +179,7 @@ int main()
 	sceneObjects.push_back(&sphere3);
 	sceneObjects.push_back(&sphere4);
 	sceneObjects.push_back(&sphere5);
-	sceneObjects.push_back(&plane);
+	sceneObjects.push_back(&floorPlane);
 
 	std::vector<FPType> intersections;
 	intersections.reserve(1024);
@@ -244,7 +249,7 @@ int main()
 	image.save_image(saveString);
 
 	std::cout << "Render complete in: " << diff << " seconds" << std::endl;
-	//std::cout << "Press enter to exit...";
+	std::cout << "Press enter to exit...";
 	//std::cin.ignore();
 
 	return 0;

@@ -7,13 +7,11 @@
 class Plane : public Object
 {
 public:
-    FPType distance;
     Vector normal, center;
 
     Plane();
-    Plane(Vector center_, FPType distance_, Vector normal_, Color color_);
+    Plane(Vector center_, Vector normal_);
     
-    virtual Color GetColor();
     virtual Vector GetNormalAt(Vector point);
     virtual FPType GetIntersection(Ray ray);
 };

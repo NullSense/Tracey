@@ -9,9 +9,7 @@ public:
 	Vector position;
 
 	Sphere();
-	Sphere(FPType radius_, Vector position_, Color color_);
-
-	virtual Color GetColor();
+	Sphere(FPType radius_, Vector position_);
 
 	Vector GetNormalAt(Vector point);
 	virtual FPType GetIntersection(Ray ray);

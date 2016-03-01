@@ -1,12 +1,31 @@
-
 #include "Light.h"
 
 Light::Light()
 	:position {0, 0, 0}
-	, color {255, 255, 255, 0, 0}
+	, material {Color(255, 255, 255), 0, 0, 0}
 {}
 
-Light::Light(Vector position_, Color color_)
+Light::Light(Vector position_, Material material_)
 	:position {position_}
-	, color {color_}
+	, material {material_}
 {}
+
+void Light::SetPosition(Vector position_)
+{
+	position = position_;
+}
+
+void Light::SetMaterial(Material material_)
+{
+	material = material_;
+}
+
+Material Light::GetMaterial()
+{
+	return material;
+}
+
+Vector Light::GetPosition()
+{
+	return position;
+}
