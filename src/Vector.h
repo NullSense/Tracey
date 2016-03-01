@@ -18,6 +18,7 @@ public:
 
 	Vector operator*(const Vector &v);
 	Vector operator*(const FPType &s);
+	Vector operator*=(const FPType &s);
 	Vector operator/(const FPType &s);
 	Vector operator-(const Vector &v);
 	Vector operator+(const Vector &v);
