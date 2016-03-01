@@ -17,12 +17,12 @@ Color Color::Clip()
 	FPType alllight = red + green + blue;
 	FPType excesslight = alllight - 765; // 255 * 3 = 765
 
-	if(excesslight > 0)
-	{
-		red = red + excesslight * (red / alllight);
-		green = green + excesslight * (green / alllight);
-		blue = blue + excesslight * (blue / alllight);
-	}
+	//if(excesslight > 0)
+	//{
+		//red = red + excesslight * (red / alllight);
+		//green = green + excesslight * (green / alllight);
+		//blue = blue + excesslight * (blue / alllight);
+	//}
 	if(red > 255)
 		red = 255;
 

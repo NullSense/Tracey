@@ -66,19 +66,14 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 	if(closestObjectMaterial.GetSpecial() == 2) // Checkerboard pattern floor
 	{
 		int square = int(floor(intersectionRayPos.x)) + int(floor(intersectionRayPos.z)); // (floor() rounds down)
-
 		if(square % 2 == 0) // black tile
 			closestObjectMaterial.SetColor(Color(0, 0, 0));
-
 		else // white tile
 			closestObjectMaterial.SetColor(Color(255, 255, 255));
 	}
 
-	int depth = 0;
 	bool shadowed = false;
-
 	Color finalColor = closestObjectMaterial.GetColor() * AMBIENTLIGHT; // Add ambient light to the calculation
-
 	if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 	{
 		Vector scalar = closestObjectNormal * (closestObjectNormal.Dot(intersectingRayDir.Negative()));
@@ -165,7 +160,7 @@ int main()
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	Vector camPos(-4, 1.3, -1.5);
+	Vector camPos(-4, 1.3, -0.5);
 	Vector lookAt(0, -1, 4);
 
 	Vector camDiff = camPos - lookAt;
@@ -179,13 +174,13 @@ int main()
 	Color orange(245, 77, 15);
 
 	// Color, diffusion [0-1] (lower = more intense phong illumination), reflection, special (tile floor)
-	Material tileFloor(Color(255, 255, 255), 0.1, 1, 2);
+	Material tileFloor(Color(255, 255, 255), 0.2, 1, 2);
 	Material whiteLight(Color(255, 255, 255));
-	Material prettyGreen(Color(128, 255, 128), 0, 1);
-	Material blueM(blue, 0);
-	Material silver(gray, 0);
-	Material orangeM(orange, 0.8);
-	Material maroonM(maroon, 1);
+	Material prettyGreen(Color(128, 255, 128), 0.2, 1);
+	Material blueM(blue, 0, 1);
+	Material silver(gray, 0, 1);
+	Material orangeM(orange, 0.8, 1);
+	Material maroonM(maroon, 0.5, 1);
 
 	// Position, distance, normal, color 
 	Plane floorPlane(Vector(0, -1, 0), Vector(0, 1, 0));

@@ -10,3 +10,6 @@
 ### Specularity / Phong illumination
 ![3](https://puu.sh/np2io/1d4fbffff3.png)
 ![4](http://puu.sh/nr10h/ff4a3f5f7e.png)
+
+### Reflections
+![5](https://puu.sh/nrdaE/e9a57d8e3f.png)
