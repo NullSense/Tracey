@@ -74,7 +74,9 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 
 	bool shadowed = false;
 	Color finalColor = closestObjectMaterial.GetColor() * AMBIENTLIGHT; // Add ambient light to the calculation
-	if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
+
+	// Reflections
+	if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1 && REFLECTIONS_ON)
 	{
 		Vector scalar = closestObjectNormal * (closestObjectNormal.Dot(intersectingRayDir.Negative()));
 		Vector resultantReflection = intersectingRayDir.Negative() + ((scalar + (intersectingRayDir)) * 2);
@@ -108,11 +110,13 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 
 	for(const auto &lightSource : lightSources)
 	{
-		// Diffuse shading
 		Vector lightDir = (lightSource->GetPosition() - intersectionRayPos).Normalize(); // Calculate the directional vector towards the lightSource
 		FPType cosineAngle = closestObjectNormal.Dot(lightDir);
-		finalColor *= cosineAngle * AMBIENTLIGHT;
-
+		// Diffuse shading
+		if(DIFFUSE_ON)
+		{
+			finalColor *= cosineAngle * AMBIENTLIGHT;
+		}
 		if(cosineAngle > 0)
 		{
 			Ray shadowRay(intersectionRayPos, (lightSource->GetPosition() - intersectionRayPos).Normalize()); // Cast a ray from the first intersection to the light
@@ -125,22 +129,21 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 
 			for(const auto &secondaryIntersection : secondaryIntersections)
 			{
-				if(secondaryIntersection > TOLERANCE)
+				if(secondaryIntersection > TOLERANCE && SHADOWS_ON)
 				{
 					// Shadows
 					shadowed = true;
-					finalColor *= cosineAngle * AMBIENTLIGHT;
+					finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENTLIGHT;
 					break;
 				}
 			}
 			if(shadowed == false)
 			{
-				finalColor += (closestObjectMaterial.GetColor() * (lightSource->GetColor()) * (cosineAngle));
-
-				if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
+				if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1 && SPECULAR_ON)
 				{ // Specular intensity / Phong illumination
 					Vector scalar1 = closestObjectNormal * (closestObjectNormal.Dot(intersectingRayDir.Negative()));
 					Vector resultantReflection = intersectingRayDir.Negative() + ((scalar1 + (intersectingRayDir)) * 2);
+
 					FPType specular = resultantReflection.Dot(lightDir);
 					if(specular > 0)
 					{
@@ -160,7 +163,7 @@ int main()
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	Vector camPos(-4, 1.3, -0.5);
+	Vector camPos(0, 1, -2);
 	Vector lookAt(0, -1, 4);
 
 	Vector camDiff = camPos - lookAt;
@@ -200,7 +203,7 @@ int main()
 
 	// Contains position and color values (currently only 1 light source works, 2 = bugs)
 	std::vector<Light*> lightSources;
-	Vector light1Position(floorPlane.center.x - 3, floorPlane.center.y + 2, floorPlane.center.z + 1.5);
+	Vector light1Position(floorPlane.center.x - 2.5, floorPlane.center.y + 2, floorPlane.center.z + 0.6);
 	Light light1(light1Position, whiteLight);
 	Light light2(Vector(light1Position.x + 6, light1Position.y, light1Position.z - 1), whiteLight);
 	lightSources.push_back(&light1);

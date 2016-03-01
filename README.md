@@ -3,13 +3,13 @@
 # Screenshots:
 
 ### Diffuse lighting and shadows
-
-![1](http://puu.sh/noLJp/0cac11935a.png)
-![2](https://puu.sh/noS4h/9c8fbab19a.png)
+![1](http://puu.sh/nrpY3/c4332631e7.png)
+![2](http://puu.sh/nrpYS/155038135c.png)
 
 ### Specularity / Phong illumination
-![3](https://puu.sh/np2io/1d4fbffff3.png)
-![4](http://puu.sh/nr10h/ff4a3f5f7e.png)
+![3](http://puu.sh/nrq1s/c17f2d8437.png)
+![4](http://puu.sh/nrq2O/d724cdacf1.png)
 
 ### Reflections
-![5](https://puu.sh/nrdaE/e9a57d8e3f.png)
+![5](http://puu.sh/nrq4u/e4d7e0c69c.png)
+![6](http://puu.sh/nrq6y/3d27b4cc64.png)
