@@ -175,6 +175,7 @@ int main()
 	bitmap_image image(WIDTH, HEIGHT);
 
 	Vector camPos(0, 1, -2);
+	//Vector camPos(0, 0, -2);
 	Vector lookAt(0, -1, 4);
 
 	Vector camDiff = camPos - lookAt;
@@ -200,16 +201,16 @@ int main()
 	Plane floorPlane(Vector(0, -1, 0), Vector(0, 1, 0));
 	floorPlane.SetMaterial(tileFloor);
 
-	// To place sphere on top of plane: (0 - sphere radius)
+	// To place sphere on top of plane: (-1 + sphere radius)
 	Sphere sphere1(0.5, Vector(1, -0.5, 2.5));
 	sphere1.SetMaterial(maroonM);
 	Sphere sphere2(0.5, Vector(-1.5, -0.5, 4));
 	sphere2.SetMaterial(prettyGreen);
-	Sphere sphere3(0.2, Vector(sphere1.position.x - 1.7, sphere1.position.y - 0.2, sphere1.position.z - 2));
+	Sphere sphere3(0.2, Vector(sphere1.position.x - 2, sphere1.position.y, sphere1.position.z - 2));
 	sphere3.SetMaterial(blueM);
 	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.67));
 	sphere4.SetMaterial(silver);
-	Sphere sphere5(0.4, Vector(floorPlane.center.x - 3.5, -0.5, floorPlane.center.z + 2.9));
+	Sphere sphere5(0.4, Vector(floorPlane.center.x - 3.5, -0.6, floorPlane.center.z + 2.9));
 	sphere5.SetMaterial(orangeM);
 
 	// Contains position and color values (currently only 1 light source works, 2 = bugs)

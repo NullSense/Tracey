@@ -15,8 +15,6 @@ Vector Object::GetNormalAt(Vector intersectionPosition)
 
 Color Object::GetColor()
 {
-	//return color;
-
 	return material.GetColor();
 }
 

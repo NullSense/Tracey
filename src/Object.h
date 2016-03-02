@@ -9,7 +9,7 @@ class Object : public Material
 public:
 	Object() noexcept;
 
-	virtual FPType Object::GetIntersection(Ray ray);
+	virtual FPType GetIntersection(Ray ray);
 
 	virtual Vector GetNormalAt(Vector intersectionPosition);
 
