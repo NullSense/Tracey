@@ -23,8 +23,8 @@ FPType Sphere::GetIntersection(Ray ray)
 {
 	FPType discriminant, b;
 
-	Vector p = ray.origin - position; // the vector from the sphere's center to the ray source
-	b = -(p.Dot(ray.direction));
+	Vector p = ray.GetOrigin() - position; // the vector from the sphere's center to the ray source
+	b = -(p.Dot(ray.GetDirection()));
 
 	discriminant = (b * b) - p.Dot(p) + (radius * radius);
 

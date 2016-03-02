@@ -44,11 +44,6 @@ Color Color::Clip()
 	return Color(red, green, blue);
 }
 
-FPType Color::Brightness()
-{
-	return (red + green + blue) / 3;
-}
-
 Color Color::Average(const Color &color)
 {
 	return Color((red + color.red) / 2, (green + color.green) / 2, (blue + color.blue) / 2);

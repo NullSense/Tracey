@@ -169,8 +169,6 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 	return finalColor.Clip();
 }
 
-//std::vector<
-
 int main()
 {
 	clock_t end, start = clock();
@@ -211,12 +209,12 @@ int main()
 	sphere3.SetMaterial(blueM);
 	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.67));
 	sphere4.SetMaterial(silver);
-	Sphere sphere5(0.4, Vector(floorPlane.center.x - 3.5, -0.6, floorPlane.center.z + 2.9));
+	Sphere sphere5(0.4, Vector(floorPlane.GetCenter().x - 3.5, -0.6, floorPlane.GetCenter().z + 2.9));
 	sphere5.SetMaterial(orangeM);
 
 	// Contains position and color values (currently only 1 light source works, 2 = bugs)
 	std::vector<Light*> lightSources;
-	Vector light1Position(floorPlane.center.x - 2.5, floorPlane.center.y + 2, floorPlane.center.z + 0.6);
+	Vector light1Position(floorPlane.GetCenter().x - 2.5, floorPlane.GetCenter().y + 2, floorPlane.GetCenter().z + 0.6);
 	Light light1(light1Position, white);
 	Light light2(Vector(light1Position.x, light1Position.y, light1Position.z), white);
 	lightSources.push_back(&light1);
@@ -288,7 +286,7 @@ int main()
 				if(intersections[indexOfClosestObject] > TOLERANCE)
 				{
 					raysCast++;
-					Vector intersectionRayPos = camera.origin + (camRayDir * intersections[indexOfClosestObject]);
+					Vector intersectionRayPos = camera.GetOrigin() + (camRayDir * intersections[indexOfClosestObject]);
 					Vector intersectionRayDir = camRayDir;
 					// If registers a ray trace, set pixel color to traced pixel color (the object color)
 					Color intersectionColor = GetColorAt(intersectionRayPos, intersectionRayDir, sceneObjects, indexOfClosestObject, lightSources);
