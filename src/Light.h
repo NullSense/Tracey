@@ -1,21 +1,21 @@
 #pragma once
 
 #include "Vector.h"
-#include "Material.h"
+#include "Color.h"
 
-struct Light : public Material
+struct Light
 {
 public:
 	Light();
 
-	Light(Vector position_, Material material_);
+	Light(Vector position_, Color material_);
 
 	void SetPosition(Vector position_);
-	void SetMaterial(Material material_);
-	Material GetMaterial();
+	void SetColor(Color color_);
+	Color GetColor();
 	Vector GetPosition();
 
 private:
-	Material material;
+	Color color;
 	Vector position;
 };

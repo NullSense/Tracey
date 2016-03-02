@@ -25,6 +25,7 @@ extern constexpr FPType HEIGHT = 4320;
 extern constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
 extern constexpr FPType AMBIENT_LIGHT = 0.8;
 extern constexpr FPType TOLERANCE = 0.0000001;
+extern constexpr int SUPERSAMPLING = 4;
 
 extern constexpr bool REFLECTIONS_ON = true;
 extern constexpr bool SPECULAR_ON = true;

@@ -2,12 +2,12 @@
 
 Light::Light()
 	:position {0, 0, 0}
-	, material {Color(255, 255, 255), 0, 0, 0}
+	, color {Color(255, 255, 255)}
 {}
 
-Light::Light(Vector position_, Material material_)
+Light::Light(Vector position_, Color color_)
 	:position {position_}
-	, material {material_}
+	, color {color_}
 {}
 
 void Light::SetPosition(Vector position_)
@@ -15,14 +15,14 @@ void Light::SetPosition(Vector position_)
 	position = position_;
 }
 
-void Light::SetMaterial(Material material_)
+void Light::SetColor(Color color_)
 {
-	material = material_;
+	color = color_;
 }
 
-Material Light::GetMaterial()
+Color Light::GetColor()
 {
-	return material;
+	return color;
 }
 
 Vector Light::GetPosition()

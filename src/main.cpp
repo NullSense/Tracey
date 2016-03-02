@@ -160,7 +160,7 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 					{
 						// pow(specular, shininess factor (higher shine = more condensed phong light)) 
 						specular = pow(specular, 120) * closestObjectMaterial.GetSpecular();
-						finalColor += (lightSource->GetMaterial().GetColor() * AMBIENT_LIGHT) * (specular * closestObjectMaterial.GetSpecular());
+						finalColor += (lightSource->GetColor() * AMBIENT_LIGHT) * (specular * closestObjectMaterial.GetSpecular());
 					}
 				}
 			}
@@ -169,13 +169,14 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 	return finalColor.Clip();
 }
 
+//std::vector<
+
 int main()
 {
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
 	Vector camPos(0, 1, -2);
-	//Vector camPos(0, 0, -2);
 	Vector lookAt(0, -1, 4);
 
 	Vector camDiff = camPos - lookAt;
@@ -187,10 +188,10 @@ int main()
 	Color maroon(128, 64, 64);
 	Color gray(128, 128, 128);
 	Color orange(245, 77, 15);
+	Color white(255, 255, 255);
 
 	// Color, diffusion [0-1] (lower = more intense phong illumination), reflection, special (tile floor)
 	Material tileFloor(Color(255, 255, 255), 0.2, 1, 2);
-	Material whiteLight(Color(255, 255, 255));
 	Material prettyGreen(Color(128, 255, 128), 0.2, 1);
 	Material blueM(blue, 0, 0);
 	Material silver(gray, 0, 1);
@@ -216,8 +217,8 @@ int main()
 	// Contains position and color values (currently only 1 light source works, 2 = bugs)
 	std::vector<Light*> lightSources;
 	Vector light1Position(floorPlane.center.x - 2.5, floorPlane.center.y + 2, floorPlane.center.z + 0.6);
-	Light light1(light1Position, whiteLight);
-	Light light2(Vector(light1Position.x + 6, light1Position.y, light1Position.z - 1), whiteLight);
+	Light light1(light1Position, white);
+	Light light2(Vector(light1Position.x, light1Position.y, light1Position.z), white);
 	lightSources.push_back(&light1);
 	//lightSources.push_back(&light2); 
 
@@ -244,7 +245,6 @@ int main()
 		percentage = columnsCompleted / (FPType) WIDTH * 100;
 		std::cout << '\r' << "Completion: " << (int) percentage << '%';
 		fflush(stdout);
-
 		for(int y = 0; y < HEIGHT; y++)
 		{
 			// No Anti-aliasing
