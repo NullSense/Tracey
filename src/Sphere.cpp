@@ -43,3 +43,23 @@ FPType Sphere::GetIntersection(Ray ray)
 	else //if it's less than 0, there's no intersection, return -1
 		return -1;
 }
+
+FPType Sphere::GetRadius()
+{
+	return radius;
+}
+
+Vector Sphere::GetPosition()
+{
+	return position;
+}
+
+void Sphere::SetRadius(const FPType &radius_)
+{
+	radius = radius_;
+}
+
+void Sphere::SetPosition(const Vector &position_)
+{
+	position = position_;
+}

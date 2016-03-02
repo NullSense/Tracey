@@ -11,12 +11,12 @@ using FPType = double;
 //extern constexpr FPType HEIGHT = 1440;
 
 // 3840 x 2160 4k
-//extern constexpr FPType WIDTH = 3840;
-//extern constexpr FPType HEIGHT = 2160;
+extern constexpr FPType WIDTH = 3840;
+extern constexpr FPType HEIGHT = 2160;
 
 // 7680 x 4320 8k
-extern constexpr FPType WIDTH = 7680;
-extern constexpr FPType HEIGHT = 4320;
+//extern constexpr FPType WIDTH = 7680;
+//extern constexpr FPType HEIGHT = 4320;
 
 // 7680 x 4320 16k
 //extern constexpr FPType WIDTH = 15360;

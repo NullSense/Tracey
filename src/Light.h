@@ -10,8 +10,8 @@ public:
 
 	Light(Vector position_, Color material_);
 
-	void SetPosition(Vector position_);
-	void SetColor(Color color_);
+	void SetPosition(const Vector &position_);
+	void SetColor(const Color &color_);
 	Color GetColor();
 	Vector GetPosition();
 

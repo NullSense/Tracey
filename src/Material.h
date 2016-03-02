@@ -14,19 +14,19 @@ public:
 		, special {special_}
 	{}
 
-	void SetColor(Color& color_)
+	void SetColor(const Color &color_)
 	{
 		color = color_;
 	}
-	void SetDiffuse(FPType diffusion_)
+	void SetDiffuse(const FPType diffusion_)
 	{
 		diffusion = diffusion_;
 	}
-	void SetReflection(FPType reflection_)
+	void SetReflection(const FPType reflection_)
 	{
 		reflection = reflection_;
 	}
-	void SetSpecial(FPType special_)
+	void SetSpecial(const FPType special_)
 	{
 		special = special_;
 	}

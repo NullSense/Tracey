@@ -31,17 +31,17 @@ Vector Plane::GetCenter()
 	return center;
 }
 
-void Plane::SetNormal(Vector & normal_)
+void Plane::SetNormal(const Vector &normal_)
 {
 	normal = normal_;
 }
 
-void Plane::SetCenter(Vector & center_)
+void Plane::SetCenter(const Vector &center_)
 {
 	center = center_;
 }
 
-Vector Plane::GetNormalAt(Vector point)
+Vector Plane::GetNormalAt(const Vector point)
 {
 	return normal;
 }

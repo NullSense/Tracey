@@ -7,8 +7,8 @@ public:
 	Ray();
 	Ray(Vector origin_, Vector direction_);
 
-	void SetOrigin(Vector &origin_);
-	void SetDirection(Vector &direction_);
+	void SetOrigin(const Vector &origin_);
+	void SetDirection(const Vector &direction_);
 	Vector GetOrigin();
 	Vector GetDirection();
 

@@ -23,7 +23,7 @@ Material Object::GetMaterial()
 	return material;
 }
 
-void Object::SetMaterial(Material material_)
+void Object::SetMaterial(const Material &material_)
 {
 	material = material_;
 }

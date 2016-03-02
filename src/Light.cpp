@@ -10,12 +10,12 @@ Light::Light(Vector position_, Color color_)
 	, color {color_}
 {}
 
-void Light::SetPosition(Vector position_)
+void Light::SetPosition(const Vector &position_)
 {
 	position = position_;
 }
 
-void Light::SetColor(Color color_)
+void Light::SetColor(const Color &color_)
 {
 	color = color_;
 }

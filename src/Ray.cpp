@@ -12,12 +12,12 @@ Ray::Ray(Vector origin_, Vector direction_)
 	direction = direction_;
 }
 
-void Ray::SetOrigin(Vector & origin_)
+void Ray::SetOrigin(const Vector &origin_)
 {
 	origin = origin_;
 }
 
-void Ray::SetDirection(Vector & direction_)
+void Ray::SetDirection(const Vector &direction_)
 {
 	direction = direction_;
 }

@@ -2,7 +2,7 @@
 #include "Globals.h"
 #include <cmath>
 
-class Vector
+struct Vector
 {
 public:
 	FPType x, y, z;

@@ -118,6 +118,7 @@
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\Ray.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
     <ClCompile Include="src\Vector.cpp" />
   </ItemGroup>
@@ -129,6 +130,7 @@
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Plane.h" />
     <ClInclude Include="src\Ray.h" />
+    <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\Sphere.h" />
     <ClInclude Include="src\Vector.h" />
   </ItemGroup>

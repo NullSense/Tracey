@@ -12,6 +12,36 @@ Color::Color(FPType red_, FPType green_, FPType blue_)
 	, blue {blue_}
 {}
 
+FPType Color::GetRed()
+{
+	return red;
+}
+
+FPType Color::GetGreen()
+{
+	return green;
+}
+
+FPType Color::GetBlue()
+{
+	return blue;
+}
+
+void Color::SetRed(const FPType &red_)
+{
+	red = red_;
+}
+
+void Color::SetGreen(const FPType &green_)
+{
+	green = green_;
+}
+
+void Color::setBlue(const FPType &blue_)
+{
+	blue = blue_;
+}
+
 Color Color::Clip()
 {
 	FPType alllight = red + green + blue;

@@ -6,7 +6,6 @@
 #include "Plane.h"
 #include "Light.h"
 #include "Material.h"
-#include "Vector.h"
 #include <vector>
 #include <iostream>
 #include <time.h>
@@ -205,9 +204,9 @@ int main()
 	sphere1.SetMaterial(maroonM);
 	Sphere sphere2(0.5, Vector(-1.5, -0.5, 4));
 	sphere2.SetMaterial(prettyGreen);
-	Sphere sphere3(0.2, Vector(sphere1.position.x - 2, sphere1.position.y, sphere1.position.z - 2));
+	Sphere sphere3(0.2, Vector(sphere1.GetPosition().x - 2, sphere1.GetPosition().y, sphere1.GetPosition().z - 2));
 	sphere3.SetMaterial(blueM);
-	Sphere sphere4(0.2, Vector(sphere1.position.x - 0.8, sphere1.position.y + 0.4, sphere1.position.z - 0.67));
+	Sphere sphere4(0.2, Vector(sphere1.GetPosition().x - 0.8, sphere1.GetPosition().y + 0.4, sphere1.GetPosition().z - 0.67));
 	sphere4.SetMaterial(silver);
 	Sphere sphere5(0.4, Vector(floorPlane.GetCenter().x - 3.5, -0.6, floorPlane.GetCenter().z + 2.9));
 	sphere5.SetMaterial(orangeM);
@@ -290,7 +289,7 @@ int main()
 					Vector intersectionRayDir = camRayDir;
 					// If registers a ray trace, set pixel color to traced pixel color (the object color)
 					Color intersectionColor = GetColorAt(intersectionRayPos, intersectionRayDir, sceneObjects, indexOfClosestObject, lightSources);
-					image.set_pixel(x, y, intersectionColor.red, intersectionColor.green, intersectionColor.blue);
+					image.set_pixel(x, y, intersectionColor.GetRed(), intersectionColor.GetGreen(), intersectionColor.GetBlue());
 				}
 			}
 		}

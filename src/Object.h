@@ -17,7 +17,7 @@ public:
 
 	Material GetMaterial();
 
-	void SetMaterial(Material material_);
+	void SetMaterial(const Material &material_);
 
 private:
 	Material material;
