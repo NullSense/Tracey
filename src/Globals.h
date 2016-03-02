@@ -22,13 +22,12 @@ using FPType = double;
 extern constexpr FPType WIDTH = 15360;
 extern constexpr FPType HEIGHT = 8640;
 
-extern constexpr FPType ASPECTRATIO = WIDTH / HEIGHT;
-extern constexpr FPType AMBIENTLIGHT = 0.8;
+extern constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
+extern constexpr FPType AMBIENT_LIGHT = 0.8;
 extern constexpr FPType TOLERANCE = 0.0000001;
+//extern constexpr int MAX_DEPTH = 16;
 
 extern constexpr bool REFLECTIONS_ON = true;
 extern constexpr bool SPECULAR_ON = true;
-extern constexpr bool SHADOWS_ON = true;
+extern constexpr bool SHADOWS_ON = false;
 extern constexpr bool DIFFUSE_ON = true;
-
-//extern constexpr unsigned MAXREFLECTIONDEPTH = 3;
