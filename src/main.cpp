@@ -58,7 +58,7 @@ int ClosestObjectIndex(const std::vector<FPType> &intersections)
 	}
 }
 
-Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std::vector<Object*> &sceneObjects, int indexOfClosestObject, const std::vector<Light*> &lightSources)
+Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
 	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(intersectionRayPos);
@@ -183,56 +183,8 @@ int main()
 	Vector camRight = Vector(0, 1, 0).Cross(camDir).Normalize();
 	Vector camDown = camRight.Cross(camDir);
 
-	std::vector<Object*> sceneObjects = scene.InitObjects();
-	std::cout << sceneObjects.size() << std::endl;
-	std::vector<Light*> lightSources = scene.InitLightSources();
-
-	/*Color blue(0, 255, 255);
-	Color maroon(128, 64, 64);
-	Color gray(128, 128, 128);
-	Color orange(245, 77, 15);
-	Color white(255, 255, 255);*/
-
-	// Color, diffusion [0-1] (lower = more intense phong illumination), reflection, special (tile floor)
-	/*Material tileFloor(Color(255, 255, 255), 0.2, 1, 2);
-	Material prettyGreen(Color(128, 255, 128), 0.2, 1);
-	Material blueM(blue, 0, 0);
-	Material silver(gray, 0, 1);
-	Material orangeM(orange, 0.8, 1);
-	Material maroonM(maroon, 0.5, 1);*/
-
-	// Position, distance, normal, color 
-	/*Plane floorPlane(Vector(0, -1, 0), Vector(0, 1, 0));
-	floorPlane.SetMaterial(tileFloor);*/
-
-	// To place sphere on top of plane: (-1 + sphere radius)
-	/*Sphere sphere1(0.5, Vector(1, -0.5, 2.5));
-	sphere1.SetMaterial(maroonM);
-	Sphere sphere2(0.5, Vector(-1.5, -0.5, 4));
-	sphere2.SetMaterial(prettyGreen);
-	Sphere sphere3(0.2, Vector(sphere1.GetPosition().x - 2, sphere1.GetPosition().y, sphere1.GetPosition().z - 2));
-	sphere3.SetMaterial(blueM);
-	Sphere sphere4(0.2, Vector(sphere1.GetPosition().x - 0.8, sphere1.GetPosition().y + 0.4, sphere1.GetPosition().z - 0.67));
-	sphere4.SetMaterial(silver);
-	Sphere sphere5(0.4, Vector(floorPlane.GetCenter().x - 3.5, -0.6, floorPlane.GetCenter().z + 2.9));
-	sphere5.SetMaterial(orangeM);*/
-
-	// Contains position and color values (currently only 1 light source works, 2 = bugs)
-	//std::vector<Light*> lightSources;
-	//Vector light1Position(floorPlane.GetCenter().x - 2.5, floorPlane.GetCenter().y + 2, floorPlane.GetCenter().z + 0.6);
-	//Light light1(light1Position, white);
-	//Light light2(Vector(light1Position.x, light1Position.y, light1Position.z), white);
-	//lightSources.push_back(&light1);
-	////lightSources.push_back(&light2); 
-
-	// Holds all scene objects
-	/*std::vector<Object*> sceneObjects;
-	sceneObjects.push_back(&sphere1);
-	sceneObjects.push_back(&sphere2);
-	sceneObjects.push_back(&sphere3);
-	sceneObjects.push_back(&sphere4);
-	sceneObjects.push_back(&sphere5);
-	sceneObjects.push_back(&floorPlane);*/
+	std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
+	std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
 
 	std::vector<FPType> intersections;
 	intersections.reserve(1024);

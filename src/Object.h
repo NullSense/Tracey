@@ -3,11 +3,13 @@
 #include "Ray.h"
 #include "Color.h"
 #include "Material.h"
+#include <iostream>
 
 class Object : public Material
 {
 public:
 	Object() noexcept;
+	virtual ~Object();
 
 	virtual FPType GetIntersection(Ray ray);
 

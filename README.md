@@ -1,4 +1,4 @@
-# [C++] A 3d Ray Tracer
+# Tracey - A 3d Ray Tracer written in C++
 
 # Final image
 ![6](http://puu.sh/nscjb/504d913f3e.png)

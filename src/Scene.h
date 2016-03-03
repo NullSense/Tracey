@@ -3,13 +3,14 @@
 #include "Sphere.h"
 #include "Material.h"
 #include "Light.h"
+#include <memory>
 #include <vector>
 
 class Scene
 {
 public:
-	std::vector<Object*> InitObjects();
-	std::vector<Light*> InitLightSources();
+	std::vector<std::shared_ptr<Object>> InitObjects();
+	std::vector<std::shared_ptr<Light>> InitLightSources();
 
 private:
 	const Color blue = Color(0, 255, 255);
