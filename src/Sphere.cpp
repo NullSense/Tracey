@@ -21,27 +21,34 @@ Vector Sphere::GetNormalAt(Vector point)
 
 FPType Sphere::GetIntersection(Ray ray)
 {
-	FPType discriminant, b;
-
-	Vector p = ray.GetOrigin() - position; // the vector from the sphere's center to the ray source
-	b = -(p.Dot(ray.GetDirection()));
-
-	discriminant = (b * b) - p.Dot(p) + (radius * radius);
-
-	if(discriminant > 0)
+	Vector length = position - ray.GetOrigin();
+	FPType tc = length.Dot(ray.GetDirection());
+	
+	FPType intersectionPoint1;
+	FPType intersectionPoint2;
+	
+	if(tc < 0) // No intersection registered
 	{
-		//calculate the two values for t
-		FPType t1 = b - sqrt(discriminant);
-		if(t1 > 0) // If t1 is closer to the ray source, return it
-			return t1;
-		else // If t2 is closer to the ray source, return it
+		return -1;
+	}
+	if(tc > 0) // Intersection registered
+	{
+		FPType discriminant = sqrt(length*length - tc*tc);
+		if(discriminant >= 0 && discriminant <= 1)
 		{
-			FPType t2 = b + sqrt(discriminant);
-			return t2;
+			FPType thc = sqrt(radius*radius - discriminant*discriminant);
+			intersectionPoint1 = tca - thc
+			if(intersectionPoint1 > 0)
+			{
+				return intersectionPoint1;
+			}
+			else
+			{
+				intersectionPoint2 = thc + tc;
+				return intersectionPoint2;
+			}
 		}
 	}
-	else //if it's less than 0, there's no intersection, return -1
-		return -1;
 }
 
 FPType Sphere::GetRadius()
