@@ -13,7 +13,7 @@ Plane::Plane(Vector center_, Vector normal_)
 FPType Plane::GetIntersection(Ray ray)
 {
 	FPType denom = normal.Dot(ray.GetDirection());
-	FPType t;
+	FPType t = -1;
 	if(abs(denom) > 0.0001) // epsilon <3
 	{
 		t = (center - ray.GetOrigin()).Dot(normal) / denom;

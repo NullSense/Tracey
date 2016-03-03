@@ -32,9 +32,9 @@ std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 	std::vector<std::shared_ptr<Light>> lightSources;
 	Vector light1Position(- 2.5, 1, 0.6);
 	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, white);
-	Light light2(Vector(light1Position.x, light1Position.y, light1Position.z), white);
+	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(light1Position.x + 3, light1Position.y - 0.5, light1Position.z), white);
 	lightSources.push_back(light1);
-	//lightSources.push_back(&light2);
+	//lightSources.push_back(light2);
 
 	return lightSources;
 }

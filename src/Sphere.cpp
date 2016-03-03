@@ -3,52 +3,49 @@
 Sphere::Sphere()
 {
 	radius = 1;
-	position = Vector(1, 1, 1);
+	center = Vector(1, 1, 1);
 }
 
-Sphere::Sphere(FPType radius_, Vector position_)
+Sphere::Sphere(FPType radius_, Vector center_)
 {
 	radius = radius_;
-	position = position_;
+	center = center_;
 }
 
 Vector Sphere::GetNormalAt(Vector point)
 {
-	// normal always points away from the center of a sphere
-	Vector normalAtPoint = (point - position).Normalize();
-	return normalAtPoint;
+	// normal always points away from the center of a sphere 
+	return (point - center).Normalize();
 }
 
 FPType Sphere::GetIntersection(Ray ray)
 {
-	Vector length = position - ray.GetOrigin();
-	FPType tc = length.Dot(ray.GetDirection());
-	
-	FPType intersectionPoint1;
-	FPType intersectionPoint2;
-	
-	if(tc < 0) // No intersection registered
-	{
+	Vector length = center - ray.GetOrigin(); // Length of the vector between the center and the ray origin (hypotenuse)
+	FPType tca = length.Dot(ray.GetDirection()); // opposide side
+
+	if(tca < 0) // No intersection registered
 		return -1;
-	}
-	if(tc > 0) // Intersection registered
+
+	if(tca > 0) // Intersection registered
 	{
-		FPType discriminant = sqrt(length*length - tc*tc);
-		if(discriminant >= 0 && discriminant <= 1)
+		FPType a = sqrt(length.Dot(length) - tca*tca); // Adjacent side (a = sqrt(c²-b²))
+
+		if(a > radius || a < 0)
+			return -1;
+
+		FPType thc = sqrt(radius*radius - a*a); // the line between 2 intersection points / 2
+
+		FPType primaryIntersection;
+		primaryIntersection = tca - thc;
+		if(primaryIntersection > 0)
+			return primaryIntersection;
+		else
 		{
-			FPType thc = sqrt(radius*radius - discriminant*discriminant);
-			intersectionPoint1 = tca - thc
-			if(intersectionPoint1 > 0)
-			{
-				return intersectionPoint1;
-			}
-			else
-			{
-				intersectionPoint2 = thc + tc;
-				return intersectionPoint2;
-			}
+			FPType secondaryIntersection = thc + tca;
+			return secondaryIntersection;
 		}
 	}
+	return -1;
 }
 
 FPType Sphere::GetRadius()
@@ -58,7 +55,7 @@ FPType Sphere::GetRadius()
 
 Vector Sphere::GetPosition()
 {
-	return position;
+	return center;
 }
 
 void Sphere::SetRadius(const FPType &radius_)
@@ -66,7 +63,7 @@ void Sphere::SetRadius(const FPType &radius_)
 	radius = radius_;
 }
 
-void Sphere::SetPosition(const Vector &position_)
+void Sphere::SetPosition(const Vector &center_)
 {
-	position = position_;
+	center = center_;
 }

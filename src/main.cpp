@@ -84,7 +84,7 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 			Vector resultantReflection = intersectingRayDir.Negative() + ((scalar + (intersectingRayDir)) * 2);
 			Vector reflectionDirection = resultantReflection.Normalize();
 
-			Vector offset = reflectionDirection * 0.001; // Offset is added to cancel out the grainyness effect in the reflections
+			Vector offset = reflectionDirection * 0.001; // The rays that start from reflecting object A are considered hitting itself, since it's the nearest object from the ray start position
 
 			Ray reflectionRay(intersectionRayPos + offset, resultantReflection);
 
@@ -247,7 +247,7 @@ int main()
 					Vector intersectionRayDir = camRayDir;
 					// If registers a ray trace, set pixel color to traced pixel color (the object color)
 					Color intersectionColor = GetColorAt(intersectionRayPos, intersectionRayDir, sceneObjects, indexOfClosestObject, lightSources);
-					image.set_pixel(x, y, intersectionColor.GetRed(), intersectionColor.GetGreen(), intersectionColor.GetBlue());
+					image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
 				}
 			}
 		}
