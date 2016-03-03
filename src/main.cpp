@@ -171,7 +171,6 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 
 int main()
 {
-	Scene scene;
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
@@ -183,6 +182,7 @@ int main()
 	Vector camRight = Vector(0, 1, 0).Cross(camDir).Normalize();
 	Vector camDown = camRight.Cross(camDir);
 
+	Scene scene;
 	std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
 	std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
 
@@ -232,15 +232,11 @@ int main()
 			// Check which object is closest to the camera
 			int indexOfClosestObject = ClosestObjectIndex(intersections);
 
-			if(indexOfClosestObject == -1)
-			{
-				// If it doesn't register a ray trace set that pixel to be black
-				image.set_pixel(x, y, 0, 0, 0);
-			}
+			if(indexOfClosestObject == -1)				
+				image.set_pixel(x, y, 0, 0, 0); // If it doesn't register a ray trace set that pixel to be black
 			else
-			{
-				// If intersection at that point > accuracy, get color of object
-				if(intersections[indexOfClosestObject] > TOLERANCE)
+			{				
+				if(intersections[indexOfClosestObject] > TOLERANCE) // If intersection at that point > accuracy, get color of object
 				{
 					raysCast++;
 					Vector intersectionRayPos = camera.GetOrigin() + (camRayDir * intersections[indexOfClosestObject]);

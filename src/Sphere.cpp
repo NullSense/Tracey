@@ -53,7 +53,7 @@ FPType Sphere::GetRadius()
 	return radius;
 }
 
-Vector Sphere::GetPosition()
+Vector Sphere::GetCenter()
 {
 	return center;
 }
@@ -63,7 +63,7 @@ void Sphere::SetRadius(const FPType &radius_)
 	radius = radius_;
 }
 
-void Sphere::SetPosition(const Vector &center_)
+void Sphere::SetCenter(const Vector &center_)
 {
 	center = center_;
 }

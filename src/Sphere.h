@@ -11,9 +11,9 @@ public:
 	Vector GetNormalAt(Vector point);
 	virtual FPType GetIntersection(Ray ray);
 	FPType GetRadius();
-	Vector GetPosition();
+	Vector GetCenter();
 	void SetRadius(const FPType &radius_);
-	void SetPosition(const Vector &center_);
+	void SetCenter(const Vector &center_);
 
 private:
 	FPType radius;
