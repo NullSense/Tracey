@@ -15,12 +15,12 @@ using FPType = double;
 //constexpr FPType HEIGHT = 2160;
 
 // 7680 x 4320 8k
-constexpr FPType WIDTH = 7680;
-constexpr FPType HEIGHT = 4320;
+//constexpr FPType WIDTH = 7680;
+//constexpr FPType HEIGHT = 4320;
 
 // 7680 x 4320 16k
-//constexpr FPType WIDTH = 15360;
-//constexpr FPType HEIGHT = 8640;
+constexpr FPType WIDTH = 15360;
+constexpr FPType HEIGHT = 8640;
 
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
 constexpr FPType AMBIENT_LIGHT = 0.8;

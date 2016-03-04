@@ -11,15 +11,15 @@ public:
 	Vector();
 
 	Vector Normalize();
-	FPType Magnitude();
+	inline FPType Magnitude();
 	FPType Dot(const Vector &v);
 	Vector Cross(const Vector &v);
 	Vector Negative();
 
-	Vector operator*(const Vector &v);
+	inline Vector operator*(const Vector &v);
 	Vector operator*(const FPType &s);
-	Vector operator*=(const FPType &s);
-	Vector operator/(const FPType &s);
+	inline Vector operator*=(const FPType &s);
+	inline Vector operator/(const FPType &s);
 	Vector operator-(const Vector &v);
 	Vector operator+(const Vector &v);
 };
