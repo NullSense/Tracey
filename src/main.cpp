@@ -243,7 +243,7 @@ int main()
 					Vector intersectionRayDir = camRayDir;
 					// If registers a ray trace, set pixel color to traced pixel color (the object color)
 					Color intersectionColor = GetColorAt(intersectionRayPos, intersectionRayDir, sceneObjects, indexOfClosestObject, lightSources);
-					image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
+					image.set_pixel(x, y, static_cast<unsigned char>(intersectionColor.GetRed()), static_cast<unsigned char>(intersectionColor.GetGreen()), static_cast<unsigned char>(intersectionColor.GetBlue()));
 				}
 			}
 		}
