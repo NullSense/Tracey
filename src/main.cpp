@@ -11,6 +11,8 @@
 #include <iostream>
 #include <time.h>
 #include <sstream>
+#include <thread>
+#include <mutex>
 
 int ClosestObjectIndex(const std::vector<FPType> &intersections)
 {
@@ -72,8 +74,7 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 			closestObjectMaterial.SetColor(Color(255, 255, 255));
 	}
 
-	bool shadowed = false;
-	Color finalColor = closestObjectMaterial.GetColor() * AMBIENT_LIGHT; // Add ambient light to the calculation
+	Color finalColor = closestObjectMaterial.GetColor() * AMBIENT_LIGHT; // Ambient color
 
 	// Reflections
 	if(REFLECTIONS_ON)
@@ -121,10 +122,12 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 		// Diffuse shading
 		if(DIFFUSE_ON)
 		{
-			finalColor *= cosineAngle * AMBIENT_LIGHT;
+			finalColor *= cosineAngle;
 		}
 		if(cosineAngle > 0)
 		{
+			bool shadowed = false;
+
 			// Shadows
 			if(SHADOWS_ON) 
 			{
@@ -142,7 +145,7 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 					{
 						// Shadows
 						shadowed = true;
-						finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
+						finalColor *= 0.15;
 						break;
 					}
 				}
@@ -169,10 +172,9 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 	return finalColor.Clip();
 }
 
-int main()
+void Render(unsigned begin, unsigned finish, bitmap_image &image)
 {
 	clock_t end, start = clock();
-	bitmap_image image(WIDTH, HEIGHT);
 
 	Vector camPos(0, 1, -2);
 	Vector lookAt(0, -1, 4);
@@ -193,7 +195,7 @@ int main()
 	int raysCast = 0;
 	FPType percentage;
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)
-	for(int x = 0; x < WIDTH; x++)
+	for(unsigned x = begin; x < finish; x++)
 	{
 		// Calculates % of render completed
 		columnsCompleted++;
@@ -213,12 +215,12 @@ int main()
 				xCamOffset = (x + 0.5) / WIDTH;
 				yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
 			}
-			else
-			{
-				// Image is square
-				xCamOffset = (x + 0.5) / WIDTH;
-				yCamOffset = (y + 0.5) / HEIGHT;
-			}
+			//else
+			//{
+			//	// Image is square
+			//	xCamOffset = (x + 0.5) / WIDTH;
+			//	yCamOffset = (y + 0.5) / HEIGHT;
+			//}
 			Vector camRayDir = (camDir + camRight * (xCamOffset - 0.5) + camDown * (yCamOffset - 0.5)).Normalize();
 			Ray camera(camPos, camRayDir);
 
@@ -232,10 +234,10 @@ int main()
 			// Check which object is closest to the camera
 			int indexOfClosestObject = ClosestObjectIndex(intersections);
 
-			if(indexOfClosestObject == -1)				
+			if(indexOfClosestObject == -1)
 				image.set_pixel(x, y, 0, 0, 0); // If it doesn't register a ray trace set that pixel to be black
 			else
-			{				
+			{
 				if(intersections[indexOfClosestObject] > TOLERANCE) // If intersection at that point > accuracy, get color of object
 				{
 					raysCast++;
@@ -248,19 +250,34 @@ int main()
 			}
 		}
 	}
-
 	end = clock();
-	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
+	//FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
+
+	
+
+	/*std::cout << "\n\nRays cast: " << raysCast << std::endl;
+	std::cout << "Resolution: " << WIDTH << "x" << HEIGHT << std::endl;
+	std::cout << "Time: " << diff << " seconds" << std::endl;
+	std::cout << "Output filename: " << saveString << std::endl;
+	std::cout << "\nPress enter to exit...";*/
+	//std::cin.ignore();
+}
+
+int main()
+{
+	unsigned numCpus = std::thread::hardware_concurrency();
+	std::cout << "\nNumber of threads on machine: " << numCpus << std::endl;
+
+	bitmap_image image(WIDTH, HEIGHT);
+
+	std::thread first(Render, 0, 960, image);
+	std::thread second(Render, 961, 1920, image);
 
 	std::string saveString = "render.bmp";
 	image.save_image(saveString);
 
-	std::cout << "\n\nRays cast: " << raysCast << std::endl;
-	std::cout << "Resolution: " << WIDTH << "x" << HEIGHT << std::endl;
-	std::cout << "Time: " << diff << " seconds" << std::endl;
-	std::cout << "Output filename: " << saveString << std::endl;
-	std::cout << "\nPress enter to exit...";
-	std::cin.ignore();
-
+	second.join();
+	first.join();
+	
 	return 0;
 }

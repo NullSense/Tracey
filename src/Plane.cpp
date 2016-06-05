@@ -21,12 +21,12 @@ FPType Plane::GetIntersection(Ray ray)
 	return t;
 }
 
-Vector Plane::GetNormal()
+Vector Plane::GetNormal() const
 {
 	return normal;
 }
 
-Vector Plane::GetCenter()
+Vector Plane::GetCenter() const
 {
 	return center;
 }

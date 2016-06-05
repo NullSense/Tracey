@@ -3,8 +3,8 @@
 using FPType = double;
 
 // 1920 x 1080p
-//constexpr FPType WIDTH = 1920;
-//constexpr FPType HEIGHT = 1080;
+constexpr FPType WIDTH = 1920;
+constexpr FPType HEIGHT = 1080;
 
 // 2560 x 1440p
 //constexpr FPType WIDTH = 2560;
@@ -19,8 +19,8 @@ using FPType = double;
 //constexpr FPType HEIGHT = 4320;
 
 // 7680 x 4320 16k
-constexpr FPType WIDTH = 15360;
-constexpr FPType HEIGHT = 8640;
+//constexpr FPType WIDTH = 15360;
+//constexpr FPType HEIGHT = 8640;
 
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
 constexpr FPType AMBIENT_LIGHT = 0.8;

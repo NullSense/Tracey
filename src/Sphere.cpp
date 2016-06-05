@@ -48,12 +48,12 @@ FPType Sphere::GetIntersection(Ray ray)
 	return -1;
 }
 
-FPType Sphere::GetRadius()
+FPType Sphere::GetRadius() const
 {
 	return radius;
 }
 
-Vector Sphere::GetCenter()
+Vector Sphere::GetCenter() const
 {
 	return center;
 }

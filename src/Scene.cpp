@@ -2,6 +2,8 @@
 
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
+	std::shared_ptr<Plane> backPlane = std::make_shared<Plane>(Vector(-5, 0, 0), Vector(1, 0, 0));
+	backPlane->SetMaterial(gray);
 	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector(0, -1, 0), Vector(0, 1, 0));
 	floorPlane->SetMaterial(tileFloor);
 
@@ -23,6 +25,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	sceneObjects.push_back(sphere4);
 	sceneObjects.push_back(sphere5);
 	sceneObjects.push_back(floorPlane);
+	//sceneObjects.push_back(backPlane);
 
 	return sceneObjects;
 }
@@ -31,10 +34,13 @@ std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 {
 	std::vector<std::shared_ptr<Light>> lightSources;
 	Vector light1Position(- 2.5, 1, 0.6);
-	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, white);
-	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(light1Position.x + 3, light1Position.y - 1, light1Position.z), white);
+	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, white, 1);
+	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(light1Position.x + 5, light1Position.y, light1Position.z), white, 1);
+	std::shared_ptr<Light> light3 = std::make_shared<Light>(Vector(-1, 2, 2.5), white, 1);
+
 	lightSources.push_back(light1);
-	//lightSources.push_back(light2); // Multiple light sources not supported yet
+	//lightSources.push_back(light2);
+	//lightSources.push_back(light3);
 
 	return lightSources;
 }
