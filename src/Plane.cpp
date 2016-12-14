@@ -19,6 +19,7 @@ FPType Plane::GetIntersection(Ray ray)
 		t = (center - ray.GetOrigin()).Dot(normal) / denom;
 	}
 	return t;
+
 }
 
 Vector Plane::GetNormal() const
