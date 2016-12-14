@@ -27,7 +27,7 @@ constexpr FPType AMBIENT_LIGHT = 0.8;
 constexpr FPType TOLERANCE = 0.000001;
 constexpr int SUPERSAMPLING = 4;
 
-constexpr bool REFLECTIONS_ON = true;
+constexpr bool REFLECTIONS_ON = false;
 constexpr bool SPECULAR_ON = true;
-constexpr bool SHADOWS_ON = true;
+constexpr bool SHADOWS_ON = false;
 constexpr bool DIFFUSE_ON = true;

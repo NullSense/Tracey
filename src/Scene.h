@@ -23,7 +23,7 @@ private:
 	const Material tileFloor = Material(Color(255, 255, 255), 0.2, 1, 2);
 	const Material prettyGreen = Material(Color(128, 255, 128), 0.2, 0.5);
 	const Material blueM = Material(blue, 0.1, 0.5);
-	const Material silver = Material(gray, 0, 1.5);
+	const Material silver = Material(gray, 0, 1);
 	const Material orangeM = Material(orange, 0.8, 0.05);
 	const Material maroonM = Material(maroon, 0.5, 0.3);
 };

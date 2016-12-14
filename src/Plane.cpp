@@ -14,7 +14,7 @@ FPType Plane::GetIntersection(Ray ray)
 {
 	FPType denom = normal.Dot(ray.GetDirection());
 	FPType t = -1;
-	if(std::abs(denom) > 0.0001) // epsilon <3
+	if(std::abs(denom) > 0.0001)
 	{
 		t = (center - ray.GetOrigin()).Dot(normal) / denom;
 	}
