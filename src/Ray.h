@@ -5,12 +5,14 @@ struct Ray
 {
 public:
 	Ray();
-	Ray(Vector origin_, Vector direction_);
+	Ray(const Vector origin_, const Vector direction_);
 
 	void SetOrigin(const Vector &origin_);
 	void SetDirection(const Vector &direction_);
 	Vector GetOrigin();
 	Vector GetDirection();
+
+	unsigned tMin, tMax;
 
 private:
 	Vector origin, direction;

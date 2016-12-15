@@ -10,8 +10,8 @@ public:
 
 	Vector GetNormalAt(Vector point);
 	virtual FPType GetIntersection(Ray ray);
-	FPType GetRadius();
-	Vector GetCenter();
+	FPType GetRadius() const;
+	Vector GetCenter() const;
 	void SetRadius(const FPType &radius_);
 	void SetCenter(const Vector &center_);
 
