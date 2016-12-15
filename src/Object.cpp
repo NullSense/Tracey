@@ -5,7 +5,7 @@ Object::Object() noexcept
 
 Object::~Object()
 {
-	std::cout << "Destroyed";
+	//std::cout << "Destroyed";
 }
 
 FPType Object::GetIntersection(Ray ray)

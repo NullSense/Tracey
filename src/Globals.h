@@ -2,6 +2,10 @@
 
 using FPType = double;
 
+//constexpr FPType WIDTH = 500;
+//constexpr FPType HEIGHT = 500;
+
+
 // 1920 x 1080p
 constexpr FPType WIDTH = 1920;
 constexpr FPType HEIGHT = 1080;
@@ -25,7 +29,7 @@ constexpr FPType HEIGHT = 1080;
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
 constexpr FPType AMBIENT_LIGHT = 0.8;
 constexpr FPType TOLERANCE = 0.000001;
-constexpr int SUPERSAMPLING = 4;
+constexpr unsigned SUPERSAMPLING = 4;
 
 constexpr bool REFLECTIONS_ON = false;
 constexpr bool SPECULAR_ON = true;

@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "Material.h"
 #include "Scene.h"
+#include "Camera.h"
 #include <vector>
 #include <iostream>
 #include <time.h>
@@ -74,13 +75,13 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 
 	bool shadowed = false;
 	Color finalColor = closestObjectMaterial.GetColor() * AMBIENT_LIGHT; // Add ambient light to the calculation
-																		 // Reflections
+														 
 	if(REFLECTIONS_ON)
 	{
 		if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 		{
-			Vector scalar = closestObjectNormal * (closestObjectNormal.Dot(intersectingRayDir.Negative()));
-			Vector resultantReflection = intersectingRayDir.Negative() + ((scalar + (intersectingRayDir)) * 2);
+			Vector scalar = closestObjectNormal * (closestObjectNormal.Dot(-intersectingRayDir));
+			Vector resultantReflection = -intersectingRayDir + ((scalar + (intersectingRayDir)) * 2);
 			Vector reflectionDirection = resultantReflection.Normalize();
 
 			Vector offset = reflectionDirection * 0.001; // The rays that start from reflecting object A are considered hitting itself, since it's the nearest object from the ray start position
@@ -163,8 +164,8 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 			{
 				if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 				{
-					Vector scalar1 = closestObjectNormal * (closestObjectNormal.Dot(intersectingRayDir.Negative()));
-					Vector resultantReflection = intersectingRayDir.Negative() + ((scalar1 + (intersectingRayDir)) * 2);
+					Vector scalar1 = closestObjectNormal * (closestObjectNormal.Dot(-intersectingRayDir));
+					Vector resultantReflection = -intersectingRayDir + ((scalar1 + (intersectingRayDir)) * 2);
 
 					FPType specular = resultantReflection.Dot(lightDir);
 					if(specular > 0)
@@ -180,43 +181,53 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 	return finalColor.Clip();
 }
 
-int main()
+void Draw(bitmap_image &image, int &x, int &y, Camera &camera, int &indexOfClosestObject, 
+		  std::vector<FPType> &intersections, std::vector<std::shared_ptr<Object>> &sceneObjects, std::vector<std::shared_ptr<Light>> &lightSources)
+{
+	// If it doesn't register a ray trace set that pixel to be black
+	if(indexOfClosestObject == -1)
+		image.set_pixel(x, y, 255, 0, 0);
+	else
+	{
+		if(intersections[indexOfClosestObject] > TOLERANCE) // If intersection at that point > accuracy, get color of object
+		{
+			// If registers a ray trace, set pixel color to traced pixel color (the object color)
+			Ray intersectionRay;
+			intersectionRay.SetOrigin(camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject]));
+			intersectionRay.SetDirection(camera.GetSceneDirection());
+
+			Color intersectionColor = GetColorAt(intersectionRay.GetOrigin(), camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
+
+			image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
+		}
+	}
+}
+
+void CalcIntersections()
 {
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	Vector camPos(0, 3, -3);
-	Vector lookAt(0, -1, 6);
-
-	Vector camDiff = camPos - lookAt;
-	Vector camDir = camDiff.Negative().Normalize();
-	Vector camRight = Vector(0, 1, 0).Cross(camDir).Normalize();
-	Vector camDown = camRight.Cross(camDir);
-
-	Scene scene;
-	std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
-	std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
-
-	std::vector<FPType> intersections;
-	intersections.reserve(1024);
-
+	Camera camera(Vector(0, 3, -3), Vector(0, -1, 6));
+	
 	int columnsCompleted = 0;
-	int raysCast = 0;
 	FPType percentage;
+	
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)
 	for(int x = 0; x < WIDTH; x++)
 	{
 		// Calculates % of render completed
 		columnsCompleted++;
 		percentage = columnsCompleted / (FPType) WIDTH * 100;
-		std::cout << '\r' << "Completion: " << (int) percentage << '%';
+		std::cout << '\r' << "Completion: " << (int)percentage << '%';
 		fflush(stdout);
+
 		for(int y = 0; y < HEIGHT; y++)
 		{
 			// No Anti-aliasing
 			if(WIDTH > HEIGHT)
 			{
-				xCamOffset = ((x + 0.5) / WIDTH) * ASPECT_RATIO - (WIDTH - HEIGHT) / HEIGHT / 2;
+				xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
 				yCamOffset = (y + 0.5) / HEIGHT;
 			}
 			else if(HEIGHT > WIDTH)
@@ -227,49 +238,51 @@ int main()
 			else
 			{
 				// Image is square
-				xCamOffset = (x + 0.5) / WIDTH;
-				yCamOffset = (y + 0.5) / HEIGHT;
+				xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
+				yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
 			}
-			Vector camRayDir = (camDir + camRight * (xCamOffset - 0.5) + camDown * (yCamOffset - 0.5)).Normalize();
-			Ray camera(camPos, camRayDir);
 
-			intersections.clear();
+			// Set up scene
+			Scene scene;
+			std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
+			std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
+
+			std::vector<FPType> intersections;
+			intersections.reserve(1024);
+			//intersections.clear();
+
+			// Camera direction for every ray shot through each pixel
+			Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
+			camera.SetSceneDirection(camRayDir);
+
+			Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
 
 			// Check if ray intersects with any scene objects
 			for(const auto &sceneObject : sceneObjects)
 			{
-				intersections.push_back(sceneObject->GetIntersection(camera));
+				intersections.push_back(sceneObject->GetIntersection(camRay));
 			}
+
 			// Check which object is closest to the camera
 			int indexOfClosestObject = ClosestObjectIndex(intersections);
-
-			if(indexOfClosestObject == -1)
-				image.set_pixel(x, y, 0, 0, 0); // If it doesn't register a ray trace set that pixel to be black
-			else
-			{
-				if(intersections[indexOfClosestObject] > TOLERANCE) // If intersection at that point > accuracy, get color of object
-				{
-					raysCast++;
-					Vector intersectionRayPos = camera.GetOrigin() + (camRayDir * intersections[indexOfClosestObject]);
-					Vector intersectionRayDir = camRayDir;
-					// If registers a ray trace, set pixel color to traced pixel color (the object color)
-					Color intersectionColor = GetColorAt(intersectionRayPos, intersectionRayDir, sceneObjects, indexOfClosestObject, lightSources);
-					image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
-				}
-			}
+			Draw(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
 		}
 	}
 
 	end = clock();
 	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
+	std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
+	std::cout << "Time: " << diff << " seconds" << std::endl;
 
 	std::string saveString = "render.bmp";
 	image.save_image(saveString);
-
-	std::cout << "\n\nRays cast: " << raysCast << std::endl;
-	std::cout << "Resolution: " << WIDTH << "x" << HEIGHT << std::endl;
-	std::cout << "Time: " << diff << " seconds" << std::endl;
 	std::cout << "Output filename: " << saveString << std::endl;
+}
+
+int main()
+{
+	CalcIntersections();
+
 	std::cout << "\nPress enter to exit...";
 	std::cin.ignore();
 

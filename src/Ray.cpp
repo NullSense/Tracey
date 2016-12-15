@@ -3,13 +3,17 @@
 Ray::Ray()
 {
 	origin = Vector(0, 0, 0);
-	direction = Vector(1, 0, 0);
+	direction = Vector(0, 0, 1);
+	tMin = TOLERANCE;
+	tMax = 1000;
 }
 
-Ray::Ray(Vector origin_, Vector direction_)
+Ray::Ray(const Vector origin_, const Vector direction_)
 {
 	origin = origin_;
 	direction = direction_;
+	tMin = TOLERANCE;
+	tMax = 1000;
 }
 
 void Ray::SetOrigin(const Vector &origin_)

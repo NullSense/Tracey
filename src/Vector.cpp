@@ -34,37 +34,38 @@ Vector Vector::Cross(const Vector &v)
 	return Vector(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
 }
 
-Vector Vector::Negative()
+Vector Vector::operator-() const
 {
 	return Vector(-x, -y, -z);
 }
 
-Vector Vector::operator*(const FPType &s)
+Vector Vector::operator*(const FPType &s) const
 {
 	return Vector(x * s, y * s, z * s);
 }
 
-Vector Vector::operator*(const Vector &v)
+Vector Vector::operator*(const Vector &v) const
 {
 	return Vector(x * v.x, y * v.y, z * v.z);
 }
 
 Vector Vector::operator*=(const FPType &s)
 {
-	return Vector(x *= s, y *= s, z *= s);
+	x *= s, y *= s, z *= s;
+	return *this;
 }
 
-Vector Vector::operator/(const FPType &s)
+Vector Vector::operator/(const FPType &s) const
 {
 	return Vector(x / s, y / s, z / s);
 }
 
-Vector Vector::operator-(const Vector &v)
+Vector Vector::operator-(const Vector &v) const
 {
 	return Vector(x - v.x, y - v.y, z - v.z);
 }
 
-Vector Vector::operator+(const Vector &v)
+Vector Vector::operator+(const Vector &v) const
 {
 	return Vector(x + v.x, y + v.y, z + v.z);
 }
