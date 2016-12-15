@@ -24,15 +24,15 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 
 	std::vector<std::shared_ptr<Object>> sceneObjects;
 	sceneObjects.push_back(sphere1);
-	sceneObjects.push_back(sphere2);
-	sceneObjects.push_back(sphere3);
+	//sceneObjects.push_back(sphere2);
+	//sceneObjects.push_back(sphere3);
 	//sceneObjects.push_back(sphere4);
 	//sceneObjects.push_back(sphere5);
 
 	sceneObjects.push_back(floorPlane);
 	sceneObjects.push_back(backPlane);
 	sceneObjects.push_back(leftPlane);
-	sceneObjects.push_back(rightPlane);
+	//sceneObjects.push_back(rightPlane);
 
 	return sceneObjects;
 }

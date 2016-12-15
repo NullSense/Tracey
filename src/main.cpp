@@ -143,6 +143,7 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 						shadowed = true;
 						finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
 						//finalColor = Color(0,0,0);
+						
 						break;
 					}
 
