@@ -13,6 +13,7 @@
 #include <time.h>
 #include <sstream>
 
+// Returns the closest object's index that the ray intersected with
 int ClosestObjectIndex(const std::vector<FPType> &intersections)
 {
 	int minValueIndex = 0;
@@ -184,19 +185,18 @@ Color GetColorAt(Vector intersectionRayPos, Vector intersectingRayDir, const std
 void Draw(bitmap_image &image, int &x, int &y, Camera &camera, int &indexOfClosestObject, 
 		  std::vector<FPType> &intersections, std::vector<std::shared_ptr<Object>> &sceneObjects, std::vector<std::shared_ptr<Light>> &lightSources)
 {
-	// If it doesn't register a ray trace set that pixel to be black
+	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
 	if(indexOfClosestObject == -1)
 		image.set_pixel(x, y, 255, 0, 0);
-	else
+	else // Ray hit an object
 	{
 		if(intersections[indexOfClosestObject] > TOLERANCE) // If intersection at that point > accuracy, get color of object
 		{
-			// If registers a ray trace, set pixel color to traced pixel color (the object color)
-			Ray intersectionRay;
-			intersectionRay.SetOrigin(camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject]));
-			intersectionRay.SetDirection(camera.GetSceneDirection());
+			// If ray hit something, set point position to ray-object intersection
+			Vector point((camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject])));
 
-			Color intersectionColor = GetColorAt(intersectionRay.GetOrigin(), camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
+			// Get the color of the intersection point (pixel)
+			Color intersectionColor = GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
 
 			image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
 		}
@@ -255,6 +255,7 @@ void CalcIntersections()
 			Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
 			camera.SetSceneDirection(camRayDir);
 
+			// Shoot ray into evey pixel of the image
 			Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
 
 			// Check if ray intersects with any scene objects
