@@ -93,6 +93,39 @@ Color GetColorAt(Vector point, Vector sceneDirection, const std::vector<std::sha
 	// Reflective
 	if(closestObjectMaterial.GetReflection() > 0 && REFLECTIONS_ON)
 	{
+		if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
+		{
+			Vector scalar = closestObjectNormal * (closestObjectNormal.Dot(-sceneDirection));
+			Vector resultantReflection = -sceneDirection + ((scalar + (sceneDirection)) * 2);
+			Vector reflectionDirection = resultantReflection.Normalize();
+
+			Vector offset = reflectionDirection * 0.001; // The rays that start from reflecting object A are considered hitting itself, since it's the nearest object from the ray start position
+
+			Ray reflectionRay(point + offset, resultantReflection);
+
+			// determine what the ray intersects with first
+			std::vector<FPType> reflectionIntersections;
+			for(auto sceneObject : sceneObjects)
+			{
+				reflectionIntersections.push_back(sceneObject->GetIntersection(reflectionRay));
+			}
+
+			int closestObjectWithReflection = ClosestObjectIndex(reflectionIntersections);
+
+			if(closestObjectWithReflection != -1 && closestObjectWithReflection != indexOfClosestObject) // Depth checking
+			{
+				// reflection ray missed everthing else
+				if(reflectionIntersections[closestObjectWithReflection] > TOLERANCE)
+				{
+					// determine the position and direction at the point of intersection with the reflection ray
+					// the ray only affects the color if it reflected off something
+					Vector reflectionIntersectionPosition = point + (resultantReflection * (reflectionIntersections[closestObjectWithReflection]));
+					Vector reflectionIntersectionRayDirection = resultantReflection;
+					Color reflectionIntersectionColor = GetColorAt(reflectionIntersectionPosition, reflectionIntersectionRayDirection, sceneObjects, closestObjectWithReflection, lightSources);
+					finalColor += (reflectionIntersectionColor * closestObjectMaterial.GetReflection());
+				}
+			}
+		}
 	}
 	if(AMBIENT_ON)
 	{
@@ -192,9 +225,10 @@ void CalcIntersections()
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	Camera camera(Vector(3, 3, -7), Vector(0, -1, 6));
+	Camera camera(Vector(3, 5, -10), Vector(0, -1, 6));
 	
-	int columnsCompleted = 0;
+	int columnsCompleted = 0, timeToComplete = 0, timeToCompleteMax = 0;
+
 	FPType percentage;
 	
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)
@@ -204,6 +238,15 @@ void CalcIntersections()
 		columnsCompleted++;
 		percentage = columnsCompleted / (FPType) WIDTH * 100;
 		std::cout << '\r' << "Completion: " << (int)percentage << '%';
+
+		// Calculates Time left
+		end = clock();
+		unsigned diff = ((unsigned) end - (unsigned) start) / CLOCKS_PER_SEC;
+		timeToComplete = (diff / columnsCompleted) * (WIDTH - columnsCompleted);
+		if(timeToCompleteMax < timeToComplete)
+			timeToCompleteMax = timeToComplete;
+		std::cout << "\tTime Left: " << timeToComplete << "s";
+		std::cout << "\tTime To Render Image: " << timeToCompleteMax << "s";
 		fflush(stdout);
 
 		for(int y = 0; y < HEIGHT; y++)
