@@ -7,10 +7,12 @@ public:
 	Material()
 	{}
 
-	Material(Color color_, FPType diffusion_ = 0, FPType reflection_ = 0, FPType special_ = 0)
+	Material(Color color_, FPType ambient_ = 1, FPType reflective_ = 0.5, FPType refractive_ = 0, FPType diffusive_ = 0.8, FPType special_ = 0)
 		:color {color_}
-		, diffusion {diffusion_}
-		, reflection {reflection_}
+		, ambient {ambient_}
+		, reflective {reflective_}
+		, refractive {refractive_}
+		, diffusive {diffusive_}
 		, special {special_}
 	{}
 
@@ -18,13 +20,17 @@ public:
 	{
 		color = color_;
 	}
-	void SetDiffuse(const FPType diffusion_)
+	void SetDiffuse(const FPType diffusive_)
 	{
-		diffusion = diffusion_;
+		diffusive = diffusive_;
 	}
-	void SetReflection(const FPType reflection_)
+	void SetReflection(const FPType reflective_)
 	{
-		reflection = reflection_;
+		reflective = reflective_;
+	}
+	void SetRefraction(const FPType refractive_)
+	{
+		refractive = refractive_;
 	}
 	void SetSpecial(const FPType special_)
 	{
@@ -35,26 +41,38 @@ public:
 	{
 		return color;
 	}
+	FPType GetAmbient()
+	{
+		return ambient;
+	}
 	FPType GetSpecular()
 	{
-		return 1 - diffusion;
+		return 1 - diffusive;
 	}
 	FPType GetDiffuse()
 	{
-		return diffusion;
+		return diffusive;
 	}
 	FPType GetReflection()
 	{
-		return reflection;
+		return reflective;
+	}
+	FPType GetRefraction()
+	{
+		return refractive;
 	}
 	FPType GetSpecial()
 	{
 		return special;
 	}
+
 private:
 	Color color;
-	FPType reflection;
-	FPType diffusion; // The more diffusive it is, the better it scatters light (phong shading radius gets wider)
+	FPType ambient;
+	FPType reflective;
+	FPType refractive;
+	FPType diffusive; // The more diffusive it is, the better it scatters light (phong shading radius gets wider)
+	FPType glossy;
 	FPType special; // Tile floor
 };
 

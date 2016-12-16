@@ -7,8 +7,8 @@ using FPType = double;
 
 
 // 1920 x 1080p
-constexpr FPType WIDTH = 1920;
-constexpr FPType HEIGHT = 1080;
+//constexpr FPType WIDTH = 1920;
+//constexpr FPType HEIGHT = 1080;
 
 // 2560 x 1440p
 //constexpr FPType WIDTH = 2560;
@@ -23,15 +23,18 @@ constexpr FPType HEIGHT = 1080;
 //constexpr FPType HEIGHT = 4320;
 
 // 7680 x 4320 16k
-//constexpr FPType WIDTH = 15360;
-//constexpr FPType HEIGHT = 8640;
+constexpr FPType WIDTH = 15360;
+constexpr FPType HEIGHT = 8640;
 
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
-constexpr FPType AMBIENT_LIGHT = 0.8;
+constexpr FPType AMBIENT_LIGHT = 0.2;
 constexpr FPType TOLERANCE = 0.000001;
 constexpr unsigned SUPERSAMPLING = 4;
+constexpr unsigned MAX_DEPTH = 6;
 
+constexpr bool REFRACTIONS_ON = false;
 constexpr bool REFLECTIONS_ON = false;
+constexpr bool SHADOWS_ON = true;
 constexpr bool SPECULAR_ON = true;
-constexpr bool SHADOWS_ON = false;
 constexpr bool DIFFUSE_ON = true;
+constexpr bool AMBIENT_ON = true;

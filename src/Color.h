@@ -17,11 +17,14 @@ public:
 
 	Color Clip();
 	Color Average(const Color &color);
+	Color operator/(const FPType & scalar);
 	Color operator*(const Color &color);
 	Color operator*(const FPType &scalar);
 	Color operator*=(const FPType &scalar);
 	Color operator+(const Color &color);
 	Color operator+=(const Color &color);
+
+	Color operator+=(const FPType & a);
 
 private:
 	FPType red, green, blue;

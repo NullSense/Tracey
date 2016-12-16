@@ -18,12 +18,20 @@ private:
 	const Color gray = Color(192, 192, 192);
 	const Color orange = Color(245, 77, 15);
 	const Color white = Color(255, 255, 255);
-	const Color yellow = Color(255, 255, 200);
+	const Color yellow = Color(255, 255, 50);
 
-	const Material tileFloor = Material(Color(255, 255, 255), 0.2, 1, 2);
-	const Material prettyGreen = Material(Color(128, 255, 128), 0.2, 0.5);
-	const Material blueM = Material(blue, 0.1, 0.5);
-	const Material silver = Material(gray, 0, 1);
-	const Material orangeM = Material(orange, 0.8, 0.05);
-	const Material maroonM = Material(maroon, 0.5, 0.3);
+	const Color brass = Color(0.30 * 255, 0.20 * 255, 0.10 * 255);
+	const Color silver = Color(0.94 * 255, 0.93 * 255, 0.90 * 255);
+
+	// Color, ambient, reflective, refractive, diffusive, special
+	const Material tileFloor =		Material(Color(255, 255, 255), 1, 0.6, 0, 0.5, 2);
+	const Material prettyGreen =    Material(Color(128, 255, 128), 1, 0, 0, 0.6, 0);
+	const Material blueM =			Material(blue, 0, 0, 0.3, 1);
+	const Material orangeM =		Material(orange, 0.8, 0.05);
+	
+	const Material maroonM =		Material(maroon, 0.5, 0, 0, 1, 0);
+
+	// Color, ambient, reflective, refractive, diffusive, special
+	const Material brassM = Material(brass, 0.3, 0.25, 0, 0.4, 0);
+	const Material silverM = Material(silver, 0.1, 0.8, 0, 0.7, 0);
 };

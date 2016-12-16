@@ -8,7 +8,7 @@ struct Light
 public:
 	Light();
 
-	Light(Vector position_, Color material_, int intensity_);
+	Light(Vector position_, Color color_, int intensity_);
 
 	void SetPosition(const Vector &position_);
 	void SetColor(const Color &color_);

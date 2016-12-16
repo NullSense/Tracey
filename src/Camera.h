@@ -16,11 +16,8 @@ public:
 	
 private:
 	Vector origin;
-	// Where the camera looks at in the scene
-	Vector sceneDirection;
-
-	// Where camera's view is centered
-	Vector camDirection = (GetSceneDirection() - GetOrigin()).Normalize();
+	Vector sceneDirection; // Where the camera looks at in the scene
+	Vector camDirection = (GetSceneDirection() - GetOrigin()).Normalize(); // Where camera's view is centered
 
 	// camX and Y represent the 2D coordinate system on the IMAGE plane
 	Vector camX = Vector(0, 1, 0).Cross(GetCameraDirection()).Normalize();
