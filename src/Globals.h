@@ -32,8 +32,8 @@ constexpr unsigned SUPERSAMPLING = 4;
 constexpr unsigned MAX_DEPTH = 6;
 
 constexpr bool REFRACTIONS_ON = false;
-constexpr bool REFLECTIONS_ON = true;
-constexpr bool SHADOWS_ON = false;
+constexpr bool REFLECTIONS_ON = false;
+constexpr bool SHADOWS_ON = true;
 constexpr bool SPECULAR_ON = true;
 constexpr bool DIFFUSE_ON = true;
 constexpr bool AMBIENT_ON = true;

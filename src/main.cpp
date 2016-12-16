@@ -140,7 +140,6 @@ Color GetColorAt(Vector point, Vector sceneDirection, const std::vector<std::sha
 			Vector lightDir = (lightSource->GetPosition() - point).Normalize(); // Calculate the directional vector towards the lightSource
 			lambertian = closestObjectNormal.Dot(lightDir);
 			diffusive = closestObjectMaterial.GetColor() * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0);
-			finalColor += diffusive;
 
 			if(lambertian > 0)
 			{
@@ -167,6 +166,7 @@ Color GetColorAt(Vector point, Vector sceneDirection, const std::vector<std::sha
 
 				if(shadowed == false && SPECULAR_ON)
 				{
+					finalColor += diffusive;
 					if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 					{
 						Vector V = -sceneDirection;
@@ -225,7 +225,7 @@ void CalcIntersections()
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	Camera camera(Vector(3, 5, -10), Vector(0, -1, 6));
+	Camera camera(Vector(0, 5, -10), Vector(0, -1, 6));
 	
 	int columnsCompleted = 0, timeToComplete = 0, timeToCompleteMax = 0;
 
@@ -241,12 +241,12 @@ void CalcIntersections()
 
 		// Calculates Time left
 		end = clock();
-		unsigned diff = ((unsigned) end - (unsigned) start) / CLOCKS_PER_SEC;
+		FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
 		timeToComplete = (diff / columnsCompleted) * (WIDTH - columnsCompleted);
 		if(timeToCompleteMax < timeToComplete)
 			timeToCompleteMax = timeToComplete;
 		std::cout << "\tTime Left: " << timeToComplete << "s";
-		std::cout << "\tTime To Render Image: " << timeToCompleteMax << "s";
+		std::cout << "\tTime To Render Image: " << timeToCompleteMax / 60 << "min " << timeToCompleteMax % 60 << "s";
 		fflush(stdout);
 
 		for(int y = 0; y < HEIGHT; y++)
