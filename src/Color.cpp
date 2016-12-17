@@ -27,17 +27,17 @@ FPType Color::GetBlue()
 	return blue;
 }
 
-void Color::SetRed(const FPType &red_)
+void Color::SetRed(const FPType red_)
 {
 	red = red_;
 }
 
-void Color::SetGreen(const FPType &green_)
+void Color::SetGreen(const FPType green_)
 {
 	green = green_;
 }
 
-void Color::SetBlue(const FPType &blue_)
+void Color::SetBlue(const FPType blue_)
 {
 	blue = blue_;
 }
@@ -79,12 +79,12 @@ Color Color::Average(const Color &color)
 	return Color((red + color.red) / 2, (green + color.green) / 2, (blue + color.blue) / 2);
 }
 
-Color Color::operator/(const FPType &scalar)
+Color Color::operator/(const FPType scalar)
 {
 	return Color((red / scalar), (green / scalar), (blue / scalar));
 }
 
-Color Color::operator*(const FPType &scalar)
+Color Color::operator*(const FPType scalar)
 {
 	return Color((red * scalar), (green * scalar), (blue * scalar));
 }
@@ -104,12 +104,12 @@ Color Color::operator+=(const Color &color)
 	return Color(red += color.red, blue += color.blue, green += color.green);
 }
 
-Color Color::operator+=(const FPType &a)
+Color Color::operator+=(const FPType a)
 {
 	return Color(red += a, blue += a, green += a);
 }
 
-Color Color::operator*=(const FPType &scalar)
+Color Color::operator*=(const FPType scalar)
 {
 	return Color((red *= scalar), (green *= scalar), (blue *= scalar));
 }

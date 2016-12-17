@@ -11,20 +11,20 @@ public:
 	FPType GetGreen();
 	FPType GetBlue();
 
-	void SetRed(const FPType &red_);
-	void SetGreen(const FPType &green_);
-	void SetBlue(const FPType &blue_);
+	void SetRed(const FPType red_);
+	void SetGreen(const FPType green_);
+	void SetBlue(const FPType blue_);
 
 	Color Clip();
 	Color Average(const Color &color);
-	Color operator/(const FPType & scalar);
+	Color operator/(const FPType scalar);
 	Color operator*(const Color &color);
-	Color operator*(const FPType &scalar);
-	Color operator*=(const FPType &scalar);
+	Color operator*(const FPType scalar);
+	Color operator*=(const FPType scalar);
 	Color operator+(const Color &color);
 	Color operator+=(const Color &color);
 
-	Color operator+=(const FPType & a);
+	Color operator+=(const FPType a);
 
 private:
 	FPType red, green, blue;

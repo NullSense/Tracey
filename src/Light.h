@@ -8,17 +8,17 @@ struct Light
 public:
 	Light();
 
-	Light(Vector position_, Color color_, int intensity_);
+	Light(Vector position_, Color color_, FPType intensity_);
 
 	void SetPosition(const Vector &position_);
 	void SetColor(const Color &color_);
-	void SetIntensity(const int &intensity_);
+	void SetIntensity(const FPType intensity_);
 	Color GetColor();
 	Vector GetPosition();
-	int GetIntensity();
+	FPType GetIntensity();
 
 private:
 	Color color;
 	Vector position;
-	int intensity;
+	FPType intensity;
 };

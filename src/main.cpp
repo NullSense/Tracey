@@ -62,7 +62,7 @@ int ClosestObjectIndex(const std::vector<FPType> &intersections)
 }
 
 // Get the color of the pixel at the ray-object intersection point
-Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int &indexOfClosestObject,
+Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject,
 				 const std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();

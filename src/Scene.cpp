@@ -50,12 +50,12 @@ std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 {
 	std::vector<std::shared_ptr<Light>> lightSources;
 	Vector light1Position(4, 3, 2);
-	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, orange, 1);
+	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, orange, 0.7);
 	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(light1Position.x - 15, light1Position.y, light1Position.z - 3), yellow, 1);
 	std::shared_ptr<Light> light3 = std::make_shared<Light>(Vector(0, 2, 5), white, 1);
 
 	lightSources.push_back(light1);
-	lightSources.push_back(light2);
+	//lightSources.push_back(light2);
 	//lightSources.push_back(light3);
 
 	return lightSources;
