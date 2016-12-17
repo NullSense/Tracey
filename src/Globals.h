@@ -28,7 +28,7 @@ constexpr FPType HEIGHT = 500;
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
 constexpr FPType AMBIENT_LIGHT = 0.5;
 constexpr FPType TOLERANCE = 0.000001;
-constexpr unsigned SUPERSAMPLING = 4;
+constexpr unsigned SUPERSAMPLING = 2;
 constexpr unsigned MAX_DEPTH = 6;
 
 constexpr bool REFRACTIONS_ON = false;

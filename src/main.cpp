@@ -62,7 +62,7 @@ int ClosestObjectIndex(const std::vector<FPType> &intersections)
 }
 
 // Get the color of the pixel at the ray-object intersection point
-Color GetColorAt(Vector point, Vector sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject,
+Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int &indexOfClosestObject,
 				 const std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
@@ -216,10 +216,21 @@ void Render(bitmap_image &image, int &x, int &y, Camera &camera, int &indexOfClo
 			// If ray hit something, set point position to ray-object intersection
 			Vector point((camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject])));
 
-			// Get the color of the intersection point (pixel)
-			Color intersectionColor = GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
+			if(SUPERSAMPLING == 1)
+			{
+				Color intersectionColor = GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
+				image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
 
-			image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
+			}
+			if(SUPERSAMPLING > 1)
+			{
+				Color intersectionColor = intersectionColor + GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources) / (SUPERSAMPLING * SUPERSAMPLING);
+				image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
+			}
+
+			// Get the color of the intersection point (pixel)
+
+			//image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
 		}
 	}
 }
@@ -256,7 +267,7 @@ void CalcIntersections()
 		for(int y = 0; y < HEIGHT; y++)
 		{
 			// No Anti-aliasing
-			if(SUPERSAMPLING == 0)
+			if(SUPERSAMPLING == 1)
 			{
 				if(WIDTH > HEIGHT)
 				{
@@ -274,43 +285,71 @@ void CalcIntersections()
 					xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
 					yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
 				}
+
+				// Camera direction for every ray shot through each pixel
+				Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
+				camera.SetSceneDirection(camRayDir);
+
+				// Shoot ray into evey pixel of the image
+				Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
+
+				// Set up scene
+				Scene scene;
+				std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
+				std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
+
+				std::vector<FPType> intersections;
+				intersections.reserve(1024);
+
+				// Check if ray intersects with any scene objects
+				for(const auto &sceneObject : sceneObjects)
+				{
+					intersections.push_back(sceneObject->GetIntersection(camRay));
+				}
+
+				// Check which object is closest to the camera
+				int indexOfClosestObject = ClosestObjectIndex(intersections);
+				Render(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
 			}
 			else
 			{
 				Color c(0, 0, 0);
+				int indexOfClosestObject;
+				std::vector<FPType> intersections;
+				intersections.reserve(1024);
+
+				// Set up scene
+				Scene scene;
+				std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
+				std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
+
 				for(unsigned i = 0; i < SUPERSAMPLING; i++)
 				{
 					for(unsigned j = 0; j < SUPERSAMPLING; j++)
 					{
-						
+						xCamOffset = (x + (i + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
+						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
+
+						// Camera direction for every ray shot through each pixel
+						Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
+						camera.SetSceneDirection(camRayDir);
+
+						// Shoot ray into evey pixel of the image
+						Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
+
+						// Check if ray intersects with any scene objects
+						for(const auto &sceneObject : sceneObjects)
+						{
+							intersections.push_back(sceneObject->GetIntersection(camRay));
+						}
+
+						// Check which object is closest to the camera
+						indexOfClosestObject = ClosestObjectIndex(intersections);
 					}
 				}
+				if(indexOfClosestObject != NULL)
+					Render(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
 			}
-
-			// Set up scene
-			Scene scene;
-			std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
-			std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
-
-			std::vector<FPType> intersections;
-			intersections.reserve(1024);
-
-			// Camera direction for every ray shot through each pixel
-			Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
-			camera.SetSceneDirection(camRayDir);
-
-			// Shoot ray into evey pixel of the image
-			Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
-
-			// Check if ray intersects with any scene objects
-			for(const auto &sceneObject : sceneObjects)
-			{
-				intersections.push_back(sceneObject->GetIntersection(camRay));
-			}
-
-			// Check which object is closest to the camera
-			int indexOfClosestObject = ClosestObjectIndex(intersections);
-			Render(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
 		}
 	}
 
