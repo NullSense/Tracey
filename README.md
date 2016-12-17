@@ -1,8 +1,8 @@
 # Tracey - A 3d Ray Tracer written in C++
 
 # Final images
-![6](http://i.imgur.com/6NwrWGT.png)
-![5](http://puu.sh/nscjb/504d913f3e.png)
+![5](http://i.imgur.com/6NwrWGT.png)
+![6](http://puu.sh/nscjb/504d913f3e.png)
 
 This implementation currently supports diffuse shading, shadows, phong lighting/specular lighting and reflections. The currently supported objects are spheres and planes.
 

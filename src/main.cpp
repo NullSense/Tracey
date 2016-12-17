@@ -86,19 +86,85 @@ Color GetColorAt(Vector point, Vector sceneDirection, const std::vector<std::sha
 	FPType phong;
 	Color specular;
 
-	// Reflection & Refraction
-	if(closestObjectMaterial.GetReflection() > 0 && closestObjectMaterial.GetRefraction() > 0 && REFLECTIONS_ON && REFRACTIONS_ON)
+
+	// Ambient
+	if(AMBIENT_ON)
 	{
+		ambient =  closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
+		finalColor += ambient;
 	}
-	// Reflective
+
+	// Shadows, Diffuse, Specular
+	for(const auto &lightSource : lightSources)
+	{
+		Vector lightDir = (lightSource->GetPosition() - point).Normalize(); // Calculate the directional vector towards the lightSource
+		lambertian = closestObjectNormal.Dot(lightDir);
+
+		// Shadows
+		if(SHADOWS_ON && lambertian > 0)
+		{
+			Ray shadowRay(point, lightDir); // Cast a ray from the first intersection to the light
+
+			std::vector<FPType> secondaryIntersections;
+			for(const auto &sceneObject : sceneObjects)
+			{
+				secondaryIntersections.push_back(sceneObject->GetIntersection(shadowRay));
+			}
+
+			for(const auto &secondaryIntersection : secondaryIntersections)
+			{
+				if(secondaryIntersection >= TOLERANCE) // If shadow ray intersects with some object along the way
+				{
+					shadowed = true;
+					finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
+					break;
+				}
+			}
+		}
+
+		if(shadowed == false && lambertian > 0)
+		{
+			// Diffuse
+			if(DIFFUSE_ON)
+			{
+				diffusive = closestObjectMaterial.GetColor() * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0);
+				finalColor += diffusive;
+			}
+
+			// Specular
+			if(SPECULAR_ON && closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
+			{
+				Vector V = -sceneDirection;
+				// Blinn-Phong
+				Vector H = (lightDir + V).Normalize();
+				FPType NdotH = closestObjectNormal.Dot(H);
+
+				phong = pow(NdotH, 300);
+				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // closestObjectMaterial.GetSpecular(); add or no?
+				finalColor += specular;
+						
+				/*//PHONG
+				Vector R = ((closestObjectNormal * lightDir.Dot(closestObjectNormal)) * 2) - lightDir;
+				FPType RV = R.Dot(V);
+				if(RV > 0)
+				{
+					phong = closestObjectMaterial.GetSpecular() * pow(RV, 300);
+					specular = (lightSource->GetColor()) * (phong);
+					finalColor += specular;
+				}*/
+			}
+		}
+	}
+
+	// Reflections
 	if(closestObjectMaterial.GetReflection() > 0 && REFLECTIONS_ON)
 	{
 		if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 		{
-			Vector scalar = closestObjectNormal * (closestObjectNormal.Dot(-sceneDirection));
-			Vector resultantReflection = -sceneDirection + ((scalar + (sceneDirection)) * 2);
-			Vector reflectionDirection = resultantReflection.Normalize();
+			FPType nDotV = closestObjectNormal.Dot(-sceneDirection);
 
+			Vector resultantReflection = (closestObjectNormal * nDotV * 2) - (-sceneDirection);
+			Vector reflectionDirection = resultantReflection.Normalize();
 			Vector offset = reflectionDirection * 0.001; // The rays that start from reflecting object A are considered hitting itself, since it's the nearest object from the ray start position
 
 			Ray reflectionRay(point + offset, resultantReflection);
@@ -127,79 +193,17 @@ Color GetColorAt(Vector point, Vector sceneDirection, const std::vector<std::sha
 			}
 		}
 	}
-	if(AMBIENT_ON)
+
+	// Reflection & Refraction
+	if(closestObjectMaterial.GetReflection() > 0 && closestObjectMaterial.GetRefraction() > 0 && REFLECTIONS_ON && REFRACTIONS_ON)
 	{
-		ambient =  closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
-		finalColor += ambient;
-	}
-	// Diffuse
-	if(DIFFUSE_ON)
-	{
-		for(const auto &lightSource : lightSources)
-		{
-			Vector lightDir = (lightSource->GetPosition() - point).Normalize(); // Calculate the directional vector towards the lightSource
-			lambertian = closestObjectNormal.Dot(lightDir);
-			diffusive = closestObjectMaterial.GetColor() * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0);
-
-			if(lambertian > 0)
-			{
-				if(SHADOWS_ON)
-				{
-					Ray shadowRay(point, lightDir); // Cast a ray from the first intersection to the light
-
-					std::vector<FPType> secondaryIntersections;
-					for(const auto &sceneObject : sceneObjects)
-					{
-						secondaryIntersections.push_back(sceneObject->GetIntersection(shadowRay));
-					}
-
-					for(const auto &secondaryIntersection : secondaryIntersections)
-					{
-						if(secondaryIntersection >= TOLERANCE) // If shadow ray intersects with some object along the way
-						{
-							shadowed = true;
-							finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
-							break;
-						}
-					}
-				}
-
-				if(shadowed == false && SPECULAR_ON)
-				{
-					finalColor += diffusive;
-					if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
-					{
-						Vector V = -sceneDirection;
-
-						// Blinn-Phong
-						Vector H = (lightDir + V).Normalize();
-						FPType NdotH = closestObjectNormal.Dot(H);
-
-						phong = pow(NdotH, 300);
-						specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // closestObjectMaterial.GetSpecular(); add or no?
-						finalColor += specular;
-						
-						
-						/*//PHONG
-						Vector R = ((closestObjectNormal * lightDir.Dot(closestObjectNormal)) * 2) - lightDir;
-						FPType RV = R.Dot(V);
-						if(RV > 0)
-						{
-							phong = closestObjectMaterial.GetSpecular() * pow(RV, 300);
-							specular = (lightSource->GetColor()) * (phong);
-							finalColor += specular;
-						}*/
-
-					}
-				}
-			}
-		}
+		//n = closestObjectMaterial.GetRefraction() / 
 	}
 
 	return finalColor.Clip();
 }
 
-void Draw(bitmap_image &image, int &x, int &y, Camera &camera, int &indexOfClosestObject, 
+void Render(bitmap_image &image, int &x, int &y, Camera &camera, int &indexOfClosestObject, 
 		  std::vector<FPType> &intersections, std::vector<std::shared_ptr<Object>> &sceneObjects, std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
@@ -252,21 +256,35 @@ void CalcIntersections()
 		for(int y = 0; y < HEIGHT; y++)
 		{
 			// No Anti-aliasing
-			if(WIDTH > HEIGHT)
+			if(SUPERSAMPLING == 0)
 			{
-				xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
-				yCamOffset = (y + 0.5) / HEIGHT;
-			}
-			else if(HEIGHT > WIDTH)
-			{
-				xCamOffset = (x + 0.5) / WIDTH;
-				yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
+				if(WIDTH > HEIGHT)
+				{
+					xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
+					yCamOffset = (y + 0.5) / HEIGHT;
+				}
+				else if(HEIGHT > WIDTH)
+				{
+					xCamOffset = (x + 0.5) / WIDTH;
+					yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
+				}
+				else
+				{
+					// Image is square
+					xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
+					yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
+				}
 			}
 			else
 			{
-				// Image is square
-				xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
-				yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
+				Color c(0, 0, 0);
+				for(unsigned i = 0; i < SUPERSAMPLING; i++)
+				{
+					for(unsigned j = 0; j < SUPERSAMPLING; j++)
+					{
+						
+					}
+				}
 			}
 
 			// Set up scene
@@ -276,7 +294,6 @@ void CalcIntersections()
 
 			std::vector<FPType> intersections;
 			intersections.reserve(1024);
-			//intersections.clear();
 
 			// Camera direction for every ray shot through each pixel
 			Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
@@ -293,7 +310,7 @@ void CalcIntersections()
 
 			// Check which object is closest to the camera
 			int indexOfClosestObject = ClosestObjectIndex(intersections);
-			Draw(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
+			Render(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
 		}
 	}
 
@@ -306,6 +323,7 @@ void CalcIntersections()
 	image.save_image(saveString);
 	std::cout << "Output filename: " << saveString << std::endl;
 }
+
 
 int main()
 {

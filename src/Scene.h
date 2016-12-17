@@ -34,5 +34,6 @@ private:
 	const Material brassM = Material(brass, 0.3, 0.25, 0, 0.4, 0);
 	const Material silverM = Material(silver, 0.1, 0.8, 0, 0.7, 0);
 	const Material mirrorM = Material(white, 0, 1, 0, 0, 0);
+	//const Material water = Material(white, 1, )
 	const Material tileFloorM = Material(Color(255, 255, 255), 0.9, 0.1, 0, 0.9, 2);
 };

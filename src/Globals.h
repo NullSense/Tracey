@@ -2,12 +2,12 @@
 
 using FPType = double;
 
-//constexpr FPType WIDTH = 500;
-//constexpr FPType HEIGHT = 500;
+constexpr FPType WIDTH = 500;
+constexpr FPType HEIGHT = 500;
 
 // 1920 x 1080p
-constexpr FPType WIDTH = 1920;
-constexpr FPType HEIGHT = 1080;
+//constexpr FPType WIDTH = 1920;
+//constexpr FPType HEIGHT = 1080;
 
 // 2560 x 1440p
 //constexpr FPType WIDTH = 2560;
@@ -32,8 +32,8 @@ constexpr unsigned SUPERSAMPLING = 4;
 constexpr unsigned MAX_DEPTH = 6;
 
 constexpr bool REFRACTIONS_ON = false;
-constexpr bool REFLECTIONS_ON = false;
-constexpr bool SHADOWS_ON = true;
+constexpr bool REFLECTIONS_ON = true;
+constexpr bool SHADOWS_ON = false;
 constexpr bool SPECULAR_ON = true;
 constexpr bool DIFFUSE_ON = true;
 constexpr bool AMBIENT_ON = true;
