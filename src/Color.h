@@ -13,7 +13,7 @@ public:
 
 	void SetRed(const FPType &red_);
 	void SetGreen(const FPType &green_);
-	void setBlue(const FPType &blue_);
+	void SetBlue(const FPType &blue_);
 
 	Color Clip();
 	Color Average(const Color &color);

@@ -37,7 +37,7 @@ void Color::SetGreen(const FPType &green_)
 	green = green_;
 }
 
-void Color::setBlue(const FPType &blue_)
+void Color::SetBlue(const FPType &blue_)
 {
 	blue = blue_;
 }

@@ -7,7 +7,7 @@ public:
 	Material()
 	{}
 
-	Material(Color color_, FPType ambient_ = 1, FPType reflective_ = 0, FPType refractive_ = 0, FPType diffusive_ = 0.5, FPType special_ = 0)
+	Material(Color color_, FPType ambient_ = 1, FPType reflective_ = 0, FPType refractive_ = 0, FPType diffusive_ = 1, FPType special_ = 0)
 		:color {color_}
 		, ambient {ambient_}
 		, reflective {reflective_}

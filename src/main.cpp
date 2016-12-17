@@ -55,7 +55,7 @@ int ClosestObjectIndex(const std::vector<FPType> &intersections)
 		}
 		else
 		{
-			// All intersections were negative (didn't hit shit)
+			// All intersections were negative (didn't hit anything)
 			return -1;
 		}
 	}
@@ -85,7 +85,6 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	FPType lambertian;
 	FPType phong;
 	Color specular;
-
 
 	// Ambient
 	if(AMBIENT_ON)
@@ -203,49 +202,26 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	return finalColor.Clip();
 }
 
-void Render(bitmap_image &image, int &x, int &y, Camera &camera, int &indexOfClosestObject, 
-		  std::vector<FPType> &intersections, std::vector<std::shared_ptr<Object>> &sceneObjects, std::vector<std::shared_ptr<Light>> &lightSources)
-{
-	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
-	if(indexOfClosestObject == -1)
-		image.set_pixel(x, y, 0, 0, 0);
-	else // Ray hit an object
-	{
-		if(intersections[indexOfClosestObject] > TOLERANCE) // If intersection at that point > accuracy, get color of object
-		{
-			// If ray hit something, set point position to ray-object intersection
-			Vector point((camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject])));
-
-			if(SUPERSAMPLING == 1)
-			{
-				Color intersectionColor = GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
-				image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
-
-			}
-			if(SUPERSAMPLING > 1)
-			{
-				Color intersectionColor = intersectionColor + GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources) / (SUPERSAMPLING * SUPERSAMPLING);
-				image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
-			}
-
-			// Get the color of the intersection point (pixel)
-
-			//image.set_pixel(x, y, unsigned char(intersectionColor.GetRed()), unsigned char(intersectionColor.GetGreen()), unsigned char(intersectionColor.GetBlue()));
-		}
-	}
-}
-
 void CalcIntersections()
 {
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	Camera camera(Vector(0, 5, -10), Vector(0, -1, 6));
+	Camera camera(Vector(0, 3, -10), Vector(0, -0.5, 6));
 	
 	int columnsCompleted = 0, timeToComplete = 0, timeToCompleteMax = 0;
 
 	FPType percentage;
 	
+	// Set up scene
+	Scene scene;
+	std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
+	std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
+
+	FPType tempRed[SUPERSAMPLING*SUPERSAMPLING];
+	FPType tempGreen[SUPERSAMPLING*SUPERSAMPLING];
+	FPType tempBlue[SUPERSAMPLING*SUPERSAMPLING];
+	unsigned aaIndex;
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)
 	for(int x = 0; x < WIDTH; x++)
 	{
@@ -266,99 +242,118 @@ void CalcIntersections()
 
 		for(int y = 0; y < HEIGHT; y++)
 		{
-			// No Anti-aliasing
-			if(SUPERSAMPLING == 1)
+			for(unsigned i = 0; i < SUPERSAMPLING; i++)
 			{
-				if(WIDTH > HEIGHT)
+				for(unsigned j = 0; j < SUPERSAMPLING; j++)
 				{
-					xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
-					yCamOffset = (y + 0.5) / HEIGHT;
-				}
-				else if(HEIGHT > WIDTH)
-				{
-					xCamOffset = (x + 0.5) / WIDTH;
-					yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
-				}
-				else
-				{
-					// Image is square
-					xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
-					yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
-				}
-
-				// Camera direction for every ray shot through each pixel
-				Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
-				camera.SetSceneDirection(camRayDir);
-
-				// Shoot ray into evey pixel of the image
-				Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
-
-				// Set up scene
-				Scene scene;
-				std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
-				std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
-
-				std::vector<FPType> intersections;
-				intersections.reserve(1024);
-
-				// Check if ray intersects with any scene objects
-				for(const auto &sceneObject : sceneObjects)
-				{
-					intersections.push_back(sceneObject->GetIntersection(camRay));
-				}
-
-				// Check which object is closest to the camera
-				int indexOfClosestObject = ClosestObjectIndex(intersections);
-				Render(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
-			}
-			else
-			{
-				Color c(0, 0, 0);
-				int indexOfClosestObject;
-				std::vector<FPType> intersections;
-				intersections.reserve(1024);
-
-				// Set up scene
-				Scene scene;
-				std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
-				std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
-
-				for(unsigned i = 0; i < SUPERSAMPLING; i++)
-				{
-					for(unsigned j = 0; j < SUPERSAMPLING; j++)
+					aaIndex = j*SUPERSAMPLING + i;
+					// No Anti-aliasing
+					if(SUPERSAMPLING == 1)
 					{
-						xCamOffset = (x + (i + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
-						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
-
-						// Camera direction for every ray shot through each pixel
-						Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
-						camera.SetSceneDirection(camRayDir);
-
-						// Shoot ray into evey pixel of the image
-						Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
-
-						// Check if ray intersects with any scene objects
-						for(const auto &sceneObject : sceneObjects)
+						if(WIDTH > HEIGHT)
 						{
-							intersections.push_back(sceneObject->GetIntersection(camRay));
+							xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
+							yCamOffset = (y + 0.5) / HEIGHT;
 						}
+						else if(HEIGHT > WIDTH)
+						{
+							xCamOffset = (x + 0.5) / WIDTH;
+							yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
+						}
+						else
+						{
+							// Image is square
+							xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
+							yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
+						}
+					}
+					else // Supersampling anti-aliasing
+					{
+						if(WIDTH > HEIGHT)
+						{
+							xCamOffset = ((x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH)*ASPECT_RATIO- (((WIDTH - HEIGHT) / (double) HEIGHT) / 2);
+							yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / HEIGHT;
+						}
+						else if(HEIGHT > WIDTH) // Not sure if works
+						{
+							// the imager is taller than it is wide
+							xCamOffset = (x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH;
+							yCamOffset = (((HEIGHT - y) + (double) i / ((double) SUPERSAMPLING - 1)) / HEIGHT) / ASPECT_RATIO - (((HEIGHT - WIDTH) / (double) WIDTH) / 2);
+						}
+						else
+						{
+							xCamOffset = (x + (i + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
+							yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
+						}
+					}
+				
+					// Camera direction for every ray shot through each pixel
+					Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
+					camera.SetSceneDirection(camRayDir);
 
-						// Check which object is closest to the camera
-						indexOfClosestObject = ClosestObjectIndex(intersections);
+					// Shoot ray into evey pixel of the image
+					Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
+
+					std::vector<FPType> intersections;
+					intersections.reserve(1024);
+
+					// Check if ray intersects with any scene objects
+					for(const auto &sceneObject : sceneObjects)
+					{
+						intersections.push_back(sceneObject->GetIntersection(camRay));
+					}
+					int indexOfClosestObject = ClosestObjectIndex(intersections);
+					// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
+					if(indexOfClosestObject == -1)
+					{
+						tempRed[aaIndex] = 0;
+						tempGreen[aaIndex] = 0;
+						tempBlue[aaIndex] = 0;
+					}
+					else // Ray hit an object
+					{
+						if(intersections[indexOfClosestObject] > TOLERANCE) // If intersection at that point > accuracy, get color of object
+						{
+							// If ray hit something, set point position to ray-object intersection
+							Vector point((camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject])));
+							Color intersectionColor = GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
+							tempRed[aaIndex] = intersectionColor.GetRed();
+							tempGreen[aaIndex] = intersectionColor.GetGreen();
+							tempBlue[aaIndex] = intersectionColor.GetBlue();
+						}
 					}
 				}
-				if(indexOfClosestObject != NULL)
-					Render(image, x, y, camera, indexOfClosestObject, intersections, sceneObjects, lightSources);
 			}
+			FPType totalRed = 0;
+			FPType totalGreen = 0;
+			FPType totalBlue = 0;
+
+			for(int iRed = 0; iRed < SUPERSAMPLING*SUPERSAMPLING; iRed++)
+			{
+				totalRed = totalRed + tempRed[iRed];
+			}
+			for(int iGreen = 0; iGreen < SUPERSAMPLING*SUPERSAMPLING; iGreen++)
+			{
+				totalGreen = totalGreen + tempGreen[iGreen];
+			}
+			for(int iBlue = 0; iBlue < SUPERSAMPLING*SUPERSAMPLING; iBlue++)
+			{
+				totalBlue = totalBlue + tempBlue[iBlue];
+			}
+
+			FPType avgRed = totalRed / (SUPERSAMPLING*SUPERSAMPLING);
+			FPType avgGreen = totalGreen / (SUPERSAMPLING*SUPERSAMPLING);
+			FPType avgBlue = totalBlue / (SUPERSAMPLING*SUPERSAMPLING);
+
+			image.set_pixel(x, y, avgRed, avgGreen, avgBlue);
 		}
 	}
-
 	end = clock();
 	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
 	std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
 	std::cout << "Time: " << diff << " seconds" << std::endl;
 
-	std::string saveString = "render.bmp";
+	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + "render " + std::to_string(SUPERSAMPLING) +"x SS.bmp";
 	image.save_image(saveString);
 	std::cout << "Output filename: " << saveString << std::endl;
 }
