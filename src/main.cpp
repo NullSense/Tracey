@@ -81,7 +81,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	bool shadowed = false;
 	Color finalColor;
 	Color ambient;
-	Color diffusive;
+	Color diffuse;
 	FPType lambertian;
 	FPType phong;
 	Color specular;
@@ -99,6 +99,13 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		Vector lightDir = (lightSource->GetPosition() - point).Normalize(); // Calculate the directional vector towards the lightSource
 		lambertian = closestObjectNormal.Dot(lightDir);
 
+		// Diffuse
+		if(DIFFUSE_ON)
+		{
+			diffuse = closestObjectMaterial.GetColor() * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0);
+			finalColor += diffuse;
+		}
+
 		// Shadows
 		if(SHADOWS_ON && lambertian > 0)
 		{
@@ -112,7 +119,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 
 			for(const auto &secondaryIntersection : secondaryIntersections)
 			{
-				if(secondaryIntersection >= TOLERANCE) // If shadow ray intersects with some object along the way
+				if(secondaryIntersection > TOLERANCE) // If shadow ray intersects with some object along the way
 				{
 					shadowed = true;
 					finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
@@ -121,17 +128,10 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 			}
 		}
 
-		if(shadowed == false && lambertian > 0)
+		if(shadowed == false && SPECULAR_ON)
 		{
-			// Diffuse
-			if(DIFFUSE_ON)
-			{
-				diffusive = closestObjectMaterial.GetColor() * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0);
-				finalColor += diffusive;
-			}
-
 			// Specular
-			if(SPECULAR_ON && closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
+			if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 			{
 				Vector V = -sceneDirection;
 				// Blinn-Phong
