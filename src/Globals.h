@@ -51,7 +51,7 @@ constexpr FPType TOLERANCE = 0.000001;
 constexpr unsigned SUPERSAMPLING = 1;
 
 constexpr bool REFRACTIONS_ON = false;
-constexpr bool REFLECTIONS_ON = false;
+constexpr bool REFLECTIONS_ON = true;
 constexpr bool SHADOWS_ON = true;
 constexpr bool SPECULAR_ON = true;
 constexpr bool DIFFUSE_ON = true;

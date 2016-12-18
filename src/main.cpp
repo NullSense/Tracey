@@ -78,13 +78,13 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 			closestObjectMaterial.SetColor(Color(255, 255, 255));
 	}
 
-	bool shadowed = false;
 	Color finalColor;
 	Color ambient;
 	Color diffuse;
 	FPType lambertian;
 	FPType phong;
 	Color specular;
+	bool shadowed = false;
 
 	// Ambient
 	if(AMBIENT_ON)
@@ -96,13 +96,15 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	// Shadows, Diffuse, Specular
 	for(const auto &lightSource : lightSources)
 	{
-		Vector lightDir = (lightSource->GetPosition() - point).Normalize(); // Calculate the directional vector towards the lightSource
+		Vector lightDir = (lightSource->GetPosition() - point); // Calculate the directional vector towards the lightSource
+		FPType distance = lightDir.Magnitude();
+		lightDir = lightDir.Normalize();
 		lambertian = closestObjectNormal.Dot(lightDir);
 
 		// Diffuse
 		if(DIFFUSE_ON)
 		{
-			diffuse = closestObjectMaterial.GetColor() * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0);
+			diffuse = closestObjectMaterial.GetColor().Average(lightSource->GetColor()) * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0) / distance;
 			finalColor += diffuse;
 		}
 
@@ -139,7 +141,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 				FPType NdotH = closestObjectNormal.Dot(H);
 
 				phong = pow(NdotH, 300);
-				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // closestObjectMaterial.GetSpecular(); add or no?
+				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity() / distance; // closestObjectMaterial.GetSpecular(); add or no?
 				finalColor += specular;
 						
 				/*//PHONG
@@ -207,7 +209,7 @@ void CalcIntersections()
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	Camera camera(Vector(0, 3, -10), Vector(0, -0.5, 6));
+	Camera camera(Vector(0, 6, -10), Vector(0, -0.5, 6));
 	
 	int columnsCompleted = 0, timeToComplete = 0, timeToCompleteMax = 0;
 
