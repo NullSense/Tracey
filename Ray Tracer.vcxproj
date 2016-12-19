@@ -113,6 +113,7 @@
     <ClInclude Include="src\bitmap_image.hpp" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Color.h" />
+    <ClInclude Include="src\Disk.hpp" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Material.h" />
@@ -125,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\Disk.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object.cpp" />

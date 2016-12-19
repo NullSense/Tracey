@@ -46,7 +46,7 @@ constexpr FPType HEIGHT = 1080;
 //constexpr FPType HEIGHT = 2880;
 
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
-constexpr FPType AMBIENT_LIGHT = 0.4;
+constexpr FPType AMBIENT_LIGHT = 0.2;
 constexpr FPType TOLERANCE = 0.000001;
 constexpr unsigned SUPERSAMPLING = 1;
 

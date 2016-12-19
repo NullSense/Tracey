@@ -3,6 +3,7 @@
 #include "Sphere.h"
 #include "Material.h"
 #include "Light.h"
+#include "Disk.hpp"
 #include <memory>
 #include <vector>
 

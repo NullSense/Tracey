@@ -101,13 +101,6 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		lightDir = lightDir.Normalize();
 		lambertian = closestObjectNormal.Dot(lightDir);
 
-		// Diffuse
-		if(DIFFUSE_ON)
-		{
-			diffuse = closestObjectMaterial.GetColor().Average(lightSource->GetColor()) * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0) / distance;
-			finalColor += diffuse;
-		}
-
 		// Shadows
 		if(SHADOWS_ON && lambertian > 0)
 		{
@@ -130,6 +123,12 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 			}
 		}
 
+		// Diffuse
+		if(DIFFUSE_ON && shadowed == false)
+		{
+			diffuse = closestObjectMaterial.GetColor().Average(lightSource->GetColor()) * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0) / distance;
+			finalColor += diffuse;
+		}
 		if(shadowed == false && SPECULAR_ON)
 		{
 			// Specular

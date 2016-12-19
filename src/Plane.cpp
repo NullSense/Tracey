@@ -3,7 +3,6 @@
 Plane::Plane()
 	:center {0, -1, 0}
 	, normal {1, 0, 0}
-	
 {}
 
 Plane::Plane(Vector center_, Vector normal_)
@@ -18,6 +17,17 @@ FPType Plane::GetIntersection(Ray ray)
 	if(std::abs(denom) > ray.tMin && t <= ray.tMax)
 	{
 		t = (center - ray.GetOrigin()).Dot(normal) / denom;
+	}
+	return t;
+}
+
+FPType Plane::GetIntersectionDisk(Ray ray, Vector normal_, Vector position)
+{
+	FPType denom = normal_.Dot(ray.GetDirection());
+	FPType t = -1;
+	if(std::abs(denom) > ray.tMin && t <= ray.tMax)
+	{
+		t = (position - ray.GetOrigin()).Dot(normal_) / denom;
 	}
 	return t;
 }

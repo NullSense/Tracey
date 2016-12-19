@@ -12,6 +12,7 @@ public:
     
     virtual Vector GetNormalAt(Vector point);
     virtual FPType GetIntersection(Ray ray);
+	FPType GetIntersectionDisk(Ray ray, Vector normal_, Vector position);
 	Vector GetNormal() const;
 	Vector GetCenter() const;
 	void SetNormal(const Vector &normal_);
