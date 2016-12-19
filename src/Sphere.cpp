@@ -20,32 +20,34 @@ Vector Sphere::GetNormalAt(Vector point)
 
 FPType Sphere::GetIntersection(Ray ray)
 {
-	Vector length = center - ray.GetOrigin(); // Length of the vector between the center and the ray origin (hypotenuse)
-	FPType tca = length.Dot(ray.GetDirection()); // opposide side
+  Vector delta = ray.GetOrigin() - center;
+  Vector dir = ray.GetDirection();
 
-	if(tca < 0) // No intersection registered
-		return -1;
+  //Quadratic equation describing the distance along ray to intersection
+  FPType a = dir.Dot(dir);
+  FPType b = dir.Dot(delta); //removed factor of 2 later divide by a, NOT 2a
+  FPType c = delta.Dot(delta) - radius*radius;
 
-	if(tca > 0) // Intersection registered
-	{
-		FPType a = sqrt(length.Dot(length) - tca*tca); // Adjacent side (a = sqrt(c²-b²))
+  FPType discriminant = b*b - a*c;
+  if (discriminant < FPType(0)) {
+    return -1;
+  }
+  //Find solutions to quadratic equation
+  discriminant = sqrt(discriminant) / a;
+  b = -b / a;
 
-		if(a > radius || a < 0)
-			return -1;
+  FPType intersection0 = b - discriminant;
+  if(intersection0 >= FPType(0)) {
+    return intersection0;
+  }
 
-		FPType thc = sqrt(radius*radius - a*a); // the line between 2 intersection points / 2
+  FPType intersection1 = b + discriminant;
+  if(intersection1 >= FPType(0)) {
+    return intersection1;
+  }
 
-		FPType primaryIntersection;
-		primaryIntersection = tca - thc;
-		if(primaryIntersection > 0)
-			return primaryIntersection;
-		else
-		{
-			FPType secondaryIntersection = thc + tca;
-			return secondaryIntersection;
-		}
-	}
-	return -1;
+  //Both solutions were negative
+  return -1;
 }
 
 FPType Sphere::GetRadius() const

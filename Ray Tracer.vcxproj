@@ -111,6 +111,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\bitmap_image.hpp" />
+    <ClInclude Include="src\Box.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Color.h" />
     <ClInclude Include="src\Disk.hpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="src\Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\Disk.cpp" />
     <ClCompile Include="src\Light.cpp" />

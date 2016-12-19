@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <random>
 
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
@@ -6,7 +7,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	backPlane->SetMaterial(blueM);
 	std::shared_ptr<Plane> behindPlane = std::make_shared<Plane>(Vector(0, 0, -11), Vector(0, 0, 1));
 	behindPlane->SetMaterial(blueM);
-	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector(0, 0, 0), Vector(0, 1, 0));
+	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector(0, -10, 0), Vector(0, 1, 0));
 	floorPlane->SetMaterial(tileFloorM);
 	std::shared_ptr<Plane> leftPlane = std::make_shared<Plane>(Vector(-4, 0, 0), Vector(1, 0, 0));
 	leftPlane->SetMaterial(maroonM);
@@ -28,18 +29,48 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Sphere> sphere6 = std::make_shared<Sphere>(1, Vector(floorPlane->GetCenter().x, floorPlane->GetCenter().y + 3, floorPlane->GetCenter().z + 3.5));
 	sphere6->SetMaterial(maroonM);
 
-	std::shared_ptr<Disk> disk1 = std::make_shared<Disk>(Vector(0, 0.5, 2), 2, Vector(0, 1, 0));
-	disk1->SetMaterial(blueM);
+	std::shared_ptr<Disk> disk1 = std::make_shared<Disk>(Vector(0, 4, 0), 1, Vector(0, 1, 0));
+	disk1->SetMaterial(maroonM);
+	std::shared_ptr<Disk> disk2 = std::make_shared<Disk>(Vector(0, 3.5, 0), 2, Vector(0, 1, 0));
+	disk2->SetMaterial(maroonM);
+	std::shared_ptr<Disk> disk3 = std::make_shared<Disk>(Vector(0, 3, 0), 3, Vector(0, 1, 0));
+	disk3->SetMaterial(maroonM);
+	std::shared_ptr<Disk> disk4 = std::make_shared<Disk>(Vector(0, 0.5, 0), 4, Vector(0, 1, 0));
+	disk4->SetMaterial(maroonM);
+
+	std::shared_ptr<Box> box1 = std::make_shared<Box>(Vector(0, 0, 0), Vector(3, 0, 3));
+	box1->SetColor(yellowM);
 
 	std::vector<std::shared_ptr<Object>> sceneObjects;
-	//sceneObjects.push_back(sphere1);
-	//sceneObjects.push_back(sphere2);
-	//sceneObjects.push_back(sphere3);
+	sceneObjects.push_back(sphere1);
+	sceneObjects.push_back(sphere2);
+	sceneObjects.push_back(sphere3);
 	//sceneObjects.push_back(sphere4);
 	//sceneObjects.push_back(sphere5);
 	//sceneObjects.push_back(sphere6);
 
-	sceneObjects.push_back(disk1);
+	/*std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(0, 1);
+
+	uint32_t numSpheres = 2;
+	gen.seed(0);
+	for(uint32_t i = 0; i < numSpheres; ++i)
+	{
+		Vector randPos((0.5 - dis(gen)) * 10, (0.5 - dis(gen)) * 10, (0.5 + dis(gen) * 10));
+		float randRadius = (0.5 + dis(gen) * 0.5);
+
+		std::shared_ptr<Object> obj = std::make_shared<Sphere>(randRadius, randPos);
+		obj->SetColor(maroonM);
+		sceneObjects.push_back(obj);
+	}*/
+
+	//sceneObjects.push_back(box1);
+
+	//sceneObjects.push_back(disk1);
+	//sceneObjects.push_back(disk2);
+	//sceneObjects.push_back(disk3);
+	//sceneObjects.push_back(disk4);
 
 	sceneObjects.push_back(floorPlane);
 	//sceneObjects.push_back(backPlane);
@@ -59,7 +90,7 @@ std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(-7, 5, 7), white, 3);
 	std::shared_ptr<Light> light3 = std::make_shared<Light>(Vector(0, 2, 9), white, 4);
 
-	lightSources.push_back(light1);
+	//lightSources.push_back(light1);
 	lightSources.push_back(light2);
 	//lightSources.push_back(light3);
 

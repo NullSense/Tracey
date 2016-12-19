@@ -12,8 +12,9 @@ public:
 	Vector GetOrigin();
 	Vector GetDirection();
 
+	Vector invDir;
 	FPType tMin, tMax;
-
 private:
 	Vector origin, direction;
+	int sign[3];
 };

@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Light.h"
 #include "Disk.hpp"
+#include "Box.h"
 #include <memory>
 #include <vector>
 
