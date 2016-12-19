@@ -15,12 +15,15 @@ public:
 
 	virtual Vector GetNormalAt(Vector intersectionPosition);
 
+	virtual Vector GetNormal() const;
+
 	virtual Color GetColor();
 
-	Material GetMaterial();
+	virtual Material GetMaterial();
 
 	void SetMaterial(const Material &material_);
 
 private:
 	Material material;
+	Vector normal;
 };

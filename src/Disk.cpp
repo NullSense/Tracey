@@ -25,11 +25,6 @@ Vector Disk::GetNormalAt(Vector point)
 	return normal;
 }
 
-Vector Disk::GetNormal() const
-{
-	return normal;
-}
-
 Vector Disk::GetPosition() const
 {
 	return position;

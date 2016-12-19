@@ -89,7 +89,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	// Ambient
 	if(AMBIENT_ON)
 	{
-		ambient =  closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
+		ambient = closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
 		finalColor += ambient;
 	}
 
@@ -100,6 +100,21 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		FPType distance = lightDir.Magnitude();
 		lightDir = lightDir.Normalize();
 		lambertian = closestObjectNormal.Dot(lightDir);
+
+		
+		/*
+			vector3 V = a_Ray.GetDirection();
+			vector3 R = lightDir - 2.0f * DOT( L, closestObjectNormal ) * closestObjectNormal;
+			float dot = DOT( V, R );
+			if (dot > 0)
+			{
+				float spec = powf( dot, 20 ) * prim->GetMaterial()->GetSpecular() * shade;
+			// add specular component to ray color
+			a_Acc += spec * lightSource->GetColor();
+			}
+			
+		*/
+
 
 		// Shadows
 		if(SHADOWS_ON && lambertian > 0)
@@ -116,9 +131,12 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 			{
 				if(secondaryIntersection > TOLERANCE) // If shadow ray intersects with some object along the way
 				{
-					shadowed = true;
-					finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
-					break;
+					if(secondaryIntersection <= distance)
+					{
+						shadowed = true;
+						finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
+						break;
+					}
 				}
 			}
 		}
@@ -142,15 +160,15 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 				phong = pow(NdotH, 300);
 				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity() / distance; // closestObjectMaterial.GetSpecular(); add or no?
 				finalColor += specular;
-						
+
 				/*//PHONG
 				Vector R = ((closestObjectNormal * lightDir.Dot(closestObjectNormal)) * 2) - lightDir;
 				FPType RV = R.Dot(V);
 				if(RV > 0)
 				{
-					phong = closestObjectMaterial.GetSpecular() * pow(RV, 300);
-					specular = (lightSource->GetColor()) * (phong);
-					finalColor += specular;
+				phong = closestObjectMaterial.GetSpecular() * pow(RV, 300);
+				specular = (lightSource->GetColor()) * (phong);
+				finalColor += specular;
 				}*/
 			}
 		}
@@ -294,7 +312,7 @@ void CalcIntersections()
 		// Calculates % of render completed
 		columnsCompleted++;
 		percentage = columnsCompleted / (FPType) WIDTH * 100;
-		std::cout << '\r' << "Completion: " << (int)percentage << '%';
+		std::cout << '\r' << "Completion: " << (int) percentage << '%';
 
 		// Calculates Time left
 		end = clock();
@@ -337,7 +355,7 @@ void CalcIntersections()
 					{
 						if(WIDTH > HEIGHT)
 						{
-							xCamOffset = ((x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH)*ASPECT_RATIO- (((WIDTH - HEIGHT) / (double) HEIGHT) / 2);
+							xCamOffset = ((x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH)*ASPECT_RATIO - (((WIDTH - HEIGHT) / (double) HEIGHT) / 2);
 							yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / HEIGHT;
 						}
 						else if(HEIGHT > WIDTH) // Not sure if works
@@ -363,7 +381,7 @@ void CalcIntersections()
 	std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
 	std::cout << "Time: " << diff << " seconds" << std::endl;
 
-	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + "render " + std::to_string(SUPERSAMPLING) +"x SS.bmp";
+	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + "render " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
 	image.save_image(saveString);
 	std::cout << "Output filename: " << saveString << std::endl;
 }

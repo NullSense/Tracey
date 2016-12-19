@@ -18,7 +18,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 
 	std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(1, Vector(1, 1, 7));
 	sphere1->SetMaterial(yellowM);
-	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(1, Vector(-3, 6, 7));
+	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(1, Vector(-3, 4.5, 14));
 	sphere2->SetMaterial(maroonM);
 	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(1, Vector(3.5, 1, 7));
 	sphere3->SetMaterial(blueM);
@@ -52,17 +52,15 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	/*std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis(0, 1);
-
 	uint32_t numSpheres = 2;
 	gen.seed(0);
 	for(uint32_t i = 0; i < numSpheres; ++i)
 	{
-		Vector randPos((0.5 - dis(gen)) * 10, (0.5 - dis(gen)) * 10, (0.5 + dis(gen) * 10));
-		float randRadius = (0.5 + dis(gen) * 0.5);
-
-		std::shared_ptr<Object> obj = std::make_shared<Sphere>(randRadius, randPos);
-		obj->SetColor(maroonM);
-		sceneObjects.push_back(obj);
+	Vector randPos((0.5 - dis(gen)) * 10, (0.5 - dis(gen)) * 10, (0.5 + dis(gen) * 10));
+	float randRadius = (0.5 + dis(gen) * 0.5);
+	std::shared_ptr<Object> obj = std::make_shared<Sphere>(randRadius, randPos);
+	obj->SetColor(maroonM);
+	sceneObjects.push_back(obj);
 	}*/
 
 	//sceneObjects.push_back(box1);
@@ -73,7 +71,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	//sceneObjects.push_back(disk4);
 
 	sceneObjects.push_back(floorPlane);
-	//sceneObjects.push_back(backPlane);
+	sceneObjects.push_back(backPlane);
 	//sceneObjects.push_back(behindPlane);
 	//sceneObjects.push_back(leftPlane);
 	//sceneObjects.push_back(rightPlane);

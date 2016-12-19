@@ -18,6 +18,11 @@ Vector Object::GetNormalAt(Vector intersectionPosition)
 	return Vector(0, 0, 0);
 }
 
+Vector Object::GetNormal() const
+{
+	return normal;
+}
+
 Color Object::GetColor()
 {
 	return material.GetColor();
