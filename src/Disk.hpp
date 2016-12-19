@@ -11,6 +11,7 @@ public:
 	FPType GetIntersection(Ray ray);
 
 	virtual Vector GetNormalAt(Vector point);
+	Vector GetNormal();
 	Vector GetPosition() const;
 	void SetNormal(const Vector &normal_);
 	void SetPosition(const Vector &position_);

@@ -2,8 +2,6 @@
 
 #include "bitmap_image.hpp"
 #include "Globals.h"
-#include "Sphere.h"
-#include "Plane.h"
 #include "Light.h"
 #include "Material.h"
 #include "Scene.h"
@@ -101,21 +99,6 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		lightDir = lightDir.Normalize();
 		lambertian = closestObjectNormal.Dot(lightDir);
 
-		
-		/*
-			vector3 V = a_Ray.GetDirection();
-			vector3 R = lightDir - 2.0f * DOT( L, closestObjectNormal ) * closestObjectNormal;
-			float dot = DOT( V, R );
-			if (dot > 0)
-			{
-				float spec = powf( dot, 20 ) * prim->GetMaterial()->GetSpecular() * shade;
-			// add specular component to ray color
-			a_Acc += spec * lightSource->GetColor();
-			}
-			
-		*/
-
-
 		// Shadows
 		if(SHADOWS_ON && lambertian > 0)
 		{
@@ -158,7 +141,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 				FPType NdotH = closestObjectNormal.Dot(H);
 
 				phong = pow(NdotH, 300);
-				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity() / distance; // closestObjectMaterial.GetSpecular(); add or no?
+				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // closestObjectMaterial.GetSpecular(); add or no?
 				finalColor += specular;
 
 				/*//PHONG
@@ -249,7 +232,7 @@ void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPTyp
 
 void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
 {
-	Camera camera(Vector(0, 6, -10), Vector(0, -0.5, 6));
+	Camera camera(Vector(0, 3, -10), Vector(0, -1, 6));
 
 	// Set up scene
 	Scene scene;

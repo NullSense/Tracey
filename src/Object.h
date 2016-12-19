@@ -5,7 +5,7 @@
 #include "Material.h"
 #include <iostream>
 
-class Object : public Material
+class Object: public Material
 {
 public:
 	Object() noexcept;
@@ -15,15 +15,12 @@ public:
 
 	virtual Vector GetNormalAt(Vector intersectionPosition);
 
-	virtual Vector GetNormal() const;
-
 	virtual Color GetColor();
 
-	virtual Material GetMaterial();
+	Material GetMaterial();
 
 	void SetMaterial(const Material &material_);
 
 private:
 	Material material;
-	Vector normal;
 };

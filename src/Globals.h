@@ -46,13 +46,13 @@ constexpr FPType HEIGHT = 1080;
 //constexpr FPType HEIGHT = 2880;
 
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
-constexpr FPType AMBIENT_LIGHT = 0.5;
+constexpr FPType AMBIENT_LIGHT = 0.7;
 constexpr FPType TOLERANCE = 0.000001;
-constexpr unsigned SUPERSAMPLING = 1;
+constexpr unsigned SUPERSAMPLING = 4;
 
 constexpr bool REFRACTIONS_ON = false;
 constexpr bool REFLECTIONS_ON = true;
-constexpr bool SHADOWS_ON = true;
-constexpr bool SPECULAR_ON = false;
+constexpr bool SHADOWS_ON = false;
+constexpr bool SPECULAR_ON = true;
 constexpr bool DIFFUSE_ON = true;
 constexpr bool AMBIENT_ON = true;

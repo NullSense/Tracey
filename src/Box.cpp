@@ -8,17 +8,29 @@ Box::Box(const Vector &min_, const Vector &max_)
 
 FPType Box::GetIntersection(Ray ray)
 {
-	FPType tx1 = (min.x - ray.GetOrigin().x) * ray.invDir.x;
-	FPType tx2 = (max.x - ray.GetOrigin().x) * ray.invDir.x;
+	Vector ro = ray.GetOrigin();
+	Vector rd = ray.GetDirection();
+	Vector rd_inv = ray.invDir;
 
-	FPType tmin = std::fmin(tx1, tx2);
-	FPType tmax = std::fmax(tx1, tx2);
+	FPType t1 = (min.x - ro.x) * rd_inv.x;
+	FPType t2 = (max.x - ro.x) * rd_inv.x;
+	FPType t3 = (min.y - ro.y) * rd_inv.y;
+	FPType t4 = (max.y - ro.y) * rd_inv.y;
+	FPType t5 = (min.z - ro.z) * rd_inv.z;
+	FPType t6 = (max.z - ro.z) * rd_inv.z;
 
-	FPType ty1 = (min.y - ray.GetOrigin().y) * ray.invDir.y;
-	FPType ty2 = (max.y - ray.GetOrigin().y) * ray.invDir.y;
+	FPType tboxmin = std::fmax(std::fmax(std::fmin(t1, t2), std::fmin(t3, t4)), std::fmin(t5, t6));
+	FPType tboxmax = std::fmin(std::fmin(std::fmax(t1, t2), std::fmax(t3, t4)), std::fmax(t5, t6));
 
-	tmin = std::fmax(tmin, std::fmin(ty1, ty2));
-	tmax = std::fmin(tmax, std::fmax(ty1, ty2));
+	if(tboxmax < TOLERANCE)
+	{
+		return false;
+	}
 
-	return tmax >= tmin;
+	if(tboxmin > tboxmax)
+	{
+		return false;
+	}
+
+	return tboxmax >= tboxmin;
 }

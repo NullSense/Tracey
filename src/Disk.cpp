@@ -7,9 +7,9 @@ Disk::Disk(Vector position_, FPType radius_, Vector normal_)
 FPType Disk::GetIntersection(Ray ray)
 {
 
-	if(Plane::GetIntersectionDisk(ray, GetNormal(), position))
+	if(Plane::GetIntersectionDisk(ray, normal, position))
 	{
-		FPType t = Plane::GetIntersectionDisk(ray, GetNormal(), position);
+		FPType t = Plane::GetIntersectionDisk(ray, normal, position);
 		Vector intersectionPoint = ray.GetOrigin() + ray.GetDirection() * t;
 		Vector intersectionToMidDist = intersectionPoint - position;
 		FPType d2 = intersectionToMidDist.Dot(intersectionToMidDist);
@@ -21,6 +21,11 @@ FPType Disk::GetIntersection(Ray ray)
 }
 
 Vector Disk::GetNormalAt(Vector point)
+{
+	return normal;
+}
+
+Vector Disk::GetNormal()
 {
 	return normal;
 }
