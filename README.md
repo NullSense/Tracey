@@ -3,7 +3,10 @@
 # Final images
 ![5](http://i.imgur.com/6NwrWGT.png)
 ![6](http://i.imgur.com/fbGFmnr.png)
-![7](http://puu.sh/nscjb/504d913f3e.png)
+![7](https://i.imgur.com/zd4ifJI.jpg)
+![8](http://puu.sh/nscjb/504d913f3e.png)
+
+
 
 This implementation currently supports diffuse shading, shadows, phong lighting/specular lighting and reflections. The currently supported objects are spheres and planes.
 

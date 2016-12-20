@@ -140,7 +140,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 				Vector H = (lightDir + V).Normalize();
 				FPType NdotH = closestObjectNormal.Dot(H);
 
-				phong = pow(NdotH, 300);
+				phong = pow(NdotH, 350);
 				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // closestObjectMaterial.GetSpecular(); add or no?
 				finalColor += specular;
 
@@ -232,7 +232,7 @@ void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPTyp
 
 void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
 {
-	Camera camera(Vector(0, 3, -10), Vector(0, -1, 6));
+	Camera camera(Vector(0, 3, -10), Vector(0, -0.5, 6));
 
 	// Set up scene
 	Scene scene;
