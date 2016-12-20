@@ -82,18 +82,12 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	FPType lambertian;
 	FPType phong;
 	Color specular;
-	bool shadowed = false;
-
-	// Ambient
-	if(AMBIENT_ON)
-	{
-		ambient = closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
-		finalColor += ambient;
-	}
+	
 
 	// Shadows, Diffuse, Specular
 	for(const auto &lightSource : lightSources)
 	{
+		bool shadowed = false;
 		Vector lightDir = (lightSource->GetPosition() - point); // Calculate the directional vector towards the lightSource
 		FPType distance = lightDir.Magnitude();
 		lightDir = lightDir.Normalize();
@@ -117,7 +111,6 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 					if(secondaryIntersection <= distance)
 					{
 						shadowed = true;
-						finalColor *= closestObjectMaterial.GetDiffuse() * AMBIENT_LIGHT;
 						break;
 					}
 				}
@@ -130,9 +123,10 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 			diffuse = closestObjectMaterial.GetColor().Average(lightSource->GetColor()) * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0) / distance;
 			finalColor += diffuse;
 		}
+
+		// Specular
 		if(shadowed == false && SPECULAR_ON)
 		{
-			// Specular
 			if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 			{
 				Vector V = -sceneDirection;
@@ -155,6 +149,13 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 				}*/
 			}
 		}
+	}
+
+	// Ambient
+	if(AMBIENT_ON)
+	{
+		ambient = closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
+		finalColor += ambient;
 	}
 
 	// Reflections
@@ -201,6 +202,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		//n = closestObjectMaterial.GetRefraction() / 
 	}
 
+
 	return finalColor.Clip();
 }
 
@@ -232,7 +234,7 @@ void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPTyp
 
 void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
 {
-	Camera camera(Vector(0, 3, -10), Vector(0, -0.5, 6));
+	Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
 
 	// Set up scene
 	Scene scene;
