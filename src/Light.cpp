@@ -4,12 +4,14 @@ Light::Light()
 	:position {0, 0, 0}
 	, color {Color(255, 255, 255)}
 	, intensity {1}
+	, light_type {POINT}
 {}
 
-Light::Light(Vector position_, Color color_, FPType intensity_)
+Light::Light(Vector position_, Color color_, FPType intensity_, enum LIGHT_TYPES)
 	:position {position_}
 	, color {color_}
 	, intensity {intensity_}
+	, light_type{POINT}
 {}
 
 void Light::SetPosition(const Vector &position_)
@@ -40,4 +42,9 @@ Vector Light::GetPosition()
 FPType Light::GetIntensity()
 {
 	return intensity;
+}
+
+unsigned Light::GetLightType()
+{
+	return 0;
 }

@@ -12,7 +12,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.2, Vector(sphere1->GetCenter().x - 2, sphere1->GetCenter().y, sphere1->GetCenter().z - 1));
 	sphere3->SetMaterial(silverM);
 	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.2, Vector(sphere1->GetCenter().x - 0.8, sphere1->GetCenter().y + 0.4, sphere1->GetCenter().z - 0.67));
-	sphere4->SetMaterial(yellowM);
+	sphere4->SetMaterial(mirrorM);
 	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.4, Vector(floorPlane->GetCenter().x - 3.5, -0.6, floorPlane->GetCenter().z + 2.9));
 	sphere5->SetMaterial(orangeM);
 
@@ -31,8 +31,8 @@ std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 {
 	std::vector<std::shared_ptr<Light>> lightSources;
 	Vector light1Position(-2.5, 1, 0.6);
-	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, white, 1);
-	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(light1Position.x + 6, light1Position.y, light1Position.z + 4), yellow, 0.8);
+	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, white, 1, Light::POINT);
+	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(light1Position.x + 6, light1Position.y, light1Position.z + 4), yellow, 0.8, Light::POINT);
 	lightSources.push_back(light1);
 	lightSources.push_back(light2);
 

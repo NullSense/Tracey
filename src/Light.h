@@ -6,9 +6,15 @@
 struct Light
 {
 public:
+	enum LIGHT_TYPES
+	{
+		POINT = 1, DISK = 2, AREA = 3
+	} light_type;
+
 	Light();
 
-	Light(Vector position_, Color color_, FPType intensity_);
+	Light(Vector position_, Color color_, FPType intensity_, enum LIGHT_TYPES);
+
 
 	void SetPosition(const Vector &position_);
 	void SetColor(const Color &color_);
@@ -16,6 +22,7 @@ public:
 	Color GetColor();
 	Vector GetPosition();
 	FPType GetIntensity();
+	unsigned GetLightType();
 
 private:
 	Color color;

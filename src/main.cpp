@@ -11,6 +11,7 @@
 #include <time.h>
 #include <sstream>
 #include <algorithm>
+#include <thread>
 
 // Returns the closest object's index that the ray intersected with
 int ClosestObjectIndex(const std::vector<FPType> &intersections)
@@ -59,8 +60,53 @@ int ClosestObjectIndex(const std::vector<FPType> &intersections)
 	}
 }
 
+// Forward declare for GetReflections()
+Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, unsigned indexOfClosestObject,
+				 const std::vector<std::shared_ptr<Light>> &lightSources);
+
+// Calculate reflections
+Color GetReflections(Material &closestObjectMaterial, Vector &closestObjectNormal, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject, Vector &point, const std::vector<std::shared_ptr<Light>> &lightSources)
+{
+	if(closestObjectMaterial.GetReflection() > 0 && REFLECTIONS_ON)
+	{
+		if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
+		{
+			FPType nDotV = closestObjectNormal.Dot(-sceneDirection);
+
+			Vector resultantReflection = (closestObjectNormal * nDotV * 2) - (-sceneDirection);
+			Vector reflectionDirection = resultantReflection.Normalize();
+			Vector offset = reflectionDirection * 0.001; // The rays that start from reflecting object A are considered hitting itself, since it's the nearest object from the ray start position
+
+			Ray reflectionRay(point + offset, resultantReflection);
+
+			// determine what the ray intersects with first
+			std::vector<FPType> reflectionIntersections;
+			for(auto sceneObject : sceneObjects)
+			{
+				reflectionIntersections.push_back(sceneObject->GetIntersection(reflectionRay));
+			}
+
+			int closestObjectWithReflection = ClosestObjectIndex(reflectionIntersections);
+
+			if(closestObjectWithReflection != -1 && closestObjectWithReflection != indexOfClosestObject) // Depth checking
+			{
+				// reflection ray missed everthing else
+				if(reflectionIntersections[closestObjectWithReflection] > TOLERANCE)
+				{
+					// determine the position and direction at the point of intersection with the reflection ray
+					// the ray only affects the color if it reflected off something
+					Vector reflectionIntersectionPosition = point + (resultantReflection * (reflectionIntersections[closestObjectWithReflection]));
+					Vector reflectionIntersectionRayDirection = resultantReflection;
+					Color reflectionIntersectionColor = GetColorAt(reflectionIntersectionPosition, reflectionIntersectionRayDirection, sceneObjects, closestObjectWithReflection, lightSources) * closestObjectMaterial.GetReflection();
+					return reflectionIntersectionColor;
+				}
+			}
+		}
+	}
+}
+
 // Get the color of the pixel at the ray-object intersection point
-Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject,
+Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, unsigned indexOfClosestObject,
 				 const std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
@@ -82,13 +128,22 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	FPType lambertian;
 	FPType phong;
 	Color specular;
-	
 
 	// Shadows, Diffuse, Specular
 	for(const auto &lightSource : lightSources)
 	{
 		bool shadowed = false;
-		Vector lightDir = (lightSource->GetPosition() - point); // Calculate the directional vector towards the lightSource
+		Vector lightDir;
+		if(lightSource->POINT)
+			lightDir = (lightSource->GetPosition() - point); // Calculate the directional vector towards the lightSource
+
+		/*if(lightSource->AREA)
+		{
+			Vector newLocation;
+			newLocation.x = position.x + radius * (2.0 * rand_float() - 1.0);
+			return (newLocation - point).Normalize();
+		}*/
+
 		FPType distance = lightDir.Magnitude();
 		lightDir = lightDir.Normalize();
 		lambertian = closestObjectNormal.Dot(lightDir);
@@ -96,6 +151,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		// Shadows
 		if(SHADOWS_ON && lambertian > 0)
 		{
+
 			Ray shadowRay(point, lightDir); // Cast a ray from the first intersection to the light
 
 			std::vector<FPType> secondaryIntersections;
@@ -157,45 +213,9 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		ambient = closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
 		finalColor += ambient;
 	}
-
-	// Reflections
-	if(closestObjectMaterial.GetReflection() > 0 && REFLECTIONS_ON)
-	{
-		if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
-		{
-			FPType nDotV = closestObjectNormal.Dot(-sceneDirection);
-
-			Vector resultantReflection = (closestObjectNormal * nDotV * 2) - (-sceneDirection);
-			Vector reflectionDirection = resultantReflection.Normalize();
-			Vector offset = reflectionDirection * 0.001; // The rays that start from reflecting object A are considered hitting itself, since it's the nearest object from the ray start position
-
-			Ray reflectionRay(point + offset, resultantReflection);
-
-			// determine what the ray intersects with first
-			std::vector<FPType> reflectionIntersections;
-			for(auto sceneObject : sceneObjects)
-			{
-				reflectionIntersections.push_back(sceneObject->GetIntersection(reflectionRay));
-			}
-
-			int closestObjectWithReflection = ClosestObjectIndex(reflectionIntersections);
-
-			if(closestObjectWithReflection != -1 && closestObjectWithReflection != indexOfClosestObject) // Depth checking
-			{
-				// reflection ray missed everthing else
-				if(reflectionIntersections[closestObjectWithReflection] > TOLERANCE)
-				{
-					// determine the position and direction at the point of intersection with the reflection ray
-					// the ray only affects the color if it reflected off something
-					Vector reflectionIntersectionPosition = point + (resultantReflection * (reflectionIntersections[closestObjectWithReflection]));
-					Vector reflectionIntersectionRayDirection = resultantReflection;
-					Color reflectionIntersectionColor = GetColorAt(reflectionIntersectionPosition, reflectionIntersectionRayDirection, sceneObjects, closestObjectWithReflection, lightSources);
-					finalColor += (reflectionIntersectionColor * closestObjectMaterial.GetReflection());
-				}
-			}
-		}
-	}
-
+	
+	Color reflections = GetReflections(closestObjectMaterial, closestObjectNormal, sceneDirection, sceneObjects, indexOfClosestObject, point, lightSources);
+	finalColor += reflections;
 	// Reflection & Refraction
 	if(closestObjectMaterial.GetReflection() > 0 && closestObjectMaterial.GetRefraction() > 0 && REFLECTIONS_ON && REFRACTIONS_ON)
 	{
@@ -232,7 +252,8 @@ void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPTyp
 	image.set_pixel(x, y, avgRed, avgGreen, avgBlue);
 }
 
-void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
+// Camera pos, dir here
+void EvaluateIntersections(FPType &xCamOffset, FPType &yCamOffset, unsigned &aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
 {
 	Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
 
@@ -256,7 +277,7 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	{
 		intersections.push_back(sceneObject->GetIntersection(camRay));
 	}
-	int indexOfClosestObject = ClosestObjectIndex(intersections);
+	unsigned indexOfClosestObject = ClosestObjectIndex(intersections);
 	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
 	if(indexOfClosestObject == -1)
 	{
@@ -278,93 +299,119 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	}
 }
 
-void CalcIntersections()
+void launchThread(unsigned start, unsigned end, bitmap_image &image)
 {
-	clock_t end, start = clock();
-	bitmap_image image(WIDTH, HEIGHT);
-
-	int columnsCompleted = 0, timeToComplete = 0, timeToCompleteMax = 0;
-
-	FPType percentage;
+	unsigned width = WIDTH;
+	unsigned heigh = HEIGHT;
 
 	FPType tempRed[SUPERSAMPLING*SUPERSAMPLING];
 	FPType tempGreen[SUPERSAMPLING*SUPERSAMPLING];
 	FPType tempBlue[SUPERSAMPLING*SUPERSAMPLING];
 	unsigned aaIndex;
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)
-	for(int x = 0; x < WIDTH; x++)
+
+	for(unsigned z = start; z < end; z++)
 	{
-		// Calculates % of render completed
-		columnsCompleted++;
-		percentage = columnsCompleted / (FPType) WIDTH * 100;
-		std::cout << '\r' << "Completion: " << (int) percentage << '%';
+		unsigned x = z % width;
+		unsigned y = z / width;
 
-		// Calculates Time left
-		end = clock();
-		FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
-		timeToComplete = (diff / columnsCompleted) * (WIDTH - columnsCompleted);
-		if(timeToCompleteMax < timeToComplete)
-			timeToCompleteMax = timeToComplete;
-		std::cout << "\tTime Left: " << timeToComplete << "s";
-		std::cout << "\tTime To Render Image: " << timeToCompleteMax / 60 << "min " << timeToCompleteMax % 60 << "s";
-		fflush(stdout);
+		//// Calculates % of render completed
+		//columnsCompleted++;
+		//percentage = columnsCompleted / (FPType) WIDTH * 100;
+		//std::cout << '\r' << "Completion: " << (int) percentage << '%';
 
-		for(int y = 0; y < HEIGHT; y++)
+		//// Calculates Time left
+		//end = clock();
+		//FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
+		//timeToComplete = (diff / columnsCompleted) * (WIDTH - columnsCompleted);
+		//if(timeToCompleteMax < timeToComplete)
+		//	timeToCompleteMax = timeToComplete;
+		//std::cout << "\tTime Left: " << timeToComplete << "s";
+		//std::cout << "\tTime To Render Image: " << timeToCompleteMax / 60 << "min " << timeToCompleteMax % 60 << "s";
+		//fflush(stdout);
+
+		for(unsigned i = 0; i < SUPERSAMPLING; i++)
 		{
-			for(unsigned i = 0; i < SUPERSAMPLING; i++)
+			for(unsigned j = 0; j < SUPERSAMPLING; j++)
 			{
-				for(unsigned j = 0; j < SUPERSAMPLING; j++)
+				aaIndex = j*SUPERSAMPLING + i;
+				// No Anti-aliasing
+				if(SUPERSAMPLING == 1)
 				{
-					aaIndex = j*SUPERSAMPLING + i;
-					// No Anti-aliasing
-					if(SUPERSAMPLING == 1)
+					if(WIDTH > HEIGHT)
 					{
-						if(WIDTH > HEIGHT)
-						{
-							xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
-							yCamOffset = (y + 0.5) / HEIGHT;
-						}
-						else if(HEIGHT > WIDTH)
-						{
-							xCamOffset = (x + 0.5) / WIDTH;
-							yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
-						}
-						else
-						{
-							// Image is square
-							xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
-							yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
-						}
+						xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
+						yCamOffset = (y + 0.5) / HEIGHT;
 					}
-					else // Supersampling anti-aliasing
+					else if(HEIGHT > WIDTH)
 					{
-						if(WIDTH > HEIGHT)
-						{
-							xCamOffset = ((x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH)*ASPECT_RATIO - (((WIDTH - HEIGHT) / (double) HEIGHT) / 2);
-							yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / HEIGHT;
-						}
-						else if(HEIGHT > WIDTH) // Not sure if works
-						{
-							// the imager is taller than it is wide
-							xCamOffset = (x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH;
-							yCamOffset = (((HEIGHT - y) + (double) i / ((double) SUPERSAMPLING - 1)) / HEIGHT) / ASPECT_RATIO - (((HEIGHT - WIDTH) / (double) WIDTH) / 2);
-						}
-						else
-						{
-							xCamOffset = (x + (i + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
-							yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
-						}
+						xCamOffset = (x + 0.5) / WIDTH;
+						yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
 					}
-					EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempRed, tempGreen, tempBlue);
+					else
+					{
+						// Image is square
+						xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
+						yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
+					}
 				}
+
+				// Supersampling anti-aliasing
+				else 
+				{
+					if(WIDTH > HEIGHT)
+					{
+						xCamOffset = ((x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH)*ASPECT_RATIO - (((WIDTH - HEIGHT) / (double) HEIGHT) / 2);
+						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / HEIGHT;
+					}
+					else if(HEIGHT > WIDTH) // Not sure if works
+					{
+						// the imager is taller than it is wide
+						xCamOffset = (x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH;
+						yCamOffset = (((HEIGHT - y) + (double) i / ((double) SUPERSAMPLING - 1)) / HEIGHT) / ASPECT_RATIO - (((HEIGHT - WIDTH) / (double) WIDTH) / 2);
+					}
+					else
+					{
+						xCamOffset = (x + (i + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
+						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
+					}
+				}
+				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempRed, tempGreen, tempBlue);
 			}
-			Render(image, x, y, tempRed, tempGreen, tempBlue);
 		}
+		std::cout << "y: " << y << std::endl;
+		Render(image, x, y, tempRed, tempGreen, tempBlue);
+		/*end = clock();
+		FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
+		std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
+		std::cout << "Time: " << diff << " seconds" << std::endl;*/
 	}
-	end = clock();
-	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
-	std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
-	std::cout << "Time: " << diff << " seconds" << std::endl;
+}
+
+void CalcIntersections()
+{
+	clock_t end, start = clock();
+	bitmap_image image(WIDTH, HEIGHT);
+
+	unsigned nThreads = std::thread::hardware_concurrency();
+	std::cout << "Threads: " << nThreads << std::endl;
+	std::thread *tt = new std::thread[nThreads];
+
+	unsigned size = WIDTH*HEIGHT;
+
+	FPType chunk = size / nThreads;
+	FPType rem = size % nThreads;
+
+	//launch threads
+	for(unsigned i = 0; i < nThreads - 1; i++)
+	{
+		tt[i] = std::thread(launchThread, i*chunk, (i + 1)*chunk, image);
+	}
+
+	//launchThread((nThreads - 1)*chunk, (nThreads) *chunk + rem, image);
+
+	for(unsigned int i = 0; i < nThreads - 1; i++)
+		tt[i].join();
 
 	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + "render " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
 	image.save_image(saveString);
