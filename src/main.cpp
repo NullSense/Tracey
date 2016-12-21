@@ -250,10 +250,13 @@ void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPTyp
 	FPType avgBlue = totalBlue / (SUPERSAMPLING*SUPERSAMPLING);
 
 	image.set_pixel(x, y, avgRed, avgGreen, avgBlue);
+
+	//if(avgGreen > 0)
+		//std::cout << "x: " << x << " green: " << avgGreen << std::endl;
 }
 
 // Camera pos, dir here
-void EvaluateIntersections(FPType &xCamOffset, FPType &yCamOffset, unsigned &aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
+void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
 {
 	Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
 
@@ -281,7 +284,7 @@ void EvaluateIntersections(FPType &xCamOffset, FPType &yCamOffset, unsigned &aaI
 	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
 	if(indexOfClosestObject == -1)
 	{
-		tempRed[aaIndex] = 0;
+		tempRed[aaIndex] = 255;
 		tempGreen[aaIndex] = 0;
 		tempBlue[aaIndex] = 0;
 	}
@@ -379,7 +382,6 @@ void launchThread(unsigned start, unsigned end, bitmap_image &image)
 				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempRed, tempGreen, tempBlue);
 			}
 		}
-		std::cout << "y: " << y << std::endl;
 		Render(image, x, y, tempRed, tempGreen, tempBlue);
 		/*end = clock();
 		FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
@@ -393,7 +395,8 @@ void CalcIntersections()
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	unsigned nThreads = std::thread::hardware_concurrency();
+	const unsigned nThreads = std::thread::hardware_concurrency();
+
 	std::cout << "Threads: " << nThreads << std::endl;
 	std::thread *tt = new std::thread[nThreads];
 
@@ -407,8 +410,9 @@ void CalcIntersections()
 	{
 		tt[i] = std::thread(launchThread, i*chunk, (i + 1)*chunk, image);
 	}
+	//tt[nThreads-1] = std::thread(launchThread, (nThreads - 1)*chunk, (nThreads) *chunk + rem, image);
 
-	//launchThread((nThreads - 1)*chunk, (nThreads) *chunk + rem, image);
+	launchThread((nThreads - 1)*chunk, (nThreads) *chunk + rem, image);
 
 	for(unsigned int i = 0; i < nThreads - 1; i++)
 		tt[i].join();
