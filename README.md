@@ -1,13 +1,22 @@
 # Tracey - A 3d Ray Tracer written in C++ (multithreaded)
 
-# Final images
-![5](http://i.imgur.com/471lxiB.png)
-![6](http://i.imgur.com/7WN9yQH.png)
-![7](http://i.imgur.com/J98nxZ5.png)
-![8](http://i.imgur.com/5ryC4nw.png)
+#Features:
 
-This implementation currently supports diffuse shading, specular reflections, shadows, reflections, blinn-phong lighting and supersampling.
+* Multithreading
+* Diffuse/Lambertian reflections
+* Specular reflections
+* Shadows
+* Reflections
+* Blinn-Phong shading
+* Supersampling
+
 The currently supported geometric primitives are spheres, planes, disks, boxes.
+
+# Final images
+![5](http://i.imgur.com/7WN9yQH.png)
+![6](http://i.imgur.com/471lxiB.png)
+33 mins 9 seconds (16k, 4x SS)
+![7](http://i.imgur.com/4ESlhH3.png)
 
 # Ray tracing introduction (with screenshots)
 Ray tracing is a 3d rendering technique that attemps to generate photorealistic images by tracing rays that are shot from every pixel of the image and applying mathematical and physical concepts to accomplish techniques described below.

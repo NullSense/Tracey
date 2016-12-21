@@ -14,9 +14,9 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.2, Vector(sphere1->GetCenter().x - 2, sphere1->GetCenter().y, sphere1->GetCenter().z - 1));
 	sphere3->SetMaterial(silverM);
 	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.2, Vector(sphere1->GetCenter().x - 1, sphere1->GetCenter().y + 0.4, sphere1->GetCenter().z - 0.71));
-	sphere4->SetMaterial(blueM);
+	sphere4->SetMaterial(waterM);
 	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.4, Vector(floorPlane->GetCenter().x - 3.5, -0.6, floorPlane->GetCenter().z + 2.9));
-	sphere5->SetMaterial(orangeM);
+	sphere5->SetMaterial(waterM);
 
 	std::vector<std::shared_ptr<Object>> sceneObjects;
 	sceneObjects.push_back(sphere1);
