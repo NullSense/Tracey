@@ -249,10 +249,8 @@ void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPTyp
 	FPType avgGreen = totalGreen / (SUPERSAMPLING*SUPERSAMPLING);
 	FPType avgBlue = totalBlue / (SUPERSAMPLING*SUPERSAMPLING);
 
-	image.set_pixel(x, y, avgRed, avgGreen, avgBlue);
-
-	//if(avgGreen > 0)
-		//std::cout << "x: " << x << " green: " << avgGreen << std::endl;
+	//image.set_pixel(x, y, avgRed, avgGreen, avgBlue);
+	image.set_pixel(x, y, 255, 0, 0);
 }
 
 // Camera pos, dir here
@@ -383,10 +381,6 @@ void launchThread(unsigned start, unsigned end, bitmap_image &image)
 			}
 		}
 		Render(image, x, y, tempRed, tempGreen, tempBlue);
-		/*end = clock();
-		FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
-		std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
-		std::cout << "Time: " << diff << " seconds" << std::endl;*/
 	}
 }
 
@@ -395,10 +389,10 @@ void CalcIntersections()
 	clock_t end, start = clock();
 	bitmap_image image(WIDTH, HEIGHT);
 
-	const unsigned nThreads = std::thread::hardware_concurrency();
-
+	unsigned nThreads = std::thread::hardware_concurrency();
 	std::cout << "Threads: " << nThreads << std::endl;
-	std::thread *tt = new std::thread[nThreads];
+
+	std::thread* tt = new std::thread[nThreads];
 
 	unsigned size = WIDTH*HEIGHT;
 
@@ -408,14 +402,20 @@ void CalcIntersections()
 	//launch threads
 	for(unsigned i = 0; i < nThreads - 1; i++)
 	{
+		// Doesn't render image properly (just black)
 		tt[i] = std::thread(launchThread, i*chunk, (i + 1)*chunk, image);
 	}
-	//tt[nThreads-1] = std::thread(launchThread, (nThreads - 1)*chunk, (nThreads) *chunk + rem, image);
 
+	// This renders the image properly
 	launchThread((nThreads - 1)*chunk, (nThreads) *chunk + rem, image);
 
 	for(unsigned int i = 0; i < nThreads - 1; i++)
 		tt[i].join();
+
+	end = clock();
+	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
+	std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
+	std::cout << "Time: " << diff << " seconds" << std::endl;
 
 	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + "render " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
 	image.save_image(saveString);
