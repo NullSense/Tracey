@@ -65,7 +65,8 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 				 const std::vector<std::shared_ptr<Light>> &lightSources);
 
 // Calculate reflections
-Color GetReflections(Material &closestObjectMaterial, Vector &closestObjectNormal, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject, Vector &point, const std::vector<std::shared_ptr<Light>> &lightSources)
+Color GetReflections(Material &closestObjectMaterial, Vector &closestObjectNormal, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, 
+					 int indexOfClosestObject, Vector &point, const std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	if(closestObjectMaterial.GetReflection() > 0 && REFLECTIONS_ON)
 	{
@@ -137,12 +138,12 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		if(lightSource->POINT)
 			lightDir = (lightSource->GetPosition() - point); // Calculate the directional vector towards the lightSource
 
-															 /*if(lightSource->AREA)
-															 {
-															 Vector newLocation;
-															 newLocation.x = position.x + radius * (2.0 * rand_float() - 1.0);
-															 return (newLocation - point).Normalize();
-															 }*/
+		/*if(lightSource->AREA)
+		{
+		Vector newLocation;
+		newLocation.x = position.x + radius * (2.0 * rand_float() - 1.0);
+		return (newLocation - point).Normalize();
+		}*/
 
 		FPType distance = lightDir.Magnitude();
 		lightDir = lightDir.Normalize();
@@ -193,16 +194,6 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 				phong = pow(NdotH, 350);
 				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // closestObjectMaterial.GetSpecular(); add or no?
 				finalColor += specular;
-
-				/*//PHONG
-				Vector R = ((closestObjectNormal * lightDir.Dot(closestObjectNormal)) * 2) - lightDir;
-				FPType RV = R.Dot(V);
-				if(RV > 0)
-				{
-				phong = closestObjectMaterial.GetSpecular() * pow(RV, 300);
-				specular = (lightSource->GetColor()) * (phong);
-				finalColor += specular;
-				}*/
 			}
 		}
 	}
@@ -289,9 +280,6 @@ void launchThread(unsigned start, unsigned end, bitmap_image *image)
 	unsigned width = WIDTH;
 	unsigned heigh = HEIGHT;
 
-	FPType tempRed[SUPERSAMPLING*SUPERSAMPLING];
-	FPType tempGreen[SUPERSAMPLING*SUPERSAMPLING];
-	FPType tempBlue[SUPERSAMPLING*SUPERSAMPLING];
 	Color tempColor[SUPERSAMPLING*SUPERSAMPLING];
 	unsigned aaIndex;
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)

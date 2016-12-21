@@ -2,12 +2,12 @@
 
 using FPType = double;
 
-//constexpr FPType WIDTH = 500;
-//constexpr FPType HEIGHT = 500;
+constexpr FPType WIDTH = 500;
+constexpr FPType HEIGHT = 500;
 
 // 1920 x 1080p
-constexpr FPType WIDTH = 1920;
-constexpr FPType HEIGHT = 1080;
+//constexpr FPType WIDTH = 1920;
+//constexpr FPType HEIGHT = 1080;
 
 // 2560 x 1440p
 //constexpr FPType WIDTH = 2560;

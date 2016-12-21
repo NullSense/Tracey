@@ -1,4 +1,4 @@
-# Tracey - A 3d Ray Tracer written in C++
+# Tracey - A 3d Ray Tracer written in C++ (multithreaded)
 
 # Final images
 ![5](http://i.imgur.com/471lxiB.png)
