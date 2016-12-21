@@ -226,35 +226,22 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	return finalColor.Clip();
 }
 
-void Render(bitmap_image *image, unsigned x, unsigned y, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
+void Render(bitmap_image *image, unsigned x, unsigned y, Color tempColor[])
 {
-	FPType totalRed = 0;
-	FPType totalGreen = 0;
-	FPType totalBlue = 0;
+	Color totalColor = Color(0, 0, 0);
 
-	for(int iRed = 0; iRed < SUPERSAMPLING*SUPERSAMPLING; iRed++)
+	for(int col = 0; col < SUPERSAMPLING*SUPERSAMPLING; col++)
 	{
-		totalRed = totalRed + tempRed[iRed];
-	}
-	for(int iGreen = 0; iGreen < SUPERSAMPLING*SUPERSAMPLING; iGreen++)
-	{
-		totalGreen = totalGreen + tempGreen[iGreen];
-	}
-	for(int iBlue = 0; iBlue < SUPERSAMPLING*SUPERSAMPLING; iBlue++)
-	{
-		totalBlue = totalBlue + tempBlue[iBlue];
+		totalColor += tempColor[col];
 	}
 
-	FPType avgRed = totalRed / (SUPERSAMPLING*SUPERSAMPLING);
-	FPType avgGreen = totalGreen / (SUPERSAMPLING*SUPERSAMPLING);
-	FPType avgBlue = totalBlue / (SUPERSAMPLING*SUPERSAMPLING);
+	Color avgColor = totalColor / (SUPERSAMPLING * SUPERSAMPLING);
 
-	image->set_pixel(x, y, avgRed, avgGreen, avgBlue);
-	//image->set_pixel(x, y, 255, 0, 0);
+	image->set_pixel(x, y, avgColor.GetRed(), avgColor.GetGreen(), avgColor.GetBlue());
 }
 
 // Camera pos, dir here
-void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
+void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, Color tempColor[])
 {
 	Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
 
@@ -282,9 +269,7 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
 	if(indexOfClosestObject == -1)
 	{
-		tempRed[aaIndex] = 0;
-		tempGreen[aaIndex] = 0;
-		tempBlue[aaIndex] = 0;
+		tempColor[aaIndex] = Color(0, 0, 0);
 	}
 	else // Ray hit an object
 	{
@@ -293,9 +278,8 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 			// If ray hit something, set point position to ray-object intersection
 			Vector point((camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject])));
 			Color intersectionColor = GetColorAt(point, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources);
-			tempRed[aaIndex] = intersectionColor.GetRed();
-			tempGreen[aaIndex] = intersectionColor.GetGreen();
-			tempBlue[aaIndex] = intersectionColor.GetBlue();
+
+			tempColor[aaIndex] = Color(intersectionColor.GetRed(), intersectionColor.GetGreen(), intersectionColor.GetBlue());
 		}
 	}
 }
@@ -308,6 +292,7 @@ void launchThread(unsigned start, unsigned end, bitmap_image *image)
 	FPType tempRed[SUPERSAMPLING*SUPERSAMPLING];
 	FPType tempGreen[SUPERSAMPLING*SUPERSAMPLING];
 	FPType tempBlue[SUPERSAMPLING*SUPERSAMPLING];
+	Color tempColor[SUPERSAMPLING*SUPERSAMPLING];
 	unsigned aaIndex;
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the direction where camera is pointed (x & y positions)
 
@@ -362,10 +347,10 @@ void launchThread(unsigned start, unsigned end, bitmap_image *image)
 						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
 					}
 				}
-				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempRed, tempGreen, tempBlue);
+				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempColor);
 			}
 		}
-		Render(image, x, y, tempRed, tempGreen, tempBlue);
+		Render(image, x, y, tempColor);
 	}
 }
 
