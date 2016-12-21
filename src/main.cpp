@@ -137,12 +137,12 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		if(lightSource->POINT)
 			lightDir = (lightSource->GetPosition() - point); // Calculate the directional vector towards the lightSource
 
-		/*if(lightSource->AREA)
-		{
-			Vector newLocation;
-			newLocation.x = position.x + radius * (2.0 * rand_float() - 1.0);
-			return (newLocation - point).Normalize();
-		}*/
+															 /*if(lightSource->AREA)
+															 {
+															 Vector newLocation;
+															 newLocation.x = position.x + radius * (2.0 * rand_float() - 1.0);
+															 return (newLocation - point).Normalize();
+															 }*/
 
 		FPType distance = lightDir.Magnitude();
 		lightDir = lightDir.Normalize();
@@ -213,7 +213,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		ambient = closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
 		finalColor += ambient;
 	}
-	
+
 	Color reflections = GetReflections(closestObjectMaterial, closestObjectNormal, sceneDirection, sceneObjects, indexOfClosestObject, point, lightSources);
 	finalColor += reflections;
 	// Reflection & Refraction
@@ -226,7 +226,7 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 	return finalColor.Clip();
 }
 
-void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
+void Render(bitmap_image *image, unsigned x, unsigned y, FPType tempRed[], FPType tempGreen[], FPType tempBlue[])
 {
 	FPType totalRed = 0;
 	FPType totalGreen = 0;
@@ -249,8 +249,8 @@ void Render(bitmap_image &image, unsigned x, unsigned y, FPType tempRed[], FPTyp
 	FPType avgGreen = totalGreen / (SUPERSAMPLING*SUPERSAMPLING);
 	FPType avgBlue = totalBlue / (SUPERSAMPLING*SUPERSAMPLING);
 
-	//image.set_pixel(x, y, avgRed, avgGreen, avgBlue);
-	image.set_pixel(x, y, 255, 0, 0);
+	image->set_pixel(x, y, avgRed, avgGreen, avgBlue);
+	//image->set_pixel(x, y, 255, 0, 0);
 }
 
 // Camera pos, dir here
@@ -282,7 +282,7 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
 	if(indexOfClosestObject == -1)
 	{
-		tempRed[aaIndex] = 255;
+		tempRed[aaIndex] = 0;
 		tempGreen[aaIndex] = 0;
 		tempBlue[aaIndex] = 0;
 	}
@@ -300,7 +300,7 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	}
 }
 
-void launchThread(unsigned start, unsigned end, bitmap_image &image)
+void launchThread(unsigned start, unsigned end, bitmap_image *image)
 {
 	unsigned width = WIDTH;
 	unsigned heigh = HEIGHT;
@@ -315,21 +315,6 @@ void launchThread(unsigned start, unsigned end, bitmap_image &image)
 	{
 		unsigned x = z % width;
 		unsigned y = z / width;
-
-		//// Calculates % of render completed
-		//columnsCompleted++;
-		//percentage = columnsCompleted / (FPType) WIDTH * 100;
-		//std::cout << '\r' << "Completion: " << (int) percentage << '%';
-
-		//// Calculates Time left
-		//end = clock();
-		//FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
-		//timeToComplete = (diff / columnsCompleted) * (WIDTH - columnsCompleted);
-		//if(timeToCompleteMax < timeToComplete)
-		//	timeToCompleteMax = timeToComplete;
-		//std::cout << "\tTime Left: " << timeToComplete << "s";
-		//std::cout << "\tTime To Render Image: " << timeToCompleteMax / 60 << "min " << timeToCompleteMax % 60 << "s";
-		//fflush(stdout);
 
 		for(unsigned i = 0; i < SUPERSAMPLING; i++)
 		{
@@ -358,7 +343,7 @@ void launchThread(unsigned start, unsigned end, bitmap_image &image)
 				}
 
 				// Supersampling anti-aliasing
-				else 
+				else
 				{
 					if(WIDTH > HEIGHT)
 					{
@@ -387,7 +372,7 @@ void launchThread(unsigned start, unsigned end, bitmap_image &image)
 void CalcIntersections()
 {
 	clock_t end, start = clock();
-	bitmap_image image(WIDTH, HEIGHT);
+	bitmap_image *image = new bitmap_image(WIDTH, HEIGHT);
 
 	unsigned nThreads = std::thread::hardware_concurrency();
 	std::cout << "Threads: " << nThreads << std::endl;
@@ -402,11 +387,9 @@ void CalcIntersections()
 	//launch threads
 	for(unsigned i = 0; i < nThreads - 1; i++)
 	{
-		// Doesn't render image properly (just black)
 		tt[i] = std::thread(launchThread, i*chunk, (i + 1)*chunk, image);
 	}
 
-	// This renders the image properly
 	launchThread((nThreads - 1)*chunk, (nThreads) *chunk + rem, image);
 
 	for(unsigned int i = 0; i < nThreads - 1; i++)
@@ -414,11 +397,11 @@ void CalcIntersections()
 
 	end = clock();
 	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
-	std::cout << "\n\nResolution: " << WIDTH << "x" << HEIGHT << std::endl;
+	std::cout << "Resolution: " << WIDTH << "x" << HEIGHT << std::endl;
 	std::cout << "Time: " << diff << " seconds" << std::endl;
 
-	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + "render " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
-	image.save_image(saveString);
+	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + " render " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
+	image->save_image(saveString);
 	std::cout << "Output filename: " << saveString << std::endl;
 }
 
