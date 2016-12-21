@@ -207,10 +207,13 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 
 	Color reflections = GetReflections(closestObjectMaterial, closestObjectNormal, sceneDirection, sceneObjects, indexOfClosestObject, point, lightSources);
 	finalColor += reflections;
-	// Reflection & Refraction
+	// Reflections & Refractions
 	if(closestObjectMaterial.GetReflection() > 0 && closestObjectMaterial.GetRefraction() > 0 && REFLECTIONS_ON && REFRACTIONS_ON)
 	{
-		//n = closestObjectMaterial.GetRefraction() / 
+		FPType refraction = closestObjectMaterial.GetRefraction();
+		Vector nl = closestObjectNormal.Dot(sceneDirection) < 0 ? closestObjectNormal : closestObjectNormal * - 1;
+
+		bool goingIn = closestObjectNormal.Dot(nl) > 0; // Ray going into material? outside -> in inside == true
 	}
 
 
@@ -234,7 +237,8 @@ void Render(bitmap_image *image, unsigned x, unsigned y, Color tempColor[])
 // Camera pos, dir here
 void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, Color tempColor[])
 {
-	Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
+	//Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
+	Camera camera(Vector(-0.5, 1, -1.2), Vector(-0.5, -0.6, 4));
 
 	// Set up scene
 	Scene scene;

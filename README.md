@@ -3,8 +3,8 @@
 # Final images
 ![5](http://i.imgur.com/471lxiB.png)
 ![6](http://i.imgur.com/7WN9yQH.png)
-
-![7](http://i.imgur.com/5ryC4nw.png)
+![7](http://i.imgur.com/J98nxZ5.png)
+![8](http://i.imgur.com/5ryC4nw.png)
 
 This implementation currently supports diffuse shading, specular reflections, shadows, reflections, blinn-phong lighting and supersampling.
 The currently supported geometric primitives are spheres, planes, disks, boxes.
