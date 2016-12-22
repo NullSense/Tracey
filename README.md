@@ -17,6 +17,7 @@ The currently supported geometric primitives are spheres, planes, disks, boxes.
 ![6](http://i.imgur.com/471lxiB.png)
 33 mins 9 seconds (16k, 4x SS)
 ![7](http://i.imgur.com/4ESlhH3.png)
+![8](http://i.imgur.com/h1zb8kK.png)
 
 # Ray tracing introduction (with screenshots)
 Ray tracing is a 3d rendering technique that attemps to generate photorealistic images by tracing rays that are shot from every pixel of the image and applying mathematical and physical concepts to accomplish techniques described below.
