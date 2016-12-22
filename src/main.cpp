@@ -131,7 +131,7 @@ Ray GetRefractionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector
 	FPType n2 = closestObjectMaterial.GetRefraction();
 
 	if(nDotI < 0) // Ray is outside the surface
-		nDotI = -nDotI; 
+		nDotI = -nDotI;
 	else // Ray is inside refractive surface
 	{
 		normal = -normal;
@@ -150,42 +150,43 @@ Ray GetRefractionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector
 Color GetRefractions(Material &closestObjectMaterial, Vector &closestObjectNormal, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 int indexOfClosestObject, Vector &point, const std::vector<std::shared_ptr<Light>> &lightSources)
 {
-	//if(closestObjectMaterial.GetRefraction() > 0)
-	//{
-	Ray refractionRay = GetRefractionRay(closestObjectNormal, sceneDirection, point, closestObjectMaterial);
-
-	std::vector<FPType> refractionIntersections;
-	for(auto sceneObject : sceneObjects)
+	if(closestObjectMaterial.GetRefraction() > 0)
 	{
-		refractionIntersections.push_back(sceneObject->GetIntersection(refractionRay));
+		Ray refractionRay = GetRefractionRay(closestObjectNormal, sceneDirection, point, closestObjectMaterial);
+
+		std::vector<FPType> refractionIntersections;
+		for(auto sceneObject : sceneObjects)
+		{
+			refractionIntersections.push_back(sceneObject->GetIntersection(refractionRay));
+		}
+
+		int closestObjectWithRefraction = ClosestObjectIndex(refractionIntersections);
+
+		Color refractionColor;
+		// compute fresnel
+		//FPType kr = 1;
+		FPType kr = fresnel(sceneDirection, closestObjectNormal, closestObjectMaterial);
+		//std::cout << "KR: " << kr;
+		bool outside = sceneDirection.Dot(closestObjectNormal) < 0;
+		Vector bias = closestObjectNormal * TOLERANCE;
+
+		// compute refraction if it is not a case of total internal reflection
+		if(kr < 1)
+		{
+			Vector refractionDirection = refractionRay.GetDirection().Normalize();
+			Vector refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
+			refractionColor = GetColorAt(refractionIntersectionPosition, refractionRay.GetDirection(), sceneObjects, closestObjectWithRefraction, lightSources);
+		}
+		else
+		{
+			//std::cout << "TIR";
+		}
+
+		//Color reflectionColor = GetReflections(closestObjectMaterial, closestObjectNormal, sceneDirection, sceneObjects, indexOfClosestObject, point, lightSources);
+		//// mix the two
+		Color refraReflColor = /*reflectionColor; * kr + */refractionColor * (1 - kr);
+		return refraReflColor;
 	}
-
-	int closestObjectWithRefraction = ClosestObjectIndex(refractionIntersections);
-
-	Color refractionColor;
-	// compute fresnel
-	//FPType kr = 1;
-	FPType kr = fresnel(sceneDirection, closestObjectNormal, closestObjectMaterial);
-	//std::cout << "KR: " << kr;
-	bool outside = sceneDirection.Dot(closestObjectNormal) < 0;
-	Vector bias = closestObjectNormal * TOLERANCE;
-
-	// compute refraction if it is not a case of total internal reflection
-	if(kr < 1)
-	{
-		Vector refractionDirection = refractionRay.GetDirection().Normalize();
-		Vector refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
-		refractionColor = GetColorAt(refractionIntersectionPosition, refractionRay.GetDirection(), sceneObjects, closestObjectWithRefraction, lightSources);
-	}
-	else
-	{
-		//std::cout << "TIR";
-	}
-
-	Color reflectionColor = GetReflections(closestObjectMaterial, closestObjectNormal, sceneDirection, sceneObjects, indexOfClosestObject, point, lightSources);
-	//// mix the two
-	Color refraReflColor = reflectionColor;/* * kr + refractionColor * (1 - kr);*/
-	return refraReflColor;
 }
 
 Ray GetReflectionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector &point)
@@ -203,7 +204,7 @@ Ray GetReflectionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector
 }
 
 // Calculate reflection colors
-Color GetReflections(Material &closestObjectMaterial, Vector &closestObjectNormal, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, 
+Color GetReflections(Material &closestObjectMaterial, Vector &closestObjectNormal, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 int indexOfClosestObject, Vector &point, const std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	if(closestObjectMaterial.GetReflection() > 0 && REFLECTIONS_ON)
@@ -269,12 +270,12 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 		if(lightSource->POINT)
 			lightDir = (lightSource->GetPosition() - point); // Calculate the sceneDirectionectional vector towards the lightSource
 
-		/*if(lightSource->AREA)
-		{
-		Vector newLocation;
-		newLocation.x = position.x + radius * (2.0 * rand_float() - 1.0);
-		return (newLocation - point).Normalize();
-		}*/
+															 /*if(lightSource->AREA)
+															 {
+															 Vector newLocation;
+															 newLocation.x = position.x + radius * (2.0 * rand_float() - 1.0);
+															 return (newLocation - point).Normalize();
+															 }*/
 
 		FPType distance = lightDir.Magnitude();
 		lightDir = lightDir.Normalize();
@@ -338,8 +339,8 @@ Color GetColorAt(Vector &point, Vector &sceneDirection, const std::vector<std::s
 
 	/*if(REFLECTIONS_ON)
 	{
-		Color reflections = GetReflections(closestObjectMaterial, closestObjectNormal, sceneDirection, sceneObjects, indexOfClosestObject, point, lightSources);
-		finalColor += reflections;
+	Color reflections = GetReflections(closestObjectMaterial, closestObjectNormal, sceneDirection, sceneObjects, indexOfClosestObject, point, lightSources);
+	finalColor += reflections;
 	}*/
 
 	// Reflections & Refractions
