@@ -13,10 +13,10 @@ Plane::Plane(Vector center_, Vector normal_)
 FPType Plane::GetIntersection(Ray ray)
 {
 	FPType denom = normal.Dot(ray.GetDirection());
-	if(std::abs(denom) > TOLERANCE) // your favorite epsilon
+	if(std::abs(denom) > BIAS) // your favorite epsilon
 	{
 		FPType t = (center - ray.GetOrigin()).Dot(normal) / denom;
-		if(t > TOLERANCE)
+		if(t > BIAS)
 			return t; // you might want to allow an epsilon here too
 	}
 	return false;
@@ -33,20 +33,9 @@ FPType Plane::GetIntersectionDisk(Ray ray, Vector normal_, Vector position)
 	return t;
 }
 
-
 Vector Plane::GetCenter() const
 {
 	return center;
-}
-
-void Plane::SetNormal(const Vector &normal_)
-{
-	normal = normal_;
-}
-
-void Plane::SetCenter(const Vector &center_)
-{
-	center = center_;
 }
 
 Vector Plane::GetNormalAt(const Vector point)

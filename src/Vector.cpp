@@ -55,7 +55,7 @@ Vector Vector::operator*=(const FPType s)
 	return *this;
 }
 
-Vector Vector::operator/(const FPType s) const
+Vector Vector::operator/(const FPType &s) const
 {
 	return Vector(x / s, y / s, z / s);
 }

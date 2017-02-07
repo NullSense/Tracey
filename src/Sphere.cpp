@@ -12,7 +12,7 @@ Sphere::Sphere(FPType radius_, Vector center_)
 	center = center_;
 }
 
-Vector Sphere::GetNormalAt(Vector point)
+Vector Sphere::GetNormalAt(const Vector point)
 {
 	// normal always points away from the center of a sphere 
 	return (point - center).Normalize();
@@ -47,7 +47,7 @@ FPType Sphere::GetIntersection(Ray ray)
 	}
 
 	//Both solutions were negative
-	return -1;
+	return false;
 }
 
 FPType Sphere::GetRadius() const
@@ -58,14 +58,4 @@ FPType Sphere::GetRadius() const
 Vector Sphere::GetCenter() const
 {
 	return center;
-}
-
-void Sphere::SetRadius(const FPType &radius_)
-{
-	radius = radius_;
-}
-
-void Sphere::SetCenter(const Vector &center_)
-{
-	center = center_;
 }

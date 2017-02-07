@@ -123,6 +123,7 @@
     <ClInclude Include="src\Ray.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\Sphere.h" />
+    <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\Vector.h" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +137,7 @@
     <ClCompile Include="src\Ray.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
+    <ClCompile Include="src\Triangle.cpp" />
     <ClCompile Include="src\Vector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

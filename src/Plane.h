@@ -14,8 +14,6 @@ public:
     virtual FPType GetIntersection(Ray ray);
 	FPType GetIntersectionDisk(Ray ray, Vector normal_, Vector position);
 	Vector GetCenter() const;
-	void SetNormal(const Vector &normal_);
-	void SetCenter(const Vector &center_);
 
 private:
 	Vector normal, center;

@@ -4,7 +4,7 @@ Ray::Ray()
 {
 	origin = Vector(0, 0, 0);
 	direction = Vector(0, 0, 1);
-	tMin = TOLERANCE;
+	tMin = BIAS;
 	tMax = 1000;
 
 	invDir.x = 1 / direction.x;
@@ -20,7 +20,7 @@ Ray::Ray(const Vector origin_, const Vector direction_)
 {
 	origin = origin_;
 	direction = direction_;
-	tMin = TOLERANCE;
+	tMin = BIAS;
 	tMax = 1000;
 
 	invDir.x = 1 / direction_.x;

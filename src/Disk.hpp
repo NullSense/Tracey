@@ -7,14 +7,12 @@
 class Disk : public Plane
 {
 public:
-	Disk(Vector position_, FPType radius_, Vector normal_);
+	Disk();
+	Disk(FPType radius_, Vector position_, Vector normal_);
 	FPType GetIntersection(Ray ray);
 
-	virtual Vector GetNormalAt(Vector point);
-	Vector GetNormal();
+	Vector GetNormalAt(Vector point);
 	Vector GetPosition() const;
-	void SetNormal(const Vector &normal_);
-	void SetPosition(const Vector &position_);
 
 private:
 	Vector position;

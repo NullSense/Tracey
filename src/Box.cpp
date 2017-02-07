@@ -22,7 +22,7 @@ FPType Box::GetIntersection(Ray ray)
 	FPType tboxmin = std::fmax(std::fmax(std::fmin(t1, t2), std::fmin(t3, t4)), std::fmin(t5, t6));
 	FPType tboxmax = std::fmin(std::fmin(std::fmax(t1, t2), std::fmax(t3, t4)), std::fmax(t5, t6));
 
-	if(tboxmax < TOLERANCE)
+	if(tboxmax < BIAS)
 	{
 		return false;
 	}

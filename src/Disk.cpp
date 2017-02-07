@@ -1,12 +1,18 @@
 #include "Disk.hpp"
 
-Disk::Disk(Vector position_, FPType radius_, Vector normal_)
-	:position{position_}, radius{radius_}, normal{normal_}
+Disk::Disk()
+{
+	radius = 1;
+	position = Vector(0, 1, 8);
+	normal = Vector(0, 0, 1);
+}
+
+Disk::Disk(FPType radius_, Vector position_, Vector normal_)
+	:radius {radius_}, position{position_}, normal{normal_}
 {}
 
 FPType Disk::GetIntersection(Ray ray)
 {
-
 	if(Plane::GetIntersectionDisk(ray, normal, position))
 	{
 		FPType t = Plane::GetIntersectionDisk(ray, normal, position);
@@ -14,18 +20,13 @@ FPType Disk::GetIntersection(Ray ray)
 		Vector intersectionToMidDist = intersectionPoint - position;
 		FPType d2 = intersectionToMidDist.Dot(intersectionToMidDist);
 		FPType radius2 = radius * radius;
-		return d2 <= radius2;
+		return (d2 <= radius2);
 	}
 	else
-		return -1;
+		return false;
 }
 
-Vector Disk::GetNormalAt(Vector point)
-{
-	return normal;
-}
-
-Vector Disk::GetNormal()
+Vector Disk::GetNormalAt(const Vector point)
 {
 	return normal;
 }
@@ -33,14 +34,4 @@ Vector Disk::GetNormal()
 Vector Disk::GetPosition() const
 {
 	return position;
-}
-
-void Disk::SetNormal(const Vector & normal_)
-{
-	normal = normal;
-}
-
-void Disk::SetPosition(const Vector & position_)
-{
-	position = position_;
 }

@@ -22,15 +22,27 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.4, Vector(floorPlane->GetCenter().x - 3.5, -0.6, floorPlane->GetCenter().z + 2.9));
 	sphere5->SetMaterial(orangeM);
 
+	std::shared_ptr<Disk> disk1 = std::make_shared<Disk>();
+	disk1->SetMaterial(blueM);
+
+	std::shared_ptr<Triangle> triangle1 = std::make_shared<Triangle>();
+	triangle1->SetMaterial(orangeM);
+
+	std::shared_ptr<Box> box1 = std::make_shared<Box>(Vector(-2, 0, 2), Vector(-1, 0.5, 3));
+	box1->SetMaterial(orangeM);
+
 	std::vector<std::shared_ptr<Object>> sceneObjects;
+	sceneObjects.push_back(box1);
+	sceneObjects.push_back(disk1);
 	sceneObjects.push_back(sphere1);
-	sceneObjects.push_back(sphere2);
+	sceneObjects.push_back(triangle1);
+	/*sceneObjects.push_back(sphere2);
 	sceneObjects.push_back(sphere3);
 	sceneObjects.push_back(sphere4);
-	sceneObjects.push_back(sphere5);
+	sceneObjects.push_back(sphere5);*/
 	sceneObjects.push_back(floorPlane);
 	//sceneObjects.push_back(topPlane);
-	sceneObjects.push_back(backPlane);
+	//sceneObjects.push_back(backPlane);
 	//sceneObjects.push_back(behindPlane);
 
 	return sceneObjects;
