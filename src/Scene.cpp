@@ -25,16 +25,16 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Disk> disk1 = std::make_shared<Disk>();
 	disk1->SetMaterial(blueM);
 
-	std::shared_ptr<Triangle> triangle1 = std::make_shared<Triangle>();
+	std::shared_ptr<Triangle> triangle1 = std::make_shared<Triangle>(Vector(0, -1, 9), Vector(2, -1, 9), Vector(2, 1, 9));
 	triangle1->SetMaterial(orangeM);
 
-	std::shared_ptr<Box> box1 = std::make_shared<Box>(Vector(-2, 0, 2), Vector(-1, 0.5, 3));
+	std::shared_ptr<Box> box1 = std::make_shared<Box>(Vector(-2, 0, 2), Vector(-1.5, 0.5, 2.5));
 	box1->SetMaterial(orangeM);
 
 	std::vector<std::shared_ptr<Object>> sceneObjects;
 	sceneObjects.push_back(box1);
-	sceneObjects.push_back(disk1);
-	sceneObjects.push_back(sphere1);
+	//sceneObjects.push_back(disk1);
+	//sceneObjects.push_back(sphere1);
 	sceneObjects.push_back(triangle1);
 	/*sceneObjects.push_back(sphere2);
 	sceneObjects.push_back(sphere3);
@@ -51,11 +51,11 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 {
 	std::vector<std::shared_ptr<Light>> lightSources;
-	Vector light1Position(-2.5, 1, 0.6);
+	Vector light1Position(1, 1, 5);
 	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, white, 1, Light::POINT);
 	std::shared_ptr<Light> light2 = std::make_shared<Light>(Vector(light1Position.x + 6, light1Position.y, light1Position.z + 4), yellow, 0.8, Light::POINT);
 	lightSources.push_back(light1);
-	lightSources.push_back(light2);
+	//lightSources.push_back(light2);
 
 	return lightSources;
 }

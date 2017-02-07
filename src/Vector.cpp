@@ -60,6 +60,11 @@ Vector Vector::operator/(const FPType &s) const
 	return Vector(x / s, y / s, z / s);
 }
 
+Vector Vector::operator/(const Vector &v) const
+{
+	return Vector(x / v.x, y / v.y, z / v.z);
+}
+
 Vector Vector::operator-(const Vector &v) const
 {
 	return Vector(x - v.x, y - v.y, z - v.z);

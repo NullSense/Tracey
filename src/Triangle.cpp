@@ -8,6 +8,10 @@ Triangle::Triangle()
 	normal = GetNormal(v0, v1, v2);
 }
 
+Triangle::Triangle(Vector v0_, Vector v1_, Vector v2_)
+	:v0{v0_}, v1{v1_}, v2{v2_}, normal{GetNormal(v0_, v1_, v2_)}
+{}
+
 Vector Triangle::GetNormal(Vector v0, Vector v1, Vector v2)
 {
 	Vector A = v1 - v0;
@@ -24,10 +28,10 @@ Vector Triangle::GetNormalAt(const Vector point)
 FPType Triangle::GetIntersection(Ray ray)
 {
 
-	// check if ray and plane are parallel ?
+	// check if ray and plane are parallel
 	FPType NdotRayDirection = normal.Dot(ray.GetDirection());
 	if(fabs(NdotRayDirection) < BIAS) // almost 0 
-		return false; // they are parallel so they don't intersect ! 
+		return false; // they are parallel so they don't intersect
 
 	FPType D = normal.Dot(v0); // Dist from point to plane
 	FPType t = (normal.Dot(ray.GetOrigin()) + D) / (normal.Dot(ray.GetDirection()));
@@ -57,7 +61,7 @@ FPType Triangle::GetIntersection(Ray ray)
 	Vector vp2 = P - v2;
 	C = edge2.Cross(vp2);
 	if(normal.Dot(C) < 0)
-		return false; // P is on the right side; 
+		return false; // P is on the right side;
 
 	return t; // this ray hits the triangle 
 }

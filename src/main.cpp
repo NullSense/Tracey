@@ -375,7 +375,7 @@ void Render(bitmap_image *image, unsigned x, unsigned y, Color tempColor[])
 void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, Color tempColor[])
 {
 	//Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
-	Camera camera(Vector(-0.5, 1, -1.2), Vector(-0.5, -0.6, 4));
+	Camera camera(Vector(0, 1.3, -1), Vector(0, -0.6, 4));
 
 	// Set up scene
 	Scene scene;
