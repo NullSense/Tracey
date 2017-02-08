@@ -244,9 +244,10 @@ Color GetReflections(Vector &position, Vector &sceneDirection, const std::vector
 Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects, unsigned indexOfClosestObject,
 				 const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth)
 {
+	Color finalColor;
 	if(depth > DEPTH)
 		return Color(0, 0, 0);
-	//std::cout << depth;
+	
 	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
 	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(origin);
 
@@ -260,7 +261,6 @@ Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::share
 			closestObjectMaterial.SetColor(Color(255, 255, 255));
 	}
 
-	Color finalColor;
 	Color ambient;
 	Color diffuse;
 	FPType lambertian;
@@ -375,7 +375,7 @@ void Render(bitmap_image *image, unsigned x, unsigned y, Color tempColor[])
 void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, Color tempColor[])
 {
 	//Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
-	Camera camera(Vector(0, 1.3, -1), Vector(0, -0.6, 4));
+	Camera camera(Vector(0, 2, -7), Vector(0, -0.6, 4));
 
 	// Set up scene
 	Scene scene;

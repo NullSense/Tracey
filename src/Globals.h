@@ -48,9 +48,9 @@ constexpr FPType HEIGHT = 1080;
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
 constexpr FPType AMBIENT_LIGHT = 0.7;
 constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
-constexpr FPType BIAS = 0.000001;
+constexpr FPType BIAS = 1e-8;
 constexpr unsigned SUPERSAMPLING = 1;
-constexpr unsigned DEPTH = 8;
+constexpr unsigned DEPTH = 100;
 
 constexpr bool REFRACTIONS_ON = false;
 constexpr bool REFLECTIONS_ON = true;
