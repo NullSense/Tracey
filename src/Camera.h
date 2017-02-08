@@ -15,10 +15,15 @@ public:
 	void SetSceneDirection(const Vector &dir);
 	
 private:
-	Vector origin;
-	Vector sceneDirection; // Where the camera looks at in the scene
+	// CAMERA COORDINATE SYSTEM
+	Vector origin; // replace with from
+	Vector sceneDirection; // Where the camera looks at in the scene, replace with to
+	// replace V with Vector forward = (from - to).Normalize(); 
 	Vector camDirection = (GetSceneDirection() - GetOrigin()).Normalize(); // Where camera's view is centered
-
+	
+	// Vector tmp(0, 1, 0);
+	// replace camX with: Vector right = (tmp.Normalize()).Cross(forward);
+	// replace camY with: Vector up = forward.Cross(right);
 	// camX and Y represent the 2D coordinate system on the IMAGE plane
 	Vector camX = Vector(0, 1, 0).Cross(GetCameraDirection()).Normalize();
 	Vector camY = camX.Cross(GetCameraDirection());
