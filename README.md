@@ -1,16 +1,26 @@
 # Tracey - A 3d Ray Tracer written in C++ (multithreaded)
 
-#Features:
+# Features:
 
-* Multithreading
-* Diffuse/Lambertian reflections
-* Specular reflections
-* Shadows
-* Reflections
-* Blinn-Phong shading
-* Supersampling
+- [x] Multithreading
+- [x] Supersampling anti-aliasing
+- [x] Blinn-Phong shading (ambient, diffuse and specular terms)
+- [x] Hard shadows
+- [ ] Soft shadows
+- [x] Point lights
+- [ ] Area Lights
+- [x] Reflections
+- [ ] Refractions
+- [ ] Triangle meshes
+- [ ] Texture mapping
 
-The currently supported geometric primitives are spheres, planes, disks, boxes.
+# Geometric primitives:
+
+- [x] Planes
+- [x] Spheres
+- [ ] Triangles (WIP)
+- [ ] Disks (WIP)
+- [ ] Boxes (WIP)
 
 # Final images
 ![5](http://i.imgur.com/7WN9yQH.png)
