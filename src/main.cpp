@@ -1,23 +1,17 @@
 #define _SCL_SECURE_NO_WARNINGS
+#define _USE_MATH_DEFINES
 
 #include "bitmap_image.hpp"
 #include "Globals.h"
-#include "Light.h"
-#include "Material.h"
 #include "Scene.h"
 #include "Camera.h"
+#include "Matrix44.h"
 #include <vector>
-#include <iostream>
 #include <time.h>
 #include <sstream>
-#include <algorithm>
 #include <thread>
 
 Color GetColorAt(Vector &position, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, unsigned indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth);
-
-Ray GetReflectionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector &position);
-
-Color GetReflections(Vector &position, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources);
 
 // Returns the closest object's index that the ray intersected with
 int ClosestObjectIndex(const std::vector<FPType> &intersections)
@@ -69,6 +63,12 @@ int ClosestObjectIndex(const std::vector<FPType> &intersections)
 FPType clamp(const FPType &lo, const FPType &hi, const FPType &v)
 {
 	return std::max(lo, std::min(hi, v));
+}
+
+inline
+float deg2rad(const float &deg)
+{
+	return deg * M_PI / 180;
 }
 
 FPType fresnel(Vector &sceneDirection, Vector &closestObjectNormal, Material &closestObjectMaterial)
@@ -175,8 +175,8 @@ Color GetRefractions(Vector &position, Vector &direction, const std::vector<std:
 			Vector refractionDirection = refractionRay.GetDirection().Normalize();
 			Vector refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
 			Vector refractionRayOrig = outside ? refractionIntersectionPosition - bias : refractionIntersectionPosition + bias;
-			
-			refractionColor = GetColorAt(refractionRayOrig, refractionDirection, sceneObjects, closestObjectWithRefraction, lightSources, + 1);
+
+			refractionColor = GetColorAt(refractionRayOrig, refractionDirection, sceneObjects, closestObjectWithRefraction, lightSources, +1);
 		}
 		else
 		{
@@ -189,6 +189,8 @@ Color GetRefractions(Vector &position, Vector &direction, const std::vector<std:
 		Color refraReflColor = /*reflectionColor; * kr + */refractionColor * (1 - kr);
 		return refraReflColor;
 	}
+	else
+		return Color(0, 0, 0);
 }
 
 Ray GetReflectionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector &position)
@@ -238,6 +240,8 @@ Color GetReflections(Vector &position, Vector &sceneDirection, const std::vector
 			}
 		}
 	}
+	else
+		return Color(0, 0, 0);
 }
 
 // Get the color of the pixel at the ray-object intersection position
@@ -374,8 +378,11 @@ void Render(bitmap_image *image, unsigned x, unsigned y, Color tempColor[])
 // Camera pos, sceneDirection here
 void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, Color tempColor[])
 {
-	//Camera camera(Vector(-0.5, 1, -2.3), Vector(-0.5, -1.3, 4));
-	Camera camera(Vector(0, 2, -7), Vector(0, -0.6, 4));
+	Camera camera(Vector(0, 0, 0), Vector(0, 0, -1));
+
+	Matrix44f cameraToWorld;
+	Vector orig;
+	cameraToWorld.MultVecMatrix(Vector(0, 0, 0), orig);
 
 	// Set up scene
 	Scene scene;
@@ -383,11 +390,11 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
 
 	// Camera sceneDirectionection for every ray shot through each pixel
-	Vector camRayDir = (camera.GetCameraDirection() + camera.GetCamX() * (xCamOffset - 0.5) + camera.GetCamY() * (yCamOffset - 0.5)).Normalize();
-	camera.SetSceneDirection(camRayDir);
+	Vector camRayDir = (camera.GetForward() + camera.GetRight() * (xCamOffset - 0.5) + camera.GetUp() * (yCamOffset - 0.5)).Normalize();
+	camera.SetTo(camRayDir);
 
 	// Shoot ray into evey pixel of the image
-	Ray camRay(camera.GetOrigin(), camera.GetSceneDirection());
+	Ray camRay(camera.GetFrom(), camera.GetTo());
 
 	std::vector<FPType> intersections;
 	intersections.reserve(1024);
@@ -408,8 +415,8 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 		if(intersections[indexOfClosestObject] > BIAS) // If intersection at that position > accuracy, get color of object
 		{
 			// If ray hit something, set position position to ray-object intersection
-			Vector position((camera.GetOrigin() + (camera.GetSceneDirection() * intersections[indexOfClosestObject])));
-			Color intersectionColor = GetColorAt(position, camera.GetSceneDirection(), sceneObjects, indexOfClosestObject, lightSources, 0);
+			Vector position((camera.GetFrom() + (camera.GetTo() * intersections[indexOfClosestObject])));
+			Color intersectionColor = GetColorAt(position, camera.GetTo(), sceneObjects, indexOfClosestObject, lightSources, 0);
 
 			tempColor[aaIndex] = Color(intersectionColor.GetRed(), intersectionColor.GetGreen(), intersectionColor.GetBlue());
 		}
@@ -425,6 +432,8 @@ void launchThread(unsigned start, unsigned end, bitmap_image *image)
 	unsigned aaIndex;
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the sceneDirectionection where camera is pointed (x & y positions)
 
+	FPType scale = tan(deg2rad(FOV * 0.5));
+
 	for(unsigned z = start; z < end; z++)
 	{
 		unsigned x = z % width;
@@ -438,39 +447,27 @@ void launchThread(unsigned start, unsigned end, bitmap_image *image)
 				// No Anti-aliasing
 				if(SUPERSAMPLING == 1)
 				{
-					if(WIDTH > HEIGHT)
-					{
-						xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
-						yCamOffset = (y + 0.5) / HEIGHT;
-					}
-					else if(HEIGHT > WIDTH)
-					{
-						xCamOffset = (x + 0.5) / WIDTH;
-						yCamOffset = ((y + 0.5) / HEIGHT) / ASPECT_RATIO - ((HEIGHT - WIDTH) / (WIDTH / 2));
-					}
-					else
-					{
-						// Image is square
-						xCamOffset = (x + 0.5) / WIDTH, HEIGHT;
-						yCamOffset = (y + 0.5) / WIDTH, HEIGHT;
-					}
+					//xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
+					xCamOffset = (2 * (x + 0.5) / (FPType) WIDTH - 1) * ASPECT_RATIO * scale;
+					//yCamOffset = (y + 0.5) / HEIGHT;
+					yCamOffset = (1 - 2 * (y + 0.5) / (FPType) HEIGHT) * scale;
 				}
 
 				// Supersampling anti-aliasing
 				else
 				{
-					if(WIDTH > HEIGHT)
+					if(WIDTH > HEIGHT) // need to fix
 					{
 						xCamOffset = ((x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH)*ASPECT_RATIO - (((WIDTH - HEIGHT) / (double) HEIGHT) / 2);
 						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / HEIGHT;
 					}
-					else if(HEIGHT > WIDTH) // Not sure if works
+					else if(HEIGHT > WIDTH) // need to fix
 					{
 						// the imager is taller than it is wide
 						xCamOffset = (x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH;
 						yCamOffset = (((HEIGHT - y) + (double) i / ((double) SUPERSAMPLING - 1)) / HEIGHT) / ASPECT_RATIO - (((HEIGHT - WIDTH) / (double) WIDTH) / 2);
 					}
-					else
+					else // need to fix
 					{
 						xCamOffset = (x + (i + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
 						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
@@ -495,8 +492,8 @@ void CalcIntersections()
 
 	unsigned size = WIDTH*HEIGHT;
 
-	FPType chunk = size / nThreads;
-	FPType rem = size % nThreads;
+	unsigned chunk = size / nThreads;
+	unsigned rem = size % nThreads;
 
 	//launch threads
 	for(unsigned i = 0; i < nThreads - 1; i++)

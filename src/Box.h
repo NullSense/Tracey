@@ -6,8 +6,8 @@ class Box : public Object
 {
 public:
 	Box(const Vector &min_, const Vector &max_);
-	FPType GetIntersection(Ray ray);
-	Vector GetIntersectionPoint(Ray ray);
+	FPType GetIntersection(const Ray ray);
+	Vector GetIntersectionPoint(const Ray ray);
 	Vector GetNormalAt(const Vector point);
 
 private:

@@ -11,9 +11,9 @@ public:
 	Object() noexcept;
 	virtual ~Object();
 
-	virtual FPType GetIntersection(Ray ray);
+	virtual FPType GetIntersection(const Ray ray);
 
-	virtual Vector GetNormalAt(Vector intersectionPosition);
+	virtual Vector GetNormalAt(const Vector intersectionPosition);
 
 	virtual Color GetColor();
 

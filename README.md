@@ -10,6 +10,7 @@
 - [x] Point lights
 - [ ] Area Lights
 - [x] Reflections
+- [ ] Glossy reflections
 - [ ] Refractions
 - [ ] Triangle meshes
 - [ ] Texture mapping

@@ -6,63 +6,59 @@ class Camera
 {
 public:
 	Camera();
-	Camera(const Vector &origin, const Vector &direction);
-	Vector GetOrigin();
-	Vector GetSceneDirection();
-	Vector GetCameraDirection();
-	Vector GetCamX();
-	Vector GetCamY();
-	void SetSceneDirection(const Vector &dir);
+	Camera(const Vector &from, const Vector &to);
+	Vector GetFrom();
+	Vector GetTo();
+	Vector GetForward();
+	Vector GetRight();
+	Vector GetUp();
+	void SetTo(const Vector &to_);
 	
 private:
-	// CAMERA COORDINATE SYSTEM
-	Vector origin; // replace with from
-	Vector sceneDirection; // Where the camera looks at in the scene, replace with to
-	// replace V with Vector forward = (from - to).Normalize(); 
-	Vector camDirection = (GetSceneDirection() - GetOrigin()).Normalize(); // Where camera's view is centered
-	
-	// Vector tmp(0, 1, 0);
-	// replace camX with: Vector right = (tmp.Normalize()).Cross(forward);
-	// replace camY with: Vector up = forward.Cross(right);
-	// camX and Y represent the 2D coordinate system on the IMAGE plane
-	Vector camX = Vector(0, 1, 0).Cross(GetCameraDirection()).Normalize();
-	Vector camY = camX.Cross(GetCameraDirection());
+	Vector from;
+	Vector to;
+	Vector tmp = Vector(0, 1, 0);
+
+	// Camera coordinates
+	Vector forward = (from - to).Normalize(); // Where camera's view is centered
+	Vector right = (tmp.Normalize()).Cross(forward);
+	Vector up = forward.Cross(right);
 };
 
 Camera::Camera()
-	:origin {0, 0, 0}, sceneDirection {0, 0, 1}
+	:from {0, 0, 0}, to {0, 0, -1}
 {}
 
-inline Camera::Camera(const Vector &origin, const Vector &sceneDirection)
-	: origin(origin), sceneDirection(sceneDirection)
+inline Camera::Camera(const Vector &from, const Vector &to)
+	: from(from), to(to)
 {}
 
-inline Vector Camera::GetOrigin()
+inline Vector Camera::GetFrom()
 {
-	return origin;
+	return from;
 }
 
-inline Vector Camera::GetSceneDirection()
+inline Vector Camera::GetTo()
 {
-	return sceneDirection;
+	return to;
 }
 
-inline Vector Camera::GetCameraDirection()
+inline Vector Camera::GetForward()
 {
-	return camDirection;
+	return forward;
 }
 
-inline Vector Camera::GetCamX()
+inline Vector Camera::GetRight()
 {
-	return camX;
+	return right;
 }
 
-inline Vector Camera::GetCamY()
+inline Vector Camera::GetUp()
 {
-	return camY;
+	return up;
 }
 
-void Camera::SetSceneDirection(const Vector &dir)
+void Camera::SetTo(const Vector &to_)
 {
-	sceneDirection = dir;
+	to = to_;
 }

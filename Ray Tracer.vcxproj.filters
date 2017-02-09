@@ -60,6 +60,9 @@
     <ClInclude Include="src\Triangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Matrix44.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Color.cpp">

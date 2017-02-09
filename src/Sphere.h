@@ -9,7 +9,7 @@ public:
 	Sphere(FPType radius_, Vector center_);
 
 	Vector GetNormalAt(const Vector point);
-	FPType GetIntersection(Ray ray);
+	FPType GetIntersection(const Ray ray);
 	FPType GetRadius() const;
 	Vector GetCenter() const;
 

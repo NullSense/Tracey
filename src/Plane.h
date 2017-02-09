@@ -10,9 +10,9 @@ public:
     Plane();
     Plane(Vector center_, Vector normal_);
     
-    virtual Vector GetNormalAt(Vector point);
-    virtual FPType GetIntersection(Ray ray);
-	FPType GetIntersectionDisk(Ray ray, Vector normal_, Vector position);
+    virtual Vector GetNormalAt(const Vector point);
+    virtual FPType GetIntersection(const Ray ray);
+	FPType GetIntersectionDisk(const Ray ray, const Vector normal_, const Vector position);
 	Vector GetCenter() const;
 
 private:

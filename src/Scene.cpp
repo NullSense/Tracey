@@ -43,7 +43,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	sceneObjects.push_back(floorPlane);
 	//sceneObjects.push_back(topPlane);
 	sceneObjects.push_back(backPlane);
-	sceneObjects.push_back(behindPlane);
+	//sceneObjects.push_back(behindPlane);
 
 	return sceneObjects;
 }

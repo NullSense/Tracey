@@ -2,8 +2,8 @@
 
 using FPType = double;
 
-//constexpr FPType WIDTH = 500;
-//constexpr FPType HEIGHT = 500;
+//constexpr unsigned WIDTH = 500;
+//constexpr unsigned HEIGHT = 500;
 
 // 1920 x 1080p
 constexpr FPType WIDTH = 1920;
@@ -50,7 +50,8 @@ constexpr FPType AMBIENT_LIGHT = 0.7;
 constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
 constexpr FPType BIAS = 1e-8;
 constexpr unsigned SUPERSAMPLING = 1;
-constexpr unsigned DEPTH = 100;
+constexpr unsigned DEPTH = 8;
+constexpr unsigned FOV = 90;
 
 constexpr bool REFRACTIONS_ON = false;
 constexpr bool REFLECTIONS_ON = true;
@@ -58,3 +59,6 @@ constexpr bool SHADOWS_ON = true;
 constexpr bool SPECULAR_ON = true;
 constexpr bool DIFFUSE_ON = true;
 constexpr bool AMBIENT_ON = true;
+
+// This ray tracer uses a Left hand coordinate system,
+// with x pointing to the right, y up and z coming out from the screen

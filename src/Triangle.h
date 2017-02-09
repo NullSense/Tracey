@@ -12,7 +12,7 @@ public:
 
 	Vector GetNormal();
 	Vector GetNormalAt(const Vector point);
-	FPType GetIntersection(Ray ray);
+	FPType GetIntersection(const Ray ray);
 
 private:
 	Vector v0, v1, v2;

@@ -103,6 +103,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -118,6 +119,7 @@
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\Matrix44.h" />
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Plane.h" />
     <ClInclude Include="src\Ray.h" />
