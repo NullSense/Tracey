@@ -69,7 +69,7 @@ FPType clamp(const FPType &lo, const FPType &hi, const FPType &v)
 }
 
 inline
-float deg2rad(const float &deg)
+FPType deg2rad(const FPType &deg)
 {
 	return deg * M_PI / 180;
 }
@@ -107,23 +107,6 @@ FPType fresnel(Vector &sceneDirection, Vector &closestObjectNormal, Material &cl
 
 Ray GetRefractionRay(Vector &position, Vector &sceneDirection, Vector &closestObjectNormal, Material &closestObjectMaterial)
 {
-	//Vector b = closestObjectNormal.Dot(sceneDirection) < 0 ? closestObjectNormal : -closestObjectNormal;
-	//bool goingIn = closestObjectNormal.Dot(b) > 0; // Ray going into material? outside -> in inside == true
-	//FPType cosI = sceneDirection.Dot(b);
-	//// If going into material, do (global refraction (usually air) / material refraction); Else, material refraction/global refraction
-	//FPType n = goingIn ? GLOBAL_REFRACTION / closestObjectMaterial.GetRefraction() : closestObjectMaterial.GetRefraction() / GLOBAL_REFRACTION;
-	//FPType cos2T = n * n * (1 - cosI * cosI);
-
-	//if(cos2T < 0) // TIR - Total Internal Reflection
-	//	std::cout << "TIR";
-	////	return ;
-
-	//FPType cosT = sqrt(1 - cos2T);
-	//Vector refractionDirection = sceneDirection * n + closestObjectNormal * (n * cosI - cosT);
-	//Vector offset = refractionDirection * BIAS;
-	//Ray refractionRay(position + offset, refractionDirection);
-	//return refractionRay;
-
 	Vector normal = closestObjectNormal;
 	FPType nDotI = normal.Dot(sceneDirection);
 
@@ -147,80 +130,27 @@ Ray GetRefractionRay(Vector &position, Vector &sceneDirection, Vector &closestOb
 	return refractionRay;
 }
 
-//Color GetRefractions(Vector &position, Vector &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects,
-//					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources)
+//Vector Refract(const Vector &direction, const Vector &closestObjectNormal, Material &closestObjectMaterial)
 //{
-//	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
-//	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
-//	if(closestObjectMaterial.GetRefraction() > 0)
+//	Vector I = direction;
+//	Vector N = closestObjectNormal;
+//	FPType ior = closestObjectMaterial.GetRefraction();
+//
+//	FPType cosi = clamp(-1, 1, I.Dot(N));
+//	FPType etai = 1, etat = ior;
+//	Vector n = N;
+//	if(cosi < 0)
 //	{
-//		Ray refractionRay = GetRefractionRay(position, direction, closestObjectNormal, closestObjectMaterial);
-//
-//		std::vector<FPType> refractionIntersections;
-//		for(auto sceneObject : sceneObjects)
-//		{
-//			refractionIntersections.push_back(sceneObject->GetIntersection(refractionRay));
-//		}
-//
-//		int closestObjectWithRefraction = ClosestObjectIndex(refractionIntersections);
-//
-//		Color refractionColor;
-//		// compute fresnel
-//		//FPType kr = 1;
-//		FPType kr = fresnel(direction, closestObjectNormal, closestObjectMaterial);
-//		//std::cout << "KR: " << kr;
-//		bool outside = direction.Dot(closestObjectNormal) < 0;
-//		Vector bias = closestObjectNormal * BIAS;
-//
-//		// compute refraction if it is not a case of total internal reflection
-//		if(kr < 1)
-//		{
-//			Vector refractionDirection = refractionRay.GetDirection().Normalize();
-//			Vector refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
-//			Vector refractionRayOrig = outside ? refractionIntersectionPosition - bias : refractionIntersectionPosition + bias;
-//
-//			refractionColor = GetColorAt(refractionRayOrig, refractionDirection, sceneObjects, closestObjectWithRefraction, lightSources, +1);
-//		}
-//		else
-//		{
-//			//std::cout << "TIR";
-//		}
-//
-//		// GetReflections crashes
-//		Color reflectionColor = GetReflections(position, direction, sceneObjects, indexOfClosestObject, lightSources, +1);
-//		// mix the two
-//		Color refraReflColor = /*reflectionColor; * kr + */refractionColor * (1 - kr);
-//		return refraReflColor;
+//		cosi = -cosi;
 //	}
 //	else
-//		return Color(0, 0, 0);
+//	{
+//		std::swap(etai, etat); n = -N;
+//	}
+//	FPType eta = etai / etat;
+//	FPType k = 1 - eta * eta * (1 - cosi * cosi);
+//	return k < 0 ? 0 : I * eta + n * (eta * cosi - sqrtf(k));
 //}
-
-Color GetRefractions(Vector &position, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
-					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth)
-{
-	if(depth > DEPTH)
-		return Color(0, 0, 0);
-	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
-	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
-	// Reflective only material
-	if(closestObjectMaterial.GetReflection() > 0)
-	{
-		Color reflectionColor = GetReflections(position, sceneDirection, sceneObjects, indexOfClosestObject, lightSources, +1);
-		return reflectionColor;
-	}
-	// Refractive object
-	//if(closestObjectMaterial.GetRefraction() > 0 && closestObjectMaterial.GetReflection() > 0)
-	//{
-	//	std::cout << "YE";
-	//	Color reflectionColor = GetReflections(position, sceneDirection, sceneObjects, indexOfClosestObject, lightSources, +1);
-	//	// mix the two
-	//	Color refraReflColor = reflectionColor; /** kr + refractionColor * (1 - kr);*/
-	//	return refraReflColor;
-	//}
-	//else
-		//return Color(0, 0, 0);
-}
 
 Ray GetReflectionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector &position)
 {
@@ -236,6 +166,33 @@ Ray GetReflectionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector
 	return reflectionRay;
 }
 
+Color GetRefractions(Vector &position, Vector &dir, const std::vector<std::shared_ptr<Object>> &sceneObjects,
+					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth)
+{
+	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
+	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
+
+	Color refractionColor = Color(0, 0, 0), reflectionColor = Color(0, 0, 0);
+
+	// compute fresnel
+	FPType kr = fresnel(dir, closestObjectNormal, closestObjectMaterial);
+	// compute refraction if it is not a case of total internal reflection
+	if(kr < 1)
+	{
+		//std::cout << "YES" << std::endl;
+		Ray refractionRay = GetRefractionRay(position, dir, closestObjectNormal, closestObjectMaterial);
+		Vector refractionDirection = refractionRay.GetDirection().Normalize();
+		//Vector refractionRayOrig = outside ? position - bias : position + bias;
+		Vector refractionRayOrig = refractionRay.GetOrigin();
+		refractionColor += GetColorAt(refractionRayOrig, refractionDirection, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
+	}
+	reflectionColor = GetReflections(position, dir, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
+
+	// mix the two
+	Color finalColor = reflectionColor * kr + refractionColor * (1 - kr);
+	return finalColor;
+}
+
 // Calculate reflection colors
 Color GetReflections(Vector &position, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth)
@@ -248,6 +205,7 @@ Color GetReflections(Vector &position, Vector &sceneDirection, const std::vector
 		if(closestObjectMaterial.GetSpecular() > 0 && closestObjectMaterial.GetSpecular() <= 1)
 		{
 			Ray reflectionRay = GetReflectionRay(closestObjectNormal, sceneDirection, position);
+			//Ray reflectionRay = GetRefractionRay(position, sceneDirection, closestObjectNormal, closestObjectMaterial);
 
 			// determine what the ray intersects with first
 			std::vector<FPType> reflectionIntersections;
@@ -425,7 +383,7 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	std::vector<FPType> intersections;
 	intersections.reserve(1024);
 
-	// Check if ray intersects with any scene objects
+	// Check if ray intersects with any scene sceneObjects
 	for(const auto &sceneObject : sceneObjects)
 	{
 		intersections.push_back(sceneObject->GetIntersection(camRay));

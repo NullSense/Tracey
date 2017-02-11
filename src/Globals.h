@@ -2,16 +2,16 @@
 
 using FPType = double;
 
-//constexpr unsigned WIDTH = 500;
-//constexpr unsigned HEIGHT = 500;
+constexpr unsigned WIDTH = 500;
+constexpr unsigned HEIGHT = 500;
 
 // 800 x 600
 //constexpr FPType WIDTH = 800;
 //constexpr FPType HEIGHT = 600;
 
 // 1920 x 1080p
-constexpr FPType WIDTH = 1920;
-constexpr FPType HEIGHT = 1080;
+//constexpr FPType WIDTH = 1920;
+//constexpr FPType HEIGHT = 1080;
 
 // 2560 x 1440p
 //constexpr FPType WIDTH = 2560;
@@ -54,7 +54,7 @@ constexpr FPType AMBIENT_LIGHT = 0.6;
 constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
 constexpr FPType BIAS = 1e-8;
 constexpr unsigned SUPERSAMPLING = 1;
-constexpr unsigned DEPTH = 30;
+constexpr unsigned DEPTH = 15;
 constexpr unsigned FOV = 50;
 
 constexpr bool REFRACTIONS_ON = true;

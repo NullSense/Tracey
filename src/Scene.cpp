@@ -3,7 +3,7 @@
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
 	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector(0, -1, 0), Vector(0, 1, 0));
-	floorPlane->SetMaterial(silverM);
+	floorPlane->SetMaterial(tileFloorM);
 	std::shared_ptr<Plane> topPlane = std::make_shared<Plane>(Vector(0, 3, 0), Vector(0, -1, 0));
 	topPlane->SetMaterial(orangeM);
 	std::shared_ptr<Plane> backPlane = std::make_shared<Plane>(Vector(0, 0, 20), Vector(0, 0, -1));
@@ -48,7 +48,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	//sceneObjects.push_back(triangle1);
 	//sceneObjects.push_back(triangle2);
 	sceneObjects.push_back(sphere2);
-	//sceneObjects.push_back(sphere3);
+	sceneObjects.push_back(sphere3);
 	sceneObjects.push_back(sphere4);
 	sceneObjects.push_back(sphere5);
 	//sceneObjects.push_back(sphere6);
