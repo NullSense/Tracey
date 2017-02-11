@@ -5,11 +5,11 @@ Triangle::Triangle()
 	v0 = Vector(0, 0, 6);
 	v1 = Vector(1, 0, 6);
 	v2 = Vector(1, 1, 6);
-	normal = GetNormal();
+	normal = (v1 - v0).Cross(v2 - v0).Normalize();
 }
 
 Triangle::Triangle(Vector v0_, Vector v1_, Vector v2_)
-	:v0{v0_}, v1{v1_}, v2{v2_}, normal{GetNormal()}
+	:v0{v0_}, v1{v1_}, v2{v2_}, normal{(v1 - v0).Cross(v2 - v0).Normalize()}
 {}
 
 Vector Triangle::GetNormal()

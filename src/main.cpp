@@ -12,6 +12,9 @@
 #include <thread>
 
 Color GetColorAt(Vector &position, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, unsigned indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth);
+Color GetReflections(Vector &position, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
+					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth);
+
 
 // Returns the closest object's index that the ray intersected with
 int ClosestObjectIndex(const std::vector<FPType> &intersections)
@@ -144,53 +147,79 @@ Ray GetRefractionRay(Vector &position, Vector &sceneDirection, Vector &closestOb
 	return refractionRay;
 }
 
-Color GetRefractions(Vector &position, Vector &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects,
-					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources)
+//Color GetRefractions(Vector &position, Vector &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects,
+//					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources)
+//{
+//	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
+//	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
+//	if(closestObjectMaterial.GetRefraction() > 0)
+//	{
+//		Ray refractionRay = GetRefractionRay(position, direction, closestObjectNormal, closestObjectMaterial);
+//
+//		std::vector<FPType> refractionIntersections;
+//		for(auto sceneObject : sceneObjects)
+//		{
+//			refractionIntersections.push_back(sceneObject->GetIntersection(refractionRay));
+//		}
+//
+//		int closestObjectWithRefraction = ClosestObjectIndex(refractionIntersections);
+//
+//		Color refractionColor;
+//		// compute fresnel
+//		//FPType kr = 1;
+//		FPType kr = fresnel(direction, closestObjectNormal, closestObjectMaterial);
+//		//std::cout << "KR: " << kr;
+//		bool outside = direction.Dot(closestObjectNormal) < 0;
+//		Vector bias = closestObjectNormal * BIAS;
+//
+//		// compute refraction if it is not a case of total internal reflection
+//		if(kr < 1)
+//		{
+//			Vector refractionDirection = refractionRay.GetDirection().Normalize();
+//			Vector refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
+//			Vector refractionRayOrig = outside ? refractionIntersectionPosition - bias : refractionIntersectionPosition + bias;
+//
+//			refractionColor = GetColorAt(refractionRayOrig, refractionDirection, sceneObjects, closestObjectWithRefraction, lightSources, +1);
+//		}
+//		else
+//		{
+//			//std::cout << "TIR";
+//		}
+//
+//		// GetReflections crashes
+//		Color reflectionColor = GetReflections(position, direction, sceneObjects, indexOfClosestObject, lightSources, +1);
+//		// mix the two
+//		Color refraReflColor = /*reflectionColor; * kr + */refractionColor * (1 - kr);
+//		return refraReflColor;
+//	}
+//	else
+//		return Color(0, 0, 0);
+//}
+
+Color GetRefractions(Vector &position, Vector &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
+					 int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, unsigned depth)
 {
+	if(depth > DEPTH)
+		return Color(0, 0, 0);
 	Material closestObjectMaterial = sceneObjects[indexOfClosestObject]->GetMaterial();
 	Vector closestObjectNormal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
-	if(closestObjectMaterial.GetRefraction() > 0)
+	// Reflective only material
+	if(closestObjectMaterial.GetReflection() > 0)
 	{
-		Ray refractionRay = GetRefractionRay(position, direction, closestObjectNormal, closestObjectMaterial);
-
-		std::vector<FPType> refractionIntersections;
-		for(auto sceneObject : sceneObjects)
-		{
-			refractionIntersections.push_back(sceneObject->GetIntersection(refractionRay));
-		}
-
-		int closestObjectWithRefraction = ClosestObjectIndex(refractionIntersections);
-
-		Color refractionColor;
-		// compute fresnel
-		//FPType kr = 1;
-		FPType kr = fresnel(direction, closestObjectNormal, closestObjectMaterial);
-		//std::cout << "KR: " << kr;
-		bool outside = direction.Dot(closestObjectNormal) < 0;
-		Vector bias = closestObjectNormal * BIAS;
-
-		// compute refraction if it is not a case of total internal reflection
-		if(kr < 1)
-		{
-			Vector refractionDirection = refractionRay.GetDirection().Normalize();
-			Vector refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
-			Vector refractionRayOrig = outside ? refractionIntersectionPosition - bias : refractionIntersectionPosition + bias;
-
-			refractionColor = GetColorAt(refractionRayOrig, refractionDirection, sceneObjects, closestObjectWithRefraction, lightSources, +1);
-		}
-		else
-		{
-			//std::cout << "TIR";
-		}
-
-		// GetReflections crashes
-		//Color reflectionColor = GetReflections(position, sceneDirection, sceneObjects, indexOfClosestObject, lightSources);
-		// mix the two
-		Color refraReflColor = /*reflectionColor; * kr + */refractionColor * (1 - kr);
-		return refraReflColor;
+		Color reflectionColor = GetReflections(position, sceneDirection, sceneObjects, indexOfClosestObject, lightSources, +1);
+		return reflectionColor;
 	}
-	else
-		return Color(0, 0, 0);
+	// Refractive object
+	//if(closestObjectMaterial.GetRefraction() > 0 && closestObjectMaterial.GetReflection() > 0)
+	//{
+	//	std::cout << "YE";
+	//	Color reflectionColor = GetReflections(position, sceneDirection, sceneObjects, indexOfClosestObject, lightSources, +1);
+	//	// mix the two
+	//	Color refraReflColor = reflectionColor; /** kr + refractionColor * (1 - kr);*/
+	//	return refraReflColor;
+	//}
+	//else
+		//return Color(0, 0, 0);
 }
 
 Ray GetReflectionRay(Vector &closestObjectNormal, Vector &sceneDirection, Vector &position)
@@ -271,6 +300,13 @@ Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::share
 	FPType phong;
 	Color specular;
 
+	// Ambient
+	if(AMBIENT_ON)
+	{
+		ambient = closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
+		finalColor += ambient;
+	}
+
 	// Shadows, Diffuse, Specular
 	for(const auto &lightSource : lightSources)
 	{
@@ -286,12 +322,11 @@ Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::share
 
 		FPType distance = lightDir.Magnitude();
 		lightDir = lightDir.Normalize();
-		lambertian = closestObjectNormal.Dot(lightDir);
+		lambertian = closestObjectNormal.Dot(lightDir.Normalize());
 
 		// Shadows
 		if(SHADOWS_ON && lambertian > 0)
 		{
-
 			Ray shadowRay(origin, lightDir); // Cast a ray from the first intersection to the light
 
 			std::vector<FPType> secondaryIntersections;
@@ -316,6 +351,7 @@ Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::share
 		// Diffuse
 		if(DIFFUSE_ON && shadowed == false)
 		{
+			//diffuse = closestObjectMaterial.GetColor().Average(lightSource->GetColor()) * 0.18 * M_PI * lightSource->GetIntensity() * std::fmax(0, lambertian) / distance;
 			diffuse = closestObjectMaterial.GetColor().Average(lightSource->GetColor()) * closestObjectMaterial.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0) / distance;
 			finalColor += diffuse;
 		}
@@ -330,34 +366,26 @@ Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::share
 				Vector H = (lightDir + V).Normalize();
 				FPType NdotH = closestObjectNormal.Dot(H);
 
-				phong = pow(NdotH, 350);
+				phong = pow(NdotH, 100);
 				specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // closestObjectMaterial.GetSpecular(); add or no?
 				finalColor += specular;
 			}
 		}
 	}
 
-	// Ambient
-	if(AMBIENT_ON)
+	if(REFLECTIONS_ON && !REFRACTIONS_ON)
 	{
-		ambient = closestObjectMaterial.GetColor() * AMBIENT_LIGHT * closestObjectMaterial.GetAmbient();
-		finalColor += ambient;
-	}
-
-	if(REFLECTIONS_ON)
-	{
-
 		Color reflections = GetReflections(origin, direction, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
 		finalColor += reflections;
 	}
 
-	////Reflections & Refractions
-	//if(REFRACTIONS_ON && REFLECTIONS_ON)
-	//{
-	//	Color refractions = GetRefractions(origin, direction, sceneObjects, indexOfClosestObject, lightSources);
-	//	finalColor += refractions;
-	//}
-
+	//Reflections & Refractions
+	if(REFRACTIONS_ON && REFLECTIONS_ON)
+	{
+		Color refractions = GetRefractions(origin, direction, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
+		finalColor += refractions;
+	}
+	
 	return finalColor.Clip();
 }
 
@@ -376,13 +404,9 @@ void Render(bitmap_image *image, unsigned x, unsigned y, Color tempColor[])
 }
 
 // Camera pos, sceneDirection here
-void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, Color tempColor[])
+void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaIndex, Color tempColor[], Matrix44f &cameraToWorld, Vector &orig)
 {
-	Camera camera(Vector(0, 0, 0), Vector(0, 0, -1));
-
-	Matrix44f cameraToWorld;
-	Vector orig;
-	cameraToWorld.MultVecMatrix(Vector(0, 0, 0), orig);
+	Camera camera(Vector(-1, 0.5, 2), Vector(0, 0, -1));
 
 	// Set up scene
 	Scene scene;
@@ -390,9 +414,11 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 	std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
 
 	// Camera sceneDirectionection for every ray shot through each pixel
-	Vector camRayDir = (camera.GetForward() + camera.GetRight() * (xCamOffset - 0.5) + camera.GetUp() * (yCamOffset - 0.5)).Normalize();
+	//Vector camRayDir = (camera.GetForward() + camera.GetRight() * (xCamOffset - 0.5) + camera.GetUp() * (yCamOffset - 0.5)).Normalize();
+	Vector camRayDir;
+	cameraToWorld.MultDirMatrix(Vector(xCamOffset, yCamOffset, -1), camRayDir);
+	camRayDir.Normalize();
 	camera.SetTo(camRayDir);
-
 	// Shoot ray into evey pixel of the image
 	Ray camRay(camera.GetFrom(), camera.GetTo());
 
@@ -426,7 +452,7 @@ void EvaluateIntersections(FPType xCamOffset, FPType yCamOffset, unsigned aaInde
 void launchThread(unsigned start, unsigned end, bitmap_image *image)
 {
 	unsigned width = WIDTH;
-	unsigned heigh = HEIGHT;
+	unsigned height = HEIGHT;
 
 	Color tempColor[SUPERSAMPLING*SUPERSAMPLING];
 	unsigned aaIndex;
@@ -434,10 +460,15 @@ void launchThread(unsigned start, unsigned end, bitmap_image *image)
 
 	FPType scale = tan(deg2rad(FOV * 0.5));
 
+	Matrix44f cameraToWorld;
+	Vector orig;
+	cameraToWorld.MultVecMatrix(Vector(0, 0, 0), orig);
+
 	for(unsigned z = start; z < end; z++)
 	{
 		unsigned x = z % width;
 		unsigned y = z / width;
+		FPType aspectRatio = WIDTH / FPType(HEIGHT);
 
 		for(unsigned i = 0; i < SUPERSAMPLING; i++)
 		{
@@ -445,35 +476,18 @@ void launchThread(unsigned start, unsigned end, bitmap_image *image)
 			{
 				aaIndex = j*SUPERSAMPLING + i;
 				// No Anti-aliasing
-				if(SUPERSAMPLING == 1)
+				if(SUPERSAMPLING == 1) // Heigh cannot be bigger than width
 				{
-					//xCamOffset = (((x + 0.5) / WIDTH) * ASPECT_RATIO) - ((WIDTH - HEIGHT) / HEIGHT) / 2;
-					xCamOffset = (2 * (x + 0.5) / (FPType) WIDTH - 1) * ASPECT_RATIO * scale;
-					//yCamOffset = (y + 0.5) / HEIGHT;
-					yCamOffset = (1 - 2 * (y + 0.5) / (FPType) HEIGHT) * scale;
+					xCamOffset = (2 * (x + 0.5) / FPType(WIDTH) - 1) * aspectRatio * scale;
+					yCamOffset = (1 - 2 * (y + 0.5) / FPType(HEIGHT)) * scale;
 				}
-
 				// Supersampling anti-aliasing
-				else
+				else // Heigh cannot be bigger than width
 				{
-					if(WIDTH > HEIGHT) // need to fix
-					{
-						xCamOffset = ((x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH)*ASPECT_RATIO - (((WIDTH - HEIGHT) / (double) HEIGHT) / 2);
-						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / HEIGHT;
-					}
-					else if(HEIGHT > WIDTH) // need to fix
-					{
-						// the imager is taller than it is wide
-						xCamOffset = (x + (double) i / ((double) SUPERSAMPLING - 1)) / WIDTH;
-						yCamOffset = (((HEIGHT - y) + (double) i / ((double) SUPERSAMPLING - 1)) / HEIGHT) / ASPECT_RATIO - (((HEIGHT - WIDTH) / (double) WIDTH) / 2);
-					}
-					else // need to fix
-					{
-						xCamOffset = (x + (i + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
-						yCamOffset = (y + (j + 0.5) / SUPERSAMPLING) / WIDTH, HEIGHT;
-					}
+					xCamOffset = (2 * (x + (0.5 + i) / (SUPERSAMPLING - 1)) / FPType(WIDTH) - 1) * aspectRatio * scale;
+					yCamOffset = (1 - 2 * (y + (j + 0.5) / SUPERSAMPLING) / FPType(HEIGHT)) * scale;
 				}
-				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempColor);
+				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempColor, cameraToWorld, orig);
 			}
 		}
 		Render(image, x, y, tempColor);

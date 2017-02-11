@@ -17,7 +17,7 @@ public:
 
 	virtual Color GetColor();
 
-	Material GetMaterial();
+	virtual Material GetMaterial();
 
 	void SetMaterial(const Material &material_);
 
