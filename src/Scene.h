@@ -31,7 +31,7 @@ private:
 
 	// Color, ambient, reflective, refractive, diffusive, special
 	const Material prettyGreenM = Material(Color(128, 255, 128), 0.8, 0, 0, 1, 0);
-	const Material blueM = Material(blue, 0.8, 0, 0, 1, 0);
+	const Material blueM = Material(blue, 0, 0, 0, 1, 0);
 	const Material orangeM = Material(orange, 0.8, 0, 0, 1, 0);
 	const Material yellowM = Material(yellow, 0.8, 0, 0, 1, 0);
 	const Material maroonM = Material(maroon, 0.8, 0, 0, 1, 0);
@@ -42,5 +42,5 @@ private:
 	const Material silverM = Material(silver, 0.1, 0.8, 0, 0.7, 0);
 	const Material mirrorM = Material(white, 0, 1, 0, 0, 0);
 	const Material tileFloorM = Material(Color(255, 255, 255), 0.35, 0.05, 0, 0.5, 2);
-	const Material waterM = Material(blue, 0, 1, 1.33, 0, 0);
+	const Material waterM = Material(blue, 0, 1, 1.3333, 0, 0);
 };

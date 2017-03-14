@@ -47,7 +47,7 @@ FPType Sphere::GetIntersection(Ray ray)
 	}
 
 	//Both solutions were negative
-	return false;
+	return -1;
 }
 
 FPType Sphere::GetRadius() const
