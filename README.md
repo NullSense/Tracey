@@ -11,7 +11,7 @@
 - [ ] Area Lights
 - [x] Reflections
 - [ ] Glossy reflections
-- [ ] Refractions
+- [x] Refractions
 - [ ] Triangle meshes
 - [ ] Texture mapping
 
