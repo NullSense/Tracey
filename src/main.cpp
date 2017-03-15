@@ -118,7 +118,7 @@ Vector GetRefraction(Vector &incident, const Vector &normal, Material &material)
 	Vector a = incident * eta + normal * (eta * cosi - sqrtf(k));
 	if(k < 0)
 	{
-		//return incident;
+		return incident;
 		//std::cout << "trigger";
 	}
 	else
@@ -220,6 +220,11 @@ Color GetReflections(Vector &position, Vector &sceneDirection, const std::vector
 	}
 }
 
+inline FPType modulo(const FPType &f)
+{
+	return f - std::floor(f);
+}
+
 // Get the color of the pixel at the ray-object intersection position
 Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects, int indexOfClosestObject,
 				 const std::vector<std::shared_ptr<Light>> &lightSources, int depth)
@@ -315,9 +320,9 @@ Color GetColorAt(Vector &origin, Vector &direction, const std::vector<std::share
 					Vector H = (lightDir + V).Normalize();
 					FPType NdotH = closestObjectNormal.Dot(H);
 
-					phong = pow(NdotH, 100);
+					phong = pow(NdotH, 500);
 					specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // material.GetSpecular(); add or no?
-					finalColor += specular;
+					finalColor += specular * material.GetSpecular();
 				}
 			}
 		}
@@ -478,6 +483,7 @@ void CalcIntersections()
 	std::cout << "Resolution: " << WIDTH << "x" << HEIGHT << std::endl;
 	std::cout << "Depth: " << DEPTH << std::endl;
 	std::cout << "Time: " << diff << " seconds" << std::endl;
+	std::cout << "Supersampling: " << SUPERSAMPLING << std::endl;
 
 	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + " render, " + std::to_string(SUPERSAMPLING) + "x SS, " + std::to_string(DEPTH) + " depth.bmp";
 	image->save_image(saveString);

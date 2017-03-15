@@ -9,9 +9,11 @@
 - [ ] Soft shadows
 - [x] Point lights
 - [ ] Area Lights
+- [x] Depth checking
 - [x] Reflections
 - [ ] Glossy reflections
 - [x] Refractions
+- [ ] Beer's law
 - [ ] Triangle meshes
 - [ ] Texture mapping
 
