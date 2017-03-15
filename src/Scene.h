@@ -12,8 +12,21 @@
 class Scene
 {
 public:
+	std::vector<std::shared_ptr<Light>> lightSources;
+	std::vector<std::shared_ptr<Object>> sceneObjects;
+
 	std::vector<std::shared_ptr<Object>> InitObjects();
 	std::vector<std::shared_ptr<Light>> InitLightSources();
+
+	std::vector<std::shared_ptr<Object>> GetObjects()
+	{
+		return sceneObjects;
+	}
+	std::vector<std::shared_ptr<Light>> GetLightSources()
+	{
+		return lightSources;
+	}
+
 
 private:
 	const Color black = Color(0, 0, 0);
