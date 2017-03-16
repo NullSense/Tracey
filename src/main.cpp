@@ -101,6 +101,17 @@ FPType fresnel(const Vector3d &sceneDirection, const Vector3d &normal, const Mat
 	return kr;
 }
 
+Ray GetReflectionRay(const Vector3d &normal, const Vector3d &sceneDirection, const Vector3d &position)
+{
+	const FPType cosI = normal.Dot(sceneDirection);
+
+	Vector3d reflectionDirection = sceneDirection - normal * 2 * cosI;
+	Vector3d offset = reflectionDirection * BIAS;
+
+	Ray reflectionRay(position + offset, reflectionDirection);
+	return reflectionRay;
+}
+
 Vector3d GetRefraction(const Vector3d &incident, const Vector3d &normal, Material &material)
 {
 	FPType cosi = clamp(-1, 1, incident.Dot(normal));
@@ -117,22 +128,13 @@ Vector3d GetRefraction(const Vector3d &incident, const Vector3d &normal, Materia
 	//return k < 0 ? 0 : eta * incident + (eta * cosi - sqrtf(k)) * n;
 	if(k < 0)
 	{
-		return 0;
+		//Ray reflRay = GetReflectionRay(normal, incident, a);
+		//return reflRay.GetDirection();
+		return -1;
 		//return normal;
 	}
 	else
 		return a;
-}
-
-Ray GetReflectionRay(const Vector3d &normal, const Vector3d &sceneDirection, const Vector3d &position)
-{
-	const FPType cosI = normal.Dot(sceneDirection);
-
-	Vector3d reflectionDirection = sceneDirection - normal * 2 * cosI;
-	Vector3d offset = reflectionDirection * BIAS;
-
-	Ray reflectionRay(position + offset, reflectionDirection);
-	return reflectionRay;
 }
 
 // Calculate reflection colors
@@ -142,7 +144,7 @@ Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, c
 	if(REFLECTIONS_ON && /*depth <= DEPTH && */indexOfClosestObject != -1) // Not checking depth for infinite mirror effect
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
-		Vector3d normal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
+		Vector3d normal = sceneObject->GetNormalAt(position);
 
 		if(sceneObject->GetReflection() > 0 && sceneObject->GetRefraction() != GLOBAL_REFRACTION)
 		{
@@ -153,9 +155,9 @@ Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, c
 				// determine what the ray intersects with first
 				std::vector<FPType> reflectionIntersections;
 				reflectionIntersections.reserve(1024);
-				for(auto sceneObject : sceneObjects)
+				for(const auto &object : sceneObjects)
 				{
-					reflectionIntersections.emplace_back(sceneObject->GetIntersection(reflectionRay));
+					reflectionIntersections.emplace_back(object->GetIntersection(reflectionRay));
 				}
 
 				int closestObjectWithReflection = ClosestObjectIndex(reflectionIntersections);
@@ -171,6 +173,8 @@ Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, c
 						Color reflectionIntersectionColor = GetColorAt(reflectionIntersectionPosition, reflectionRay.GetDirection(), sceneObjects, closestObjectWithReflection, lightSources, depth + 1);
 						return reflectionIntersectionColor * sceneObject->GetReflection();
 					}
+					else
+						return Color(0);
 				}
 				else
 					return Color(0);
@@ -202,9 +206,9 @@ Color GetRefractions(const Vector3d &position, const Vector3d &dir, const std::v
 
 			std::vector<FPType> refractionIntersections;
 			refractionIntersections.reserve(10024);
-			for(auto sceneObject : sceneObjects)
+			for(const auto &object : sceneObjects)
 			{
-				refractionIntersections.emplace_back(sceneObject->GetIntersection(refractionRay));
+				refractionIntersections.emplace_back(object->GetIntersection(refractionRay));
 			}
 
 			if(refractionIntersections.size() > 0)
@@ -307,9 +311,9 @@ Color GetColorAt(const Vector3d &origin, const Vector3d &direction, const std::v
 
 					std::vector<FPType> secondaryIntersections;
 					secondaryIntersections.reserve(1024);
-					for(const auto &sceneObject : sceneObjects)
+					for(const auto &object : sceneObjects)
 					{
-						secondaryIntersections.emplace_back(sceneObject->GetIntersection(shadowRay));
+						secondaryIntersections.emplace_back(object->GetIntersection(shadowRay));
 					}
 
 					for(const auto &secondaryIntersection : secondaryIntersections)
@@ -383,12 +387,12 @@ void Render(bitmap_image *image, const unsigned x, const unsigned y, const Color
 	}
 
 	Color avgColor = totalColor / (SUPERSAMPLING * SUPERSAMPLING);
-	image->set_pixel(x, y, avgColor.GetRed(), avgColor.GetGreen(), avgColor.GetBlue());
+	image->set_pixel(x, y, char(avgColor.GetRed()), char(avgColor.GetGreen()), char(avgColor.GetBlue()));
 }
 
 // Camera pos, sceneDirection here
 void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, const unsigned aaIndex, Color tempColor[], const Matrix44f &cameraToWorld, 
-						   const Vector3d &orig, const std::vector<std::shared_ptr<Object>> &sceneObjects, const std::vector<std::shared_ptr<Light>> &lightSources)
+						   const std::vector<std::shared_ptr<Object>> &sceneObjects, const std::vector<std::shared_ptr<Light>> &lightSources)
 {
 	Camera camera(Vector3d(-1, 0.2, 6), Vector3d(0, 0, -1));
 
@@ -429,9 +433,6 @@ void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, con
 
 void launchThread(const unsigned start, const unsigned end, bitmap_image *image)
 {
-	unsigned width = WIDTH;
-	unsigned height = HEIGHT;
-
 	Color tempColor[SUPERSAMPLING*SUPERSAMPLING];
 	unsigned aaIndex;
 	FPType xCamOffset, yCamOffset; // Offset position of rays from the sceneDirectionection where camera is pointed (x & y positions)
@@ -449,8 +450,8 @@ void launchThread(const unsigned start, const unsigned end, bitmap_image *image)
 
 	for(unsigned z = start; z < end; z++)
 	{
-		unsigned x = z % width;
-		unsigned y = z / width;
+		unsigned x = z % WIDTH;
+		unsigned y = z / WIDTH;
 		FPType aspectRatio = WIDTH / FPType(HEIGHT);
 
 		for(unsigned i = 0; i < SUPERSAMPLING; i++)
@@ -458,19 +459,19 @@ void launchThread(const unsigned start, const unsigned end, bitmap_image *image)
 			for(unsigned j = 0; j < SUPERSAMPLING; j++)
 			{
 				aaIndex = j*SUPERSAMPLING + i;
-				// No Anti-aliasing
-				if(SUPERSAMPLING == 1) // Heigh cannot be bigger than width
-				{
-					xCamOffset = (2 * (x + 0.5) / FPType(WIDTH) - 1) * aspectRatio * scale;
-					yCamOffset = (1 - 2 * (y + 0.5) / FPType(HEIGHT)) * scale;
-				}
 				// Supersampling anti-aliasing
-				else // Heigh cannot be bigger than width
+				if(SUPERSAMPLING != 1) // Heigh cannot be bigger than width
 				{
 					xCamOffset = (2 * (x + (0.5 + i) / (SUPERSAMPLING)) / FPType(WIDTH) - 1) * aspectRatio * scale;
 					yCamOffset = (1 - 2 * (y + (j + 0.5) / SUPERSAMPLING) / FPType(HEIGHT)) * scale;
 				}
-				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempColor, cameraToWorld, orig, sceneObjects, lightSources);
+				// No Anti-aliasing
+				else // Heigh cannot be bigger than width
+				{
+					xCamOffset = (2 * (x + 0.5) / FPType(WIDTH) - 1) * aspectRatio * scale;
+					yCamOffset = (1 - 2 * (y + 0.5) / FPType(HEIGHT)) * scale;
+				}
+				EvaluateIntersections(xCamOffset, yCamOffset, aaIndex, tempColor, cameraToWorld, sceneObjects, lightSources);
 			}
 		}
 		Render(image, x, y, tempColor);
@@ -518,7 +519,7 @@ void CalcIntersections()
 int main()
 {
 	CalcIntersections();
-
+	
 	std::cout << "\nPress enter to exit...";
 	std::cin.ignore();
 

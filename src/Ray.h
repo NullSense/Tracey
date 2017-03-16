@@ -9,8 +9,8 @@ public:
 
 	void SetOrigin(const Vector3d &origin_);
 	void SetDirection(const Vector3d &direction_);
-	Vector3d GetOrigin();
-	Vector3d GetDirection();
+	Vector3d GetOrigin() const;
+	Vector3d GetDirection() const;
 
 	Vector3d invDir;
 	FPType tMin, tMax;

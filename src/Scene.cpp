@@ -4,7 +4,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
 	//sceneObjects.reserve(50);
 	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector3d(0, -1, 0), Vector3d(0, 1, 0));
-	floorPlane->SetMaterial(tileFloorM);
+	floorPlane->SetMaterial(mirrorM);
 	std::shared_ptr<Plane> topPlane = std::make_shared<Plane>(Vector3d(0, 10, 0), Vector3d(0, -1, 0));
 	topPlane->SetMaterial(blueM);
 	std::shared_ptr<Plane> backPlane = std::make_shared<Plane>(Vector3d(0, 0, 10), Vector3d(0, 0, -1));

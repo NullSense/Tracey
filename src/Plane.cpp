@@ -10,7 +10,12 @@ Plane::Plane(Vector3d center_, Vector3d normal_)
 	, normal {normal_}
 {}
 
-FPType Plane::GetIntersection(Ray ray)
+Vector3d Plane::GetNormalAt(const Vector3d &)
+{
+	return normal;
+}
+
+FPType Plane::GetIntersection(const Ray &ray)
 {
 	FPType denom = normal.Dot(ray.GetDirection());
 	if(std::abs(denom) > BIAS)
@@ -36,9 +41,4 @@ FPType Plane::GetIntersectionDisk(Ray ray, Vector3d normal_, Vector3d position)
 Vector3d Plane::GetCenter() const
 {
 	return center;
-}
-
-Vector3d Plane::GetNormalAt(const Vector3d point)
-{
-	return normal;
 }

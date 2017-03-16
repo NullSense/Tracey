@@ -16,16 +16,16 @@ Vector3d Triangle::GetNormal()
 {
 	Vector3d A = v1 - v0;
 	Vector3d B = v2 - v0;
-	Vector3d normal = (A.Cross(B)).Normalize(); // normal of the triangle
-	return normal;
+	Vector3d normal1 = (A.Cross(B)).Normalize(); // normal of the triangle
+	return normal1;
 }
 
-Vector3d Triangle::GetNormalAt(const Vector3d point)
+Vector3d Triangle::GetNormalAt(const Vector3d &)
 {
 	return -normal;
 }
 
-FPType Triangle::GetIntersection(Ray ray)
+FPType Triangle::GetIntersection(const Ray &ray)
 {
 	Vector3d rayDir = ray.GetDirection();
 	Vector3d rayPos = ray.GetOrigin();

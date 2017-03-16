@@ -11,7 +11,7 @@ Disk::Disk(FPType radius_, Vector3d position_, Vector3d normal_)
 	:radius {radius_}, position{position_}, normal{normal_}
 {}
 
-FPType Disk::GetIntersection(Ray ray)
+FPType Disk::GetIntersection(const Ray &ray)
 {
 	if(Plane::GetIntersectionDisk(ray, normal, position))
 	{
@@ -26,7 +26,7 @@ FPType Disk::GetIntersection(Ray ray)
 		return false;
 }
 
-Vector3d Disk::GetNormalAt(const Vector3d point)
+Vector3d Disk::GetNormalAt(const Vector3d &)
 {
 	return normal;
 }

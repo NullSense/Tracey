@@ -42,12 +42,12 @@ void Ray::SetDirection(const Vector3d &direction_)
 	direction = direction_;
 }
 
-Vector3d Ray::GetOrigin()
+Vector3d Ray::GetOrigin() const
 {
 	return origin;
 }
 
-Vector3d Ray::GetDirection()
+Vector3d Ray::GetDirection() const
 {
 	return direction;
 }

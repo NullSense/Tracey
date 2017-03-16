@@ -1,7 +1,7 @@
 # Tracey - A 3d Ray Tracer written in C++ (multithreaded)
 
 # Final images
-This scene rendered in 70s, with 6x6 supersampling at 1080p.
+This scene rendered in 38s, with 6x6 supersampling at 1080p.
 
 
 2 Light sources; 1 refractive, 3 reflective, 2 matte spheres and 4 planes (3 matte, 1 reflective with tile texture)
@@ -72,7 +72,7 @@ This method is used recursively to add realism by allowing for multiple reflecti
 
 ![4](https://i.imgur.com/mxIxEuC.png)
 You can even get infinite mirrors (the checker floor plane is a mirror now)
-At 6x supersampling, 1080p, this took 70s on a 4 thread i5-4690k
+At 6x supersampling, 1080p, this took 39s on a 4 thread i5-4690k
 ![9](https://i.imgur.com/UgWFE0R.png)
 
 ## Refractions (transmission)

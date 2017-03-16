@@ -29,7 +29,7 @@ public:
 		z = 0;
 	}
 
-	Vector3<T> Normalize()
+	inline Vector3<T> Normalize()
 	{
 		T length = Dot(*this);
 		if(length > 0)
@@ -39,19 +39,19 @@ public:
 		}
 		return *this;
 	}
-	T Magnitude()
+	inline T Magnitude()
 	{
 		return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
 	}
-	T Dot(const Vector3<T> &v) const
+	inline T Dot(const Vector3<T> &v) const
 	{
 		return (this->x * v.x + this->y * v.y + this->z * v.z);
 	}
-	Vector3<T> Cross(const Vector3<T> &v) const
+	inline Vector3<T> Cross(const Vector3<T> &v) const
 	{
 		return Vector3(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
 	}
-	Vector3<T> operator-() const
+	inline Vector3<T> operator-() const
 	{
 		return Vector3(-x, -y, -z);
 	}
@@ -60,7 +60,7 @@ public:
 	{
 		return Vector3(x * v.x, y * v.y, z * v.z);
 	}
-	Vector3<T> operator*(const T s) const
+	inline Vector3<T> operator*(const T s) const
 	{
 		return Vector3(x * s, y * s, z * s);
 	}
@@ -73,15 +73,15 @@ public:
 	{
 		return Vector3(x / s, y / s, z / s);
 	}
-	Vector3<T> operator/(const Vector3<T> &v) const
+	inline Vector3<T> operator/(const Vector3<T> &v) const
 	{
 		return Vector3(x / v.x, y / v.y, z / v.z);
 	}
-	Vector3<T> operator-(const Vector3<T> &v) const
+	inline Vector3<T> operator-(const Vector3<T> &v) const
 	{
 		return Vector3(x - v.x, y - v.y, z - v.z);
 	}
-	Vector3 operator+(const Vector3 &v) const
+	inline Vector3 operator+(const Vector3 &v) const
 	{
 		return Vector3(x + v.x, y + v.y, z + v.z);
 	}
@@ -95,7 +95,7 @@ public:
 		return (&x)[i];
 	}
 
-	Vector3<T> SphericalToCartesian(const T theta, const T phi)
+	inline Vector3<T> SphericalToCartesian(const T theta, const T phi)
 	{
 		return Vector3(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
 	}

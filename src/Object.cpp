@@ -7,12 +7,12 @@ Object::~Object()
 {
 }
 
-FPType Object::GetIntersection(const Ray ray)
+FPType Object::GetIntersection(const Ray &ray)
 {
 	return 0;
 }
 
-Vector3d Object::GetNormalAt(const Vector3d intersectionPosition)
+Vector3d Object::GetNormalAt(const Vector3d &intersectionPosition)
 {
-	return Vector3d(0);
+	return 0;
 }

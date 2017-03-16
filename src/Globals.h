@@ -26,8 +26,8 @@ constexpr unsigned int HEIGHT = 1080;
 //constexpr unsigned int HEIGHT = 2160;
 
 // 7680 x 4320 8k
-constexpr unsigned int WIDTH = 7680;
-constexpr unsigned int HEIGHT = 4320;
+//constexpr unsigned int WIDTH = 7680;
+//constexpr unsigned int HEIGHT = 4320;
 
 // 15360 x 8640 16k
 //constexpr unsigned int WIDTH = 15360;
@@ -57,7 +57,7 @@ constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
 constexpr FPType AMBIENT_LIGHT = 0.7;
 constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
 constexpr FPType BIAS = 1e-8;
-constexpr unsigned SUPERSAMPLING = 4;
+constexpr unsigned SUPERSAMPLING = 6;
 constexpr unsigned DEPTH = 50; // not checking for hall of mirrors effect
 constexpr unsigned FOV = 28;
 

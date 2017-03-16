@@ -9,9 +9,9 @@ class Disk : public Plane
 public:
 	Disk();
 	Disk(FPType radius_, Vector3d position_, Vector3d normal_);
-	FPType GetIntersection(const Ray ray);
+	FPType GetIntersection(const Ray &ray);
 
-	Vector3d GetNormalAt(const Vector3d point);
+	Vector3d GetNormalAt(const Vector3d &point);
 	Vector3d GetPosition() const;
 
 private:

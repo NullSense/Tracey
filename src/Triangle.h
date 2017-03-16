@@ -11,8 +11,8 @@ public:
 	Triangle(Vector3d v0_, Vector3d v1_, Vector3d v2_);
 
 	Vector3d GetNormal();
-	Vector3d GetNormalAt(const Vector3d point);
-	FPType GetIntersection(const Ray ray);
+	Vector3d GetNormalAt(const Vector3d &point);
+	FPType GetIntersection(const Ray &ray);
 
 private:
 	Vector3d v0, v1, v2;

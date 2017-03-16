@@ -12,13 +12,13 @@ Sphere::Sphere(FPType radius_, Vector3d center_)
 	center = center_;
 }
 
-Vector3d Sphere::GetNormalAt(const Vector3d point)
+Vector3d Sphere::GetNormalAt(const Vector3d &point)
 {
 	// normal always points away from the center of a sphere 
 	return (point - center).Normalize();
 }
 
-FPType Sphere::GetIntersection(Ray ray)
+FPType Sphere::GetIntersection(const Ray &ray)
 {
 	Vector3d delta = ray.GetOrigin() - center;
 	Vector3d dir = ray.GetDirection();

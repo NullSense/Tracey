@@ -6,7 +6,7 @@ Box::Box(const Vector3d &min_, const Vector3d &max_)
 	max = max_;
 }
 
-FPType Box::GetIntersection(Ray ray)
+FPType Box::GetIntersection(const Ray &ray)
 {
 	Vector3d origin = ray.GetOrigin();
 	Vector3d direction = ray.GetDirection();
@@ -42,7 +42,7 @@ Vector3d Box::GetIntersectionPoint(Ray ray)
 	return (ray.GetOrigin() + ray.GetDirection() * t);
 }
 
-Vector3d Box::GetNormalAt(const Vector3d point)
+Vector3d Box::GetNormalAt(const Vector3d &)
 {
 	Vector3d c = (min + max) * 0.5;
 	Vector3d p = GetIntersectionPoint(bRay) - c;
