@@ -1,5 +1,12 @@
 # Tracey - A 3d Ray Tracer written in C++ (multithreaded)
 
+# Final images
+This scene rendered in 70s, with 6x6 supersampling at 1080p.
+
+
+2 Light sources; 1 refractive, 3 reflective, 2 matte spheres and 4 planes (3 matte, 1 reflective with tile texture)
+![6](https://i.imgur.com/6QQnu3d.png)
+
 # Features:
 
 - [x] Multithreading
@@ -31,12 +38,6 @@
 - [x] Triangles
 - [ ] Disks (WIP)
 - [ ] Boxes (WIP)
-
-# Final images
-This render 2021 seconds 16x Supersampling 1080p 15 ray depth
-![5](https://i.imgur.com/PpvvatS.png)
-70s, 6x SS, 1080p
-![6](https://i.imgur.com/6QQnu3d.png)
 
 # Ray tracing introduction (with screenshots)
 Ray tracing is a 3d rendering technique that attemps to generate photorealistic images by tracing rays that are shot from every pixel of the image and applying mathematical and physical concepts to accomplish techniques described below.
