@@ -1,19 +1,19 @@
 #pragma once
-#include "Vector.h"
+#include "Vector3.h"
 #include "Object.h"
 
 class Sphere: public Object
 {
 public:
 	Sphere();
-	Sphere(FPType radius_, Vector center_);
+	Sphere(FPType radius_, Vector3 center_);
 
-	Vector GetNormalAt(const Vector point);
+	Vector3 GetNormalAt(const Vector3 point);
 	FPType GetIntersection(const Ray ray);
 	FPType GetRadius() const;
-	Vector GetCenter() const;
+	Vector3 GetCenter() const;
 
 private:
 	FPType radius;
-	Vector center;
+	Vector3 center;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector.h"
+#include "Vector3.h"
 #include "Color.h"
 
 struct Light
@@ -13,19 +13,19 @@ public:
 
 	Light();
 
-	Light(Vector position_, Color color_, FPType intensity_, enum LIGHT_TYPES);
+	Light(Vector3 position_, Color color_, FPType intensity_, enum LIGHT_TYPES);
 
 
-	void SetPosition(const Vector &position_);
+	void SetPosition(const Vector3 &position_);
 	void SetColor(const Color &color_);
 	void SetIntensity(const FPType intensity_);
 	Color GetColor();
-	Vector GetPosition();
+	Vector3 GetPosition();
 	FPType GetIntensity();
 	unsigned GetLightType();
 
 private:
 	Color color;
-	Vector position;
+	Vector3 position;
 	FPType intensity;
 };

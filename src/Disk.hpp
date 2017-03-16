@@ -1,6 +1,6 @@
 #pragma once
 #include "Globals.h"
-#include "Vector.h"
+#include "Vector3.h"
 #include "Ray.h"
 #include "Plane.h"
 
@@ -8,14 +8,14 @@ class Disk : public Plane
 {
 public:
 	Disk();
-	Disk(FPType radius_, Vector position_, Vector normal_);
+	Disk(FPType radius_, Vector3 position_, Vector3 normal_);
 	FPType GetIntersection(const Ray ray);
 
-	Vector GetNormalAt(const Vector point);
-	Vector GetPosition() const;
+	Vector3 GetNormalAt(const Vector3 point);
+	Vector3 GetPosition() const;
 
 private:
-	Vector position;
-	Vector normal;
+	Vector3 position;
+	Vector3 normal;
 	FPType radius;
 };

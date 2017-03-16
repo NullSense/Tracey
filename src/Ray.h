@@ -1,20 +1,20 @@
 #pragma once
-#include "Vector.h"
+#include "Vector3.h"
 
 struct Ray
 {
 public:
 	Ray();
-	Ray(const Vector origin_, const Vector direction_);
+	Ray(const Vector3 origin_, const Vector3 direction_);
 
-	void SetOrigin(const Vector &origin_);
-	void SetDirection(const Vector &direction_);
-	Vector GetOrigin();
-	Vector GetDirection();
+	void SetOrigin(const Vector3 &origin_);
+	void SetDirection(const Vector3 &direction_);
+	Vector3 GetOrigin();
+	Vector3 GetDirection();
 
-	Vector invDir;
+	Vector3 invDir;
 	FPType tMin, tMax;
 private:
-	Vector origin, direction;
+	Vector3 origin, direction;
 	int sign[3];
 };

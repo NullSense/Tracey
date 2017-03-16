@@ -1,6 +1,6 @@
 #include "Box.h"
 
-Box::Box(const Vector &min_, const Vector &max_)
+Box::Box(const Vector3 &min_, const Vector3 &max_)
 {
 	min = min_;
 	max = max_;
@@ -8,9 +8,9 @@ Box::Box(const Vector &min_, const Vector &max_)
 
 FPType Box::GetIntersection(Ray ray)
 {
-	Vector origin = ray.GetOrigin();
-	Vector direction = ray.GetDirection();
-	Vector invDirection = ray.invDir;
+	Vector3 origin = ray.GetOrigin();
+	Vector3 direction = ray.GetDirection();
+	Vector3 invDirection = ray.invDir;
 
 	FPType t1 = (min.x - origin.x) * invDirection.x;
 	FPType t2 = (max.x - origin.x) * invDirection.x;
@@ -36,18 +36,18 @@ FPType Box::GetIntersection(Ray ray)
 	return tboxmax >= tboxmin;
 }
 
-Vector Box::GetIntersectionPoint(Ray ray)
+Vector3 Box::GetIntersectionPoint(Ray ray)
 {
 	FPType t = GetIntersection(ray);
 	return (ray.GetOrigin() + ray.GetDirection() * t);
 }
 
-Vector Box::GetNormalAt(const Vector point)
+Vector3 Box::GetNormalAt(const Vector3 point)
 {
-	Vector c = (min + max) * 0.5;
-	Vector p = GetIntersectionPoint(bRay) - c;
-	Vector d = (min - max) * 0.5;
+	Vector3 c = (min + max) * 0.5;
+	Vector3 p = GetIntersectionPoint(bRay) - c;
+	Vector3 d = (min - max) * 0.5;
 	FPType bias = 1.000001;
 
-	return Vector((p / d) * bias).Normalize();
+	return Vector3((p / d) * bias).Normalize();
 }

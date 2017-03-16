@@ -5,13 +5,13 @@
 class Box : public Object
 {
 public:
-	Box(const Vector &min_, const Vector &max_);
+	Box(const Vector3 &min_, const Vector3 &max_);
 	FPType GetIntersection(const Ray ray);
-	Vector GetIntersectionPoint(const Ray ray);
-	Vector GetNormalAt(const Vector point);
+	Vector3 GetIntersectionPoint(const Ray ray);
+	Vector3 GetNormalAt(const Vector3 point);
 
 private:
-	Vector min;
-	Vector max;
+	Vector3 min;
+	Vector3 max;
 	Ray bRay;
 };

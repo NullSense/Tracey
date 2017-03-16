@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Globals.h"
-#include "Vector.h"
+#include "Vector3.h"
 
 template<typename T>
 class Matrix44
@@ -62,8 +62,8 @@ public:
 			}
 		}
 	}
-	//void MultVecMatrix(const Vector &src, Vector &dst) const;
-	void MultVecMatrix(const Vector &src, Vector &dst) const
+	//void MultVecMatrix(const Vector3 &src, Vector3 &dst) const;
+	void MultVecMatrix(const Vector3 &src, Vector3 &dst) const
 	{
 		FPType a, b, c, w;
 
@@ -173,7 +173,7 @@ public:
 		return s;
 	}
 
-	void MultDirMatrix(const Vector &src, Vector &dst) const
+	void MultDirMatrix(const Vector3 &src, Vector3 &dst) const
 	{
 		dst.x = src.x * x[0][0] + src.y * x[1][0] + src.z * x[2][0];
 		dst.y = src.x * x[0][1] + src.y * x[1][1] + src.z * x[2][1];
@@ -193,7 +193,7 @@ public:
 
 		return transpMat;
 	}
-	Matrix44<T> LookAt(const Vector& from, const Vector& to, const Vector& tmp = Vector(0, 1, 0))
+	Matrix44<T> LookAt(const Vector3& from, const Vector3& to, const Vector3& tmp = Vector3(0, 1, 0))
 	{
 		Vec3f forward = normalize(from - to);
 		Vec3f right = crossProduct(normalize(tmp), forward);

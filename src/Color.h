@@ -5,7 +5,8 @@ class Color
 {
 public:
 	Color();
-	Color(FPType red_, FPType green_, FPType blue_);
+	Color(const FPType red_, const FPType green_, const FPType blue_);
+	Color(const FPType color);
 
 	FPType GetRed();
 	FPType GetGreen();

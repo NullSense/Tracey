@@ -1,20 +1,20 @@
 #include "Light.h"
 
 Light::Light()
-	:position {0, 0, 0}
-	, color {Color(255, 255, 255)}
+	:position {0}
+	, color {Color(255)}
 	, intensity {1}
 	, light_type {POINT}
 {}
 
-Light::Light(Vector position_, Color color_, FPType intensity_, enum LIGHT_TYPES)
+Light::Light(Vector3 position_, Color color_, FPType intensity_, enum LIGHT_TYPES)
 	:position {position_}
 	, color {color_}
 	, intensity {intensity_}
 	, light_type{POINT}
 {}
 
-void Light::SetPosition(const Vector &position_)
+void Light::SetPosition(const Vector3 &position_)
 {
 	position = position_;
 }
@@ -34,7 +34,7 @@ Color Light::GetColor()
 	return color;
 }
 
-Vector Light::GetPosition()
+Vector3 Light::GetPosition()
 {
 	return position;
 }

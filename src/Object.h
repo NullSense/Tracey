@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector.h"
+#include "Vector3.h"
 #include "Ray.h"
 #include "Color.h"
 #include "Material.h"
@@ -12,5 +12,5 @@ public:
 
 	virtual FPType GetIntersection(const Ray ray);
 
-	virtual Vector GetNormalAt(const Vector intersectionPosition);
+	virtual Vector3 GetNormalAt(const Vector3 intersectionPosition);
 };

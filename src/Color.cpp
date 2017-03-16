@@ -6,10 +6,16 @@ Color::Color()
 	, blue {0}
 {}
 
-Color::Color(FPType red_, FPType green_, FPType blue_)
+Color::Color(const FPType red_, const FPType green_, const FPType blue_)
 	: red {red_}
 	, green {green_}
 	, blue {blue_}
+{}
+
+Color::Color(const FPType color)
+	: red {color}
+	, green {color}
+	, blue {color}
 {}
 
 FPType Color::GetRed()

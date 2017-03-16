@@ -3,16 +3,16 @@
 Sphere::Sphere()
 {
 	radius = 1;
-	center = Vector(1, 1, 1);
+	center = Vector3(1, 1, 1);
 }
 
-Sphere::Sphere(FPType radius_, Vector center_)
+Sphere::Sphere(FPType radius_, Vector3 center_)
 {
 	radius = radius_;
 	center = center_;
 }
 
-Vector Sphere::GetNormalAt(const Vector point)
+Vector3 Sphere::GetNormalAt(const Vector3 point)
 {
 	// normal always points away from the center of a sphere 
 	return (point - center).Normalize();
@@ -20,8 +20,8 @@ Vector Sphere::GetNormalAt(const Vector point)
 
 FPType Sphere::GetIntersection(Ray ray)
 {
-	Vector delta = ray.GetOrigin() - center;
-	Vector dir = ray.GetDirection();
+	Vector3 delta = ray.GetOrigin() - center;
+	Vector3 dir = ray.GetDirection();
 
 	//Quadratic equation describing the distance along ray to intersection
 	FPType a = dir.Dot(dir);
@@ -55,7 +55,7 @@ FPType Sphere::GetRadius() const
 	return radius;
 }
 
-Vector Sphere::GetCenter() const
+Vector3 Sphere::GetCenter() const
 {
 	return center;
 }
