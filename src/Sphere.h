@@ -6,14 +6,14 @@ class Sphere: public Object
 {
 public:
 	Sphere();
-	Sphere(FPType radius_, Vector3 center_);
+	Sphere(FPType radius_, Vector3d center_);
 
-	Vector3 GetNormalAt(const Vector3 point);
+	Vector3d GetNormalAt(const Vector3d point);
 	FPType GetIntersection(const Ray ray);
 	FPType GetRadius() const;
-	Vector3 GetCenter() const;
+	Vector3d GetCenter() const;
 
 private:
 	FPType radius;
-	Vector3 center;
+	Vector3d center;
 };

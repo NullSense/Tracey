@@ -6,59 +6,59 @@ class Camera
 {
 public:
 	Camera();
-	Camera(const Vector3 &from, const Vector3 &to);
-	Vector3 GetFrom();
-	Vector3 GetTo();
-	Vector3 GetForward();
-	Vector3 GetRight();
-	Vector3 GetUp();
-	void SetTo(const Vector3 &to_);
+	Camera(const Vector3d &from, const Vector3d &to);
+	Vector3d GetFrom();
+	Vector3d GetTo();
+	Vector3d GetForward();
+	Vector3d GetRight();
+	Vector3d GetUp();
+	void SetTo(const Vector3d &to_);
 	
 private:
-	Vector3 from;
-	Vector3 to;
-	Vector3 tmp = Vector3(0, 1, 0);
+	Vector3d from;
+	Vector3d to;
+	Vector3d tmp = Vector3d(0, 1, 0);
 
 	// Camera coordinates
-	Vector3 forward = (from - to).Normalize(); // Where camera's view is centered
-	Vector3 right = (tmp.Normalize()).Cross(forward);
-	Vector3 up = forward.Cross(right);
+	Vector3d forward = (from - to).Normalize(); // Where camera's view is centered
+	Vector3d right = (tmp.Normalize()).Cross(forward);
+	Vector3d up = forward.Cross(right);
 };
 
 Camera::Camera()
 	:from {0}, to {0, 0, -1}
 {}
 
-inline Camera::Camera(const Vector3 &from, const Vector3 &to)
+inline Camera::Camera(const Vector3d &from, const Vector3d &to)
 	: from(from), to(to)
 {}
 
-inline Vector3 Camera::GetFrom()
+inline Vector3d Camera::GetFrom()
 {
 	return from;
 }
 
-inline Vector3 Camera::GetTo()
+inline Vector3d Camera::GetTo()
 {
 	return to;
 }
 
-inline Vector3 Camera::GetForward()
+inline Vector3d Camera::GetForward()
 {
 	return forward;
 }
 
-inline Vector3 Camera::GetRight()
+inline Vector3d Camera::GetRight()
 {
 	return right;
 }
 
-inline Vector3 Camera::GetUp()
+inline Vector3d Camera::GetUp()
 {
 	return up;
 }
 
-void Camera::SetTo(const Vector3 &to_)
+void Camera::SetTo(const Vector3d &to_)
 {
 	to = to_;
 }

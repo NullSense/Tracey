@@ -8,13 +8,13 @@ class Triangle : public Object
 {
 public:
 	Triangle();
-	Triangle(Vector3 v0_, Vector3 v1_, Vector3 v2_);
+	Triangle(Vector3d v0_, Vector3d v1_, Vector3d v2_);
 
-	Vector3 GetNormal();
-	Vector3 GetNormalAt(const Vector3 point);
+	Vector3d GetNormal();
+	Vector3d GetNormalAt(const Vector3d point);
 	FPType GetIntersection(const Ray ray);
 
 private:
-	Vector3 v0, v1, v2;
-	Vector3 normal;
+	Vector3d v0, v1, v2;
+	Vector3d normal;
 };

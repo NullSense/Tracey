@@ -5,7 +5,7 @@ Plane::Plane()
 	, normal {1, 0, 0}
 {}
 
-Plane::Plane(Vector3 center_, Vector3 normal_)
+Plane::Plane(Vector3d center_, Vector3d normal_)
 	:center {center_}
 	, normal {normal_}
 {}
@@ -22,7 +22,7 @@ FPType Plane::GetIntersection(Ray ray)
 	return false;
 }
 
-FPType Plane::GetIntersectionDisk(Ray ray, Vector3 normal_, Vector3 position)
+FPType Plane::GetIntersectionDisk(Ray ray, Vector3d normal_, Vector3d position)
 {
 	FPType denom = normal_.Dot(ray.GetDirection());
 	FPType t = -1;
@@ -33,12 +33,12 @@ FPType Plane::GetIntersectionDisk(Ray ray, Vector3 normal_, Vector3 position)
 	return t;
 }
 
-Vector3 Plane::GetCenter() const
+Vector3d Plane::GetCenter() const
 {
 	return center;
 }
 
-Vector3 Plane::GetNormalAt(const Vector3 point)
+Vector3d Plane::GetNormalAt(const Vector3d point)
 {
 	return normal;
 }

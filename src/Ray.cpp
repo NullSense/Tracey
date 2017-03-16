@@ -2,8 +2,8 @@
 
 Ray::Ray()
 {
-	origin = Vector3(0);
-	direction = Vector3(0, 0, 1);
+	origin = Vector3d(0);
+	direction = Vector3d(0, 0, 1);
 	tMin = BIAS;
 	tMax = 1000;
 
@@ -16,7 +16,7 @@ Ray::Ray()
 	sign[2] = (invDir.z < 0);
 }
 
-Ray::Ray(const Vector3 origin_, const Vector3 direction_)
+Ray::Ray(const Vector3d origin_, const Vector3d direction_)
 {
 	origin = origin_;
 	direction = direction_;
@@ -32,22 +32,22 @@ Ray::Ray(const Vector3 origin_, const Vector3 direction_)
 	sign[2] = (invDir.z < 0);
 }
 
-void Ray::SetOrigin(const Vector3 &origin_)
+void Ray::SetOrigin(const Vector3d &origin_)
 {
 	origin = origin_;
 }
 
-void Ray::SetDirection(const Vector3 &direction_)
+void Ray::SetDirection(const Vector3d &direction_)
 {
 	direction = direction_;
 }
 
-Vector3 Ray::GetOrigin()
+Vector3d Ray::GetOrigin()
 {
 	return origin;
 }
 
-Vector3 Ray::GetDirection()
+Vector3d Ray::GetDirection()
 {
 	return direction;
 }

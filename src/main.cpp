@@ -11,7 +11,7 @@
 #include <sstream>
 #include <thread>
 
-Color GetColorAt(const Vector3 &position, const Vector3 &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, 
+Color GetColorAt(const Vector3d &position, const Vector3d &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, 
 				 const int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, const int &depth);
 
 // Returns the closest object's index that the ray intersected with
@@ -72,11 +72,11 @@ FPType deg2rad(const FPType deg)
 	return deg * M_PI / 180;
 }
 
-FPType fresnel(const Vector3 &sceneDirection, const Vector3 &normal, const Material &material)
+FPType fresnel(const Vector3d &sceneDirection, const Vector3d &normal, const Material &material)
 {
 	FPType kr;
-	Vector3 I = sceneDirection;
-	Vector3 N = normal;
+	Vector3d I = sceneDirection;
+	Vector3d N = normal;
 	FPType cosi = clamp(-1, 1, I.Dot(N));
 	FPType etai = 1, etat = material.GetRefraction();
 	if(cosi > 0)
@@ -101,18 +101,18 @@ FPType fresnel(const Vector3 &sceneDirection, const Vector3 &normal, const Mater
 	return kr;
 }
 
-Vector3 GetRefraction(const Vector3 &incident, const Vector3 &normal, Material &material)
+Vector3d GetRefraction(const Vector3d &incident, const Vector3d &normal, Material &material)
 {
 	FPType cosi = clamp(-1, 1, incident.Dot(normal));
 	FPType etai = GLOBAL_REFRACTION, etat = material.GetRefraction();
-	Vector3 n = normal;
+	Vector3d n = normal;
 	if(cosi < 0)
 		cosi = -cosi;
 	else
 		std::swap(etai, etat); n = -normal;
 	FPType eta = etai / etat;
 	FPType k = 1 - eta * eta * (1 - cosi * cosi);
-	Vector3 a = incident * eta + normal * (eta * cosi - sqrt(k));
+	Vector3d a = incident * eta + normal * (eta * cosi - sqrt(k));
 
 	//return k < 0 ? 0 : eta * incident + (eta * cosi - sqrtf(k)) * n;
 	if(k < 0)
@@ -124,25 +124,25 @@ Vector3 GetRefraction(const Vector3 &incident, const Vector3 &normal, Material &
 		return a;
 }
 
-Ray GetReflectionRay(const Vector3 &normal, const Vector3 &sceneDirection, const Vector3 &position)
+Ray GetReflectionRay(const Vector3d &normal, const Vector3d &sceneDirection, const Vector3d &position)
 {
 	const FPType cosI = normal.Dot(sceneDirection);
 
-	Vector3 reflectionDirection = sceneDirection - normal * 2 * cosI;
-	Vector3 offset = reflectionDirection * BIAS;
+	Vector3d reflectionDirection = sceneDirection - normal * 2 * cosI;
+	Vector3d offset = reflectionDirection * BIAS;
 
 	Ray reflectionRay(position + offset, reflectionDirection);
 	return reflectionRay;
 }
 
 // Calculate reflection colors
-Color GetReflections(const Vector3 &position, const Vector3 &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
+Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 const int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, int depth)
 {
 	if(depth <= DEPTH && indexOfClosestObject != -1)
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
-		Vector3 normal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
+		Vector3d normal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
 
 		if(sceneObject->GetReflection() > 0 && REFLECTIONS_ON && sceneObject->GetRefraction() != GLOBAL_REFRACTION)
 		{
@@ -165,7 +165,7 @@ Color GetReflections(const Vector3 &position, const Vector3 &sceneDirection, con
 				{
 					// determine the position and sceneDirectionection at the position of intersection with the reflection ray
 					// the ray only affects the color if it reflected off something
-					Vector3 reflectionIntersectionPosition = reflectionRay.GetOrigin() + (reflectionRay.GetDirection() * (reflectionIntersections[closestObjectWithReflection]));
+					Vector3d reflectionIntersectionPosition = reflectionRay.GetOrigin() + (reflectionRay.GetDirection() * (reflectionIntersections[closestObjectWithReflection]));
 					Color reflectionIntersectionColor = GetColorAt(reflectionIntersectionPosition, reflectionRay.GetDirection(), sceneObjects, closestObjectWithReflection, lightSources, depth + 1);
 					return reflectionIntersectionColor * sceneObject->GetReflection();
 				}
@@ -184,7 +184,7 @@ Color GetReflections(const Vector3 &position, const Vector3 &sceneDirection, con
 		return Color(0);
 }
 
-Color GetRefractions(const Vector3 &position, const Vector3 &dir, const std::vector<std::shared_ptr<Object>> &sceneObjects,
+Color GetRefractions(const Vector3d &position, const Vector3d &dir, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 const int &indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, int depth)
 {
 	if(indexOfClosestObject != -1 && depth <= DEPTH)
@@ -192,11 +192,11 @@ Color GetRefractions(const Vector3 &position, const Vector3 &dir, const std::vec
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
 
 		Material material = sceneObject->GetMaterial();
-		Vector3 normal = sceneObject->GetNormalAt(position);
+		Vector3d normal = sceneObject->GetNormalAt(position);
 		if(sceneObject->GetRefraction() > 0 && sceneObject->GetReflection() > 0)
 		{
-			Vector3 refractionDir = GetRefraction(dir, normal, material);
-			Vector3 offset = refractionDir * BIAS;
+			Vector3d refractionDir = GetRefraction(dir, normal, material);
+			Vector3d offset = refractionDir * BIAS;
 			Ray refractionRay(position + offset, refractionDir);
 
 			std::vector<FPType> refractionIntersections;
@@ -217,9 +217,9 @@ Color GetRefractions(const Vector3 &position, const Vector3 &dir, const std::vec
 					// compute refraction if it is not a case of total internal reflection
 					if(kr < 1)
 					{
-						Vector3 refractionDirection = refractionRay.GetDirection().Normalize();
-						Vector3 refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
-						//Vector3 refractionRayOrig = outside ? refractionIntersectionPosition - bias : refractionIntersectionPosition + bias;
+						Vector3d refractionDirection = refractionRay.GetDirection().Normalize();
+						Vector3d refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
+						//Vector3d refractionRayOrig = outside ? refractionIntersectionPosition - bias : refractionIntersectionPosition + bias;
 
 						refractionColor = GetColorAt(refractionIntersectionPosition, refractionDirection, sceneObjects, closestObjectWithRefraction, lightSources, depth + 1);
 					}
@@ -245,7 +245,7 @@ Color GetRefractions(const Vector3 &position, const Vector3 &dir, const std::vec
 }
 
 // Get the color of the pixel at the ray-object intersection position
-Color GetColorAt(const Vector3 &origin, const Vector3 &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects, const int indexOfClosestObject,
+Color GetColorAt(const Vector3d &origin, const Vector3d &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects, const int indexOfClosestObject,
 				 const std::vector<std::shared_ptr<Light>> &lightSources, const int &depth = 0)
 {
 	if(indexOfClosestObject != -1)
@@ -255,7 +255,7 @@ Color GetColorAt(const Vector3 &origin, const Vector3 &direction, const std::vec
 			return Color(0);
 
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
-		Vector3 normal = sceneObject->GetNormalAt(origin);
+		Vector3d normal = sceneObject->GetNormalAt(origin);
 
 		// Checkerboard pattern floor
 		if(sceneObject->GetSpecial() == 2)
@@ -286,7 +286,7 @@ Color GetColorAt(const Vector3 &origin, const Vector3 &direction, const std::vec
 			for(const auto &lightSource : lightSources)
 			{
 				bool shadowed = false;
-				Vector3 lightDir;
+				Vector3d lightDir;
 				if(lightSource->POINT)
 					lightDir = (lightSource->GetPosition() - origin); // Calculate the sceneDirectionectional vector towards the lightSource
 
@@ -337,9 +337,9 @@ Color GetColorAt(const Vector3 &origin, const Vector3 &direction, const std::vec
 				{
 					if(sceneObject->GetSpecular() > 0 && sceneObject->GetSpecular() <= 1 && sceneObject->GetRefraction() != GLOBAL_REFRACTION)
 					{
-						Vector3 V = -direction;
+						Vector3d V = -direction;
 						// Blinn-Phong
-						Vector3 H = (lightDir + V).Normalize();
+						Vector3d H = (lightDir + V).Normalize();
 						FPType NdotH = normal.Dot(H);
 
 						phong = pow(NdotH, 500);
@@ -387,14 +387,14 @@ void Render(bitmap_image *image, const unsigned x, const unsigned y, const Color
 
 // Camera pos, sceneDirection here
 void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, const unsigned aaIndex, Color tempColor[], const Matrix44f &cameraToWorld, 
-						   const Vector3 &orig, const std::vector<std::shared_ptr<Object>> &sceneObjects, const std::vector<std::shared_ptr<Light>> &lightSources)
+						   const Vector3d &orig, const std::vector<std::shared_ptr<Object>> &sceneObjects, const std::vector<std::shared_ptr<Light>> &lightSources)
 {
-	Camera camera(Vector3(-1, 0.2, 6), Vector3(0, 0, -1));
+	Camera camera(Vector3d(-1, 0.2, 6), Vector3d(0, 0, -1));
 
 	// Camera sceneDirectionection for every ray shot through each pixel
-	//Vector3 camRayDir = (camera.GetForward() + camera.GetRight() * (xCamOffset - 0.5) + camera.GetUp() * (yCamOffset - 0.5)).Normalize();
-	Vector3 camRayDir;
-	cameraToWorld.MultDirMatrix(Vector3(xCamOffset, yCamOffset - 0.07, -1), camRayDir);
+	//Vector3d camRayDir = (camera.GetForward() + camera.GetRight() * (xCamOffset - 0.5) + camera.GetUp() * (yCamOffset - 0.5)).Normalize();
+	Vector3d camRayDir;
+	cameraToWorld.MultDirMatrix(Vector3d(xCamOffset, yCamOffset - 0.07, -1), camRayDir);
 	camRayDir.Normalize();
 	camera.SetTo(camRayDir);
 	// Shoot ray into evey pixel of the image
@@ -419,7 +419,7 @@ void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, con
 		if(intersections[indexOfClosestObject] > BIAS) // If intersection at that position > accuracy, get color of object
 		{
 			// If ray hit something, set position position to ray-object intersection
-			Vector3 position((camera.GetFrom() + (camera.GetTo() * intersections[indexOfClosestObject])));
+			Vector3d position((camera.GetFrom() + (camera.GetTo() * intersections[indexOfClosestObject])));
 			Color intersectionColor = GetColorAt(position, camera.GetTo(), sceneObjects, indexOfClosestObject, lightSources);
 			tempColor[aaIndex] = Color(intersectionColor.GetRed(), intersectionColor.GetGreen(), intersectionColor.GetBlue());
 		}
@@ -438,8 +438,8 @@ void launchThread(const unsigned start, const unsigned end, bitmap_image *image)
 	FPType scale = tan(deg2rad(FOV * 0.5));
 
 	Matrix44f cameraToWorld;
-	Vector3 orig;
-	cameraToWorld.MultVecMatrix(Vector3(0), orig);
+	Vector3d orig;
+	cameraToWorld.MultVecMatrix(Vector3d(0), orig);
 
 	// Set up scene
 	Scene scene;

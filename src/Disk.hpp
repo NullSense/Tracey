@@ -8,14 +8,14 @@ class Disk : public Plane
 {
 public:
 	Disk();
-	Disk(FPType radius_, Vector3 position_, Vector3 normal_);
+	Disk(FPType radius_, Vector3d position_, Vector3d normal_);
 	FPType GetIntersection(const Ray ray);
 
-	Vector3 GetNormalAt(const Vector3 point);
-	Vector3 GetPosition() const;
+	Vector3d GetNormalAt(const Vector3d point);
+	Vector3d GetPosition() const;
 
 private:
-	Vector3 position;
-	Vector3 normal;
+	Vector3d position;
+	Vector3d normal;
 	FPType radius;
 };

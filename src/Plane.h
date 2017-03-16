@@ -8,13 +8,13 @@ class Plane : public Object
 {
 public:
     Plane();
-    Plane(Vector3 center_, Vector3 normal_);
+    Plane(Vector3d center_, Vector3d normal_);
     
-    virtual Vector3 GetNormalAt(const Vector3 point);
+    virtual Vector3d GetNormalAt(const Vector3d point);
     virtual FPType GetIntersection(const Ray ray);
-	FPType GetIntersectionDisk(const Ray ray, const Vector3 normal_, const Vector3 position);
-	Vector3 GetCenter() const;
+	FPType GetIntersectionDisk(const Ray ray, const Vector3d normal_, const Vector3d position);
+	Vector3d GetCenter() const;
 
 private:
-	Vector3 normal, center;
+	Vector3d normal, center;
 };

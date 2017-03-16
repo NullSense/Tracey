@@ -5,16 +5,16 @@ struct Ray
 {
 public:
 	Ray();
-	Ray(const Vector3 origin_, const Vector3 direction_);
+	Ray(const Vector3d origin_, const Vector3d direction_);
 
-	void SetOrigin(const Vector3 &origin_);
-	void SetDirection(const Vector3 &direction_);
-	Vector3 GetOrigin();
-	Vector3 GetDirection();
+	void SetOrigin(const Vector3d &origin_);
+	void SetDirection(const Vector3d &direction_);
+	Vector3d GetOrigin();
+	Vector3d GetDirection();
 
-	Vector3 invDir;
+	Vector3d invDir;
 	FPType tMin, tMax;
 private:
-	Vector3 origin, direction;
+	Vector3d origin, direction;
 	int sign[3];
 };

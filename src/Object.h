@@ -12,5 +12,5 @@ public:
 
 	virtual FPType GetIntersection(const Ray ray);
 
-	virtual Vector3 GetNormalAt(const Vector3 intersectionPosition);
+	virtual Vector3d GetNormalAt(const Vector3d intersectionPosition);
 };

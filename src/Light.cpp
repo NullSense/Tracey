@@ -7,14 +7,14 @@ Light::Light()
 	, light_type {POINT}
 {}
 
-Light::Light(Vector3 position_, Color color_, FPType intensity_, enum LIGHT_TYPES)
+Light::Light(Vector3d position_, Color color_, FPType intensity_, enum LIGHT_TYPES)
 	:position {position_}
 	, color {color_}
 	, intensity {intensity_}
 	, light_type{POINT}
 {}
 
-void Light::SetPosition(const Vector3 &position_)
+void Light::SetPosition(const Vector3d &position_)
 {
 	position = position_;
 }
@@ -34,7 +34,7 @@ Color Light::GetColor()
 	return color;
 }
 
-Vector3 Light::GetPosition()
+Vector3d Light::GetPosition()
 {
 	return position;
 }
