@@ -139,12 +139,12 @@ Ray GetReflectionRay(const Vector3d &normal, const Vector3d &sceneDirection, con
 Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 const int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, int depth)
 {
-	if(depth <= DEPTH && indexOfClosestObject != -1)
+	if(REFLECTIONS_ON && /*depth <= DEPTH && */indexOfClosestObject != -1) // Not checking depth for infinite mirror effect
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
 		Vector3d normal = sceneObjects[indexOfClosestObject]->GetNormalAt(position);
 
-		if(sceneObject->GetReflection() > 0 && REFLECTIONS_ON && sceneObject->GetRefraction() != GLOBAL_REFRACTION)
+		if(sceneObject->GetReflection() > 0 && sceneObject->GetRefraction() != GLOBAL_REFRACTION)
 		{
 			if(sceneObject->GetSpecular() > 0 && sceneObject->GetSpecular() <= 1)
 			{
@@ -160,23 +160,24 @@ Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, c
 
 				int closestObjectWithReflection = ClosestObjectIndex(reflectionIntersections);
 
-				// reflection ray missed everthing else
-				if(reflectionIntersections[closestObjectWithReflection] > BIAS)
+				if(closestObjectWithReflection != indexOfClosestObject) // Makes infinite mirror effect
 				{
-					// determine the position and sceneDirectionection at the position of intersection with the reflection ray
-					// the ray only affects the color if it reflected off something
-					Vector3d reflectionIntersectionPosition = reflectionRay.GetOrigin() + (reflectionRay.GetDirection() * (reflectionIntersections[closestObjectWithReflection]));
-					Color reflectionIntersectionColor = GetColorAt(reflectionIntersectionPosition, reflectionRay.GetDirection(), sceneObjects, closestObjectWithReflection, lightSources, depth + 1);
-					return reflectionIntersectionColor * sceneObject->GetReflection();
+					// reflection ray missed everthing else
+					if(reflectionIntersections[closestObjectWithReflection] > BIAS)
+					{
+						// determine the position and sceneDirectionection at the position of intersection with the reflection ray
+						// the ray only affects the color if it reflected off something
+						Vector3d reflectionIntersectionPosition = reflectionRay.GetOrigin() + (reflectionRay.GetDirection() * (reflectionIntersections[closestObjectWithReflection]));
+						Color reflectionIntersectionColor = GetColorAt(reflectionIntersectionPosition, reflectionRay.GetDirection(), sceneObjects, closestObjectWithReflection, lightSources, depth + 1);
+						return reflectionIntersectionColor * sceneObject->GetReflection();
+					}
 				}
 				else
 					return Color(0);
 			}
-			
 			else
 				return Color(0);
 		}
-
 		else
 			return Color(0);
 	}
@@ -187,7 +188,7 @@ Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, c
 Color GetRefractions(const Vector3d &position, const Vector3d &dir, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 const int &indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, int depth)
 {
-	if(indexOfClosestObject != -1 && depth <= DEPTH)
+	if(indexOfClosestObject != -1/* && depth <= DEPTH*/)
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
 
@@ -248,11 +249,11 @@ Color GetRefractions(const Vector3d &position, const Vector3d &dir, const std::v
 Color GetColorAt(const Vector3d &origin, const Vector3d &direction, const std::vector<std::shared_ptr<Object>> &sceneObjects, const int indexOfClosestObject,
 				 const std::vector<std::shared_ptr<Light>> &lightSources, const int &depth = 0)
 {
-	if(indexOfClosestObject != -1)
+	if(indexOfClosestObject != -1/* && depth <= DEPTH*/) // not checking depth for infinite mirror effect (not a lot of overhead)
 	{
 		Color finalColor;
-		if(depth > DEPTH)
-			return Color(0);
+		//if(depth > DEPTH)
+			//return Color(0);
 
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
 		Vector3d normal = sceneObject->GetNormalAt(origin);
@@ -280,9 +281,9 @@ Color GetColorAt(const Vector3d &origin, const Vector3d &direction, const std::v
 			finalColor += ambient;
 		}
 
+		// Shadows, Diffuse, Specular
 		if(SHADOWS_ON || DIFFUSE_ON || SPECULAR_ON)
 		{
-			// Shadows, Diffuse, Specular
 			for(const auto &lightSource : lightSources)
 			{
 				bool shadowed = false;
@@ -484,7 +485,7 @@ void CalcIntersections()
 	unsigned nThreads = std::thread::hardware_concurrency();
 	std::cout << "Resolution: " << WIDTH << "x" << HEIGHT << std::endl;
 	std::cout << "Supersampling: " << SUPERSAMPLING << std::endl;
-	std::cout << "Ray depth: " << DEPTH << std::endl;
+	//std::cout << "Ray depth: " << DEPTH << std::endl;
 	std::cout << "Threads: " << nThreads << std::endl;
 
 	std::thread* tt = new std::thread[nThreads];
@@ -509,7 +510,7 @@ void CalcIntersections()
 	FPType diff = ((FPType) end - (FPType) start) / CLOCKS_PER_SEC;
 	std::cout << "Time: " << diff << " seconds" << std::endl;
 
-	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + " render, " + std::to_string(SUPERSAMPLING) + "x SS, " + std::to_string(DEPTH) + " depth.bmp";
+	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + " render, " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
 	image->save_image(saveString);
 	std::cout << "Output filename: " << saveString << std::endl;
 }

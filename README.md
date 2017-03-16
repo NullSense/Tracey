@@ -35,8 +35,8 @@
 # Final images
 This render 2021 seconds 16x Supersampling 1080p 15 ray depth
 ![5](https://i.imgur.com/PpvvatS.png)
-![6](http://i.imgur.com/471lxiB.png)
-![8](http://i.imgur.com/h1zb8kK.png)
+70s, 6x SS, 1080p
+![6](https://i.imgur.com/6QQnu3d.png)
 
 # Ray tracing introduction (with screenshots)
 Ray tracing is a 3d rendering technique that attemps to generate photorealistic images by tracing rays that are shot from every pixel of the image and applying mathematical and physical concepts to accomplish techniques described below.
@@ -70,6 +70,9 @@ Reflections are implemented by casting rays from the light source to an object a
 This method is used recursively to add realism by allowing for multiple reflections in the scene.
 
 ![4](https://i.imgur.com/mxIxEuC.png)
+You can even get infinite mirrors (the checker floor plane is a mirror now)
+At 6x supersampling, 1080p, this took 70s on a 4 thread i5-4690k
+![9](https://i.imgur.com/UgWFE0R.png)
 
 ## Refractions (transmission)
 

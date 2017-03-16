@@ -7,10 +7,14 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	floorPlane->SetMaterial(tileFloorM);
 	std::shared_ptr<Plane> topPlane = std::make_shared<Plane>(Vector3d(0, 10, 0), Vector3d(0, -1, 0));
 	topPlane->SetMaterial(blueM);
-	std::shared_ptr<Plane> backPlane = std::make_shared<Plane>(Vector3d(0, 0, 15), Vector3d(0, 0, -1));
+	std::shared_ptr<Plane> backPlane = std::make_shared<Plane>(Vector3d(0, 0, 10), Vector3d(0, 0, -1));
 	backPlane->SetMaterial(orangeM);
-	std::shared_ptr<Plane> behindPlane = std::make_shared<Plane>(Vector3d(0, 0, -15), Vector3d(0, 0, 1));
+	std::shared_ptr<Plane> behindPlane = std::make_shared<Plane>(Vector3d(0, 0, -12), Vector3d(0, 0, 1));
 	behindPlane->SetMaterial(prettyGreenM);
+	std::shared_ptr<Plane> leftPlane = std::make_shared<Plane>(Vector3d(-12, 0, 0), Vector3d(1, 0, 0));
+	leftPlane->SetMaterial(yellowM);
+	std::shared_ptr<Plane> rightPlane = std::make_shared<Plane>(Vector3d(12, 0, 0), Vector3d(-1, 0, 0));
+	rightPlane->SetMaterial(maroonM);
 
 	std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(0.5, Vector3d(1, -0.5, -2.5));
 	sphere1->SetMaterial(maroonM);
@@ -18,11 +22,11 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	sphere2->SetMaterial(mirrorM);
 	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.4, Vector3d(sphere1->GetCenter().x - 1.6, sphere1->GetCenter().y + 0.2, sphere1->GetCenter().z + 1.7));
 	sphere3->SetMaterial(silverM);
-	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.2, Vector3d(sphere1->GetCenter().x - 1, sphere1->GetCenter().y + 0.4, sphere1->GetCenter().z + 1.2));
+	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.2, Vector3d(sphere1->GetCenter().x - 1, sphere1->GetCenter().y + 0.8, sphere1->GetCenter().z + 1.2));
 	sphere4->SetMaterial(blueM);
-	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.6, Vector3d(floorPlane->GetCenter().x - 4, 0, floorPlane->GetCenter().z - 5));
-	sphere5->SetMaterial(waterM);
-	std::shared_ptr<Sphere> sphere6 = std::make_shared<Sphere>(0.35, Vector3d(sphere2->GetCenter().x + 0.45, sphere1->GetCenter().y + 0.6, sphere1->GetCenter().z + 5.5));
+	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.6, Vector3d(floorPlane->GetCenter().x - 3, 0.8, floorPlane->GetCenter().z - 2));
+	sphere5->SetMaterial(mirrorM);
+	std::shared_ptr<Sphere> sphere6 = std::make_shared<Sphere>(0.35, Vector3d(sphere2->GetCenter().x + 0.25, sphere1->GetCenter().y + 0.4, sphere1->GetCenter().z + 5.5));
 	sphere6->SetMaterial(glassM);
 	std::shared_ptr<Sphere> sphere7 = std::make_shared<Sphere>(0.4, Vector3d(sphere2->GetCenter().x + 0.55, sphere1->GetCenter().y + 1, sphere1->GetCenter().z + 7));
 	sphere7->SetMaterial(transparentM);
@@ -32,7 +36,7 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Disk> disk1 = std::make_shared<Disk>();
 	disk1->SetMaterial(waterM);
 
-	std::shared_ptr<Triangle> triangle1 = std::make_shared<Triangle>(Vector3d(-1.5, -1, 0), Vector3d(-2.5, 2, 0), Vector3d(-2.5, -1, -0.2));
+	std::shared_ptr<Triangle> triangle1 = std::make_shared<Triangle>(Vector3d(-3.5, -1, 2), Vector3d(-5.5, 2, 2), Vector3d(-5.5, -1, 2.7));
 	triangle1->SetMaterial(prettyGreenM);
 
 	std::shared_ptr<Triangle> triangle2 = std::make_shared<Triangle>(Vector3d(0, -1, -4), Vector3d(2, 3, -4), Vector3d(2, -1, -4));
@@ -48,19 +52,21 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 
 	//sceneObjects.emplace_back(disk1);
 	sceneObjects.emplace_back(sphere1);
-	//sceneObjects.emplace_back(triangle1);
+	sceneObjects.emplace_back(triangle1);
 	//sceneObjects.emplace_back(triangle2);
 	sceneObjects.emplace_back(sphere2);
 	//sceneObjects.emplace_back(sphere3);
 	sceneObjects.emplace_back(sphere4);
 	sceneObjects.emplace_back(sphere5);
 	sceneObjects.emplace_back(sphere6);
-	sceneObjects.emplace_back(sphere7);
+	//sceneObjects.emplace_back(sphere7);
 	sceneObjects.emplace_back(sphere8);
 	sceneObjects.emplace_back(floorPlane);
 	sceneObjects.emplace_back(topPlane);
 	sceneObjects.emplace_back(backPlane);
 	sceneObjects.emplace_back(behindPlane);
+	sceneObjects.emplace_back(leftPlane);
+	sceneObjects.emplace_back(rightPlane);
 
 	return sceneObjects;
 }
