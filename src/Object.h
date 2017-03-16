@@ -3,7 +3,6 @@
 #include "Ray.h"
 #include "Color.h"
 #include "Material.h"
-#include <iostream>
 
 class Object: public Material
 {
@@ -14,13 +13,4 @@ public:
 	virtual FPType GetIntersection(const Ray ray);
 
 	virtual Vector GetNormalAt(const Vector intersectionPosition);
-
-	virtual Color GetColor();
-
-	virtual Material GetMaterial();
-
-	void SetMaterial(const Material &material_);
-
-private:
-	Material material;
 };

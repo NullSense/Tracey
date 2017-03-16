@@ -2,10 +2,11 @@
 
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
+	//sceneObjects.reserve(50);
 	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector(0, -1, 0), Vector(0, 1, 0));
 	floorPlane->SetMaterial(tileFloorM);
-	std::shared_ptr<Plane> topPlane = std::make_shared<Plane>(Vector(0, 3, 0), Vector(0, -1, 0));
-	topPlane->SetMaterial(orangeM);
+	std::shared_ptr<Plane> topPlane = std::make_shared<Plane>(Vector(0, 10, 0), Vector(0, -1, 0));
+	topPlane->SetMaterial(blueM);
 	std::shared_ptr<Plane> backPlane = std::make_shared<Plane>(Vector(0, 0, 15), Vector(0, 0, -1));
 	backPlane->SetMaterial(orangeM);
 	std::shared_ptr<Plane> behindPlane = std::make_shared<Plane>(Vector(0, 0, -15), Vector(0, 0, 1));
@@ -42,38 +43,39 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Box> box2 = std::make_shared<Box>(Vector(0, -1, -5), Vector(1, 0.5, -6));
 	box2->SetMaterial(orangeM);
 
-	//sceneObjects.push_back(box1);
-	//sceneObjects.push_back(box2);
+	//sceneObjects.emplace_back(box1);
+	//sceneObjects.emplace_back(box2);
 
-	//sceneObjects.push_back(disk1);
-	sceneObjects.push_back(sphere1);
-	//sceneObjects.push_back(triangle1);
-	//sceneObjects.push_back(triangle2);
-	sceneObjects.push_back(sphere2);
-	//sceneObjects.push_back(sphere3);
-	sceneObjects.push_back(sphere4);
-	sceneObjects.push_back(sphere5);
-	sceneObjects.push_back(sphere6);
-	sceneObjects.push_back(sphere7);
-	sceneObjects.push_back(sphere8);
-	sceneObjects.push_back(floorPlane);
-	//sceneObjects.push_back(topPlane);
-	sceneObjects.push_back(backPlane);
-	sceneObjects.push_back(behindPlane);
+	//sceneObjects.emplace_back(disk1);
+	sceneObjects.emplace_back(sphere1);
+	//sceneObjects.emplace_back(triangle1);
+	//sceneObjects.emplace_back(triangle2);
+	sceneObjects.emplace_back(sphere2);
+	//sceneObjects.emplace_back(sphere3);
+	sceneObjects.emplace_back(sphere4);
+	sceneObjects.emplace_back(sphere5);
+	sceneObjects.emplace_back(sphere6);
+	sceneObjects.emplace_back(sphere7);
+	sceneObjects.emplace_back(sphere8);
+	sceneObjects.emplace_back(floorPlane);
+	sceneObjects.emplace_back(topPlane);
+	sceneObjects.emplace_back(backPlane);
+	sceneObjects.emplace_back(behindPlane);
 
 	return sceneObjects;
 }
 
 std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 {
+	//lightSources.reserve(5);
 	Vector light1Position(-2.5, 1, 1);
 	Vector light2Position(2.5, 2, -4.6);
 	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, Color(255, 255, 255), 1.5, Light::POINT);
 	std::shared_ptr<Light> light2 = std::make_shared<Light>(light2Position, Color(255, 255, 255), 1.5, Light::POINT);
 	std::shared_ptr<Light> light3 = std::make_shared<Light>(light1Position, Color(0, 0, 255), 1, Light::POINT);
-	lightSources.push_back(light1);
-	lightSources.push_back(light2);
-	//lightSources.push_back(light3);
+	lightSources.emplace_back(light1);
+	lightSources.emplace_back(light2);
+	//lightSources.emplace_back(light3);
 
 	return lightSources;
 }

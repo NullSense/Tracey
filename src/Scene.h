@@ -1,7 +1,7 @@
 #pragma once
 #include "Plane.h"
 #include "Sphere.h"
-#include "Material.h"
+#include "material.h"
 #include "Light.h"
 #include "Disk.hpp"
 #include "Triangle.h"
@@ -51,12 +51,13 @@ private:
 	const Material blackM = Material(black, 0.6, 0, 0, 0.5, 0);
 
 	// Color, ambient (more == brighter), reflective, refractive, diffusive (more == matte), special (2 == tile floor, for planes)
-	const Material brassM = Material(brass, 0.3, 0.25, 0, 0.4, 0);
-	const Material silverM = Material(silver, 0.1, 0.8, 0, 0.7, 0);
-	const Material mirrorM = Material(white, 0, 1, 0, 0, 0);
-	const Material tileFloorM = Material(Color(255, 255, 255), 0.2, 0.15, 0, 0.5, 2);
-	const Material waterM = Material(Color(0, 0, 205), 0.1, 1, 1.333, 0, 0);
-	const Material glassM = Material(white, 0.03, 1, 1.5, 0, 0);
-	const Material diamondM = Material(white, 0.03, 0.7, 2, 0, 0);
-	const Material transparentM = Material(white, 0.02, 0.1, 1, 0.25, 0);
-};
+	const Material brassM = Material(brass,						0.3,  0.25, 0,     0.4, 0);
+	const Material silverM = Material(silver,					0.1,  0.8,  0,     0.7, 0);
+	const Material mirrorM = Material(white,					0,    1,    0,     0,   0);
+	const Material tileFloorM = Material(Color(255, 255, 255),  0.2,  0.15, 0,     0.5, 2);
+
+	const Material waterM = Material(Color(0, 0, 205),			0.1,  1,    1.333, 0,   0);
+	const Material glassM = Material(white,						0.03, 1,    1.5,   0,   0);
+	const Material diamondM = Material(white,					0.03, 0.7,  2,     0,   0);
+	const Material transparentM = Material(white,				0.03, 0.001,1,     0,   0);
+}; //															amb,  refl, refr, diff, special

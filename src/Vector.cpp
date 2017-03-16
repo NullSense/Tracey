@@ -37,15 +37,15 @@ Vector Vector::Normalize()
 
 FPType Vector::Magnitude()
 {
-	return sqrt(x * x + y * y + z * z);
+	return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
 }
 
-FPType Vector::Dot(const Vector &v)
+FPType Vector::Dot(const Vector &v) const
 {
-	return (x * v.x + y * v.y + z * v.z);
+	return (this->x * v.x + this->y * v.y + this->z * v.z);
 }
 
-Vector Vector::Cross(const Vector &v)
+Vector Vector::Cross(const Vector &v) const
 {
 	return Vector(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
 }

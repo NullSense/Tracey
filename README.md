@@ -6,22 +6,29 @@
 - [x] Supersampling anti-aliasing
 - [x] Blinn-Phong shading (ambient, diffuse and specular terms)
 - [x] Hard shadows
-- [ ] Soft shadows
 - [x] Point lights
-- [ ] Area Lights
 - [x] Depth checking
 - [x] Reflections
-- [ ] Glossy reflections
 - [x] Refractions
+
+# TODO
+- [ ] Soft shadows
+- [ ] Area Lights
+- [ ] Glossy reflections
 - [ ] Beer's law
 - [ ] Triangle meshes
 - [ ] Texture mapping
+- [ ] Png output (png++)
+- [ ] Transparent shadows
+- [ ] Motion blur
+- [ ] Depth of field
+- [ ] Speedup structures (kd-trees, etc.)
 
 # Geometric primitives:
 
 - [x] Planes
 - [x] Spheres
-- [ ] Triangles (WIP)
+- [x] Triangles
 - [ ] Disks (WIP)
 - [ ] Boxes (WIP)
 

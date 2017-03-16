@@ -9,6 +9,10 @@ using FPType = double;
 //constexpr FPType WIDTH = 800;
 //constexpr FPType HEIGHT = 600;
 
+// 1280 x 720p
+//constexpr FPType WIDTH = 1280;
+//constexpr FPType HEIGHT = 720;
+
 // 1920 x 1080p
 constexpr FPType WIDTH = 1920;
 constexpr FPType HEIGHT = 1080;
@@ -50,10 +54,10 @@ constexpr FPType HEIGHT = 1080;
 //constexpr FPType HEIGHT = 2880;
 
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
-constexpr FPType AMBIENT_LIGHT = 0.4;
+constexpr FPType AMBIENT_LIGHT = 0.8;
 constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
 constexpr FPType BIAS = 1e-8;
-constexpr unsigned SUPERSAMPLING = 16;
+constexpr unsigned SUPERSAMPLING = 1;
 constexpr unsigned DEPTH = 15; // effectively more than 15 is not needed
 constexpr unsigned FOV = 28;
 

@@ -14,8 +14,8 @@ public:
 
 	Vector Normalize();
 	FPType Magnitude();
-	FPType Dot(const Vector &v);
-	Vector Cross(const Vector &v);
+	FPType Dot(const Vector &v) const;
+	Vector Cross(const Vector &v) const;
 	Vector operator-() const;
 
 	inline Vector operator*(const Vector &v) const;

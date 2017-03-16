@@ -20,19 +20,19 @@ public:
 	{
 		color = color_;
 	}
-	void SetDiffuse(const FPType diffusive_)
+	void SetDiffuse(const FPType &diffusive_)
 	{
 		diffusive = diffusive_;
 	}
-	void SetReflection(const FPType reflective_)
+	void SetReflection(const FPType &reflective_)
 	{
 		reflective = reflective_;
 	}
-	void SetRefraction(const FPType refractive_)
+	void SetRefraction(const FPType &refractive_)
 	{
 		refractive = refractive_;
 	}
-	void SetSpecial(const FPType special_)
+	void SetSpecial(const FPType &special_)
 	{
 		special = special_;
 	}
@@ -57,13 +57,22 @@ public:
 	{
 		return reflective;
 	}
-	FPType GetRefraction()
+	FPType GetRefraction() const
 	{
-		return refractive;
+		return this->refractive;
 	}
 	FPType GetSpecial()
 	{
 		return special;
+	}
+
+	void SetMaterial(const Material &material_)
+	{
+		*this = material_;
+	}
+	Material GetMaterial()
+	{
+		return *this;
 	}
 
 private:
