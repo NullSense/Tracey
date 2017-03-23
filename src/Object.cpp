@@ -4,15 +4,14 @@ Object::Object() noexcept
 {}
 
 Object::~Object()
-{
-}
+{}
 
-FPType Object::GetIntersection(const Ray &ray)
+FPType Object::GetIntersection(const Ray &)
 {
 	return 0;
 }
 
-Vector3d Object::GetNormalAt(const Vector3d &intersectionPosition)
+Vector3d Object::GetNormalAt(const Vector3d &)
 {
 	return 0;
 }

@@ -39,6 +39,9 @@ This scene rendered in 38s, with 6x6 supersampling at 1080p.
 - [ ] Disks (WIP)
 - [ ] Boxes (WIP)
 
+# .obj file model rendering (WIP)
+![9](https://i.imgur.com/BpqYvdJ.png)
+
 # Ray tracing introduction (with screenshots)
 Ray tracing is a 3d rendering technique that attemps to generate photorealistic images by tracing rays that are shot from every pixel of the image and applying mathematical and physical concepts to accomplish techniques described below.
 

@@ -195,9 +195,9 @@ public:
 	}
 	Matrix44<T> LookAt(const Vector3d& from, const Vector3d& to, const Vector3d& tmp = Vector3d(0, 1, 0))
 	{
-		Vec3f forward = normalize(from - to);
-		Vec3f right = crossProduct(normalize(tmp), forward);
-		Vec3f up = crossProduct(forward, right);
+		Vector3d forward = normalize(from - to);
+		Vector3d right = crossProduct(normalize(tmp), forward);
+		Vector3d up = crossProduct(forward, right);
 
 		Matrix44 camToWorld;
 
