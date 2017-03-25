@@ -19,11 +19,11 @@ public:
 	std::vector<std::shared_ptr<Object>> InitObjects();
 	std::vector<std::shared_ptr<Light>> InitLightSources();
 
-	std::vector<std::shared_ptr<Object>> GetObjects()
+	std::vector<std::shared_ptr<Object>> GetObjects() const
 	{
 		return sceneObjects;
 	}
-	std::vector<std::shared_ptr<Light>> GetLightSources()
+	std::vector<std::shared_ptr<Light>> GetLightSources() const
 	{
 		return lightSources;
 	}

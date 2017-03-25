@@ -2,9 +2,9 @@
 
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
-	std::shared_ptr<TriangleMesh> triMesh = std::make_shared<TriangleMesh>("obj/bunny.obj");
+	sceneObjects.reserve(151);
+	std::shared_ptr<TriangleMesh> triMesh = std::make_shared<TriangleMesh>("obj/bunny-150.obj");
 	triMesh->SetMaterial(orangeM);
-	//sceneObjects.reserve(50);
 	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector3d(0, -1, 0), Vector3d(0, 1, 0));
 	floorPlane->SetMaterial(tileFloorM);
 	std::shared_ptr<Plane> topPlane = std::make_shared<Plane>(Vector3d(0, 10, 0), Vector3d(0, -1, 0));
@@ -20,13 +20,13 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 
 	std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(0.5, Vector3d(1, -0.5, -2.5));
 	sphere1->SetMaterial(maroonM);
-	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(1.3, Vector3d(-1, 0.3, -4));
+	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(1.3, Vector3d(-2.2, 0.3, -2.2));
 	sphere2->SetMaterial(mirrorM);
 	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.4, Vector3d(sphere1->GetCenter().x - 1.6, sphere1->GetCenter().y + 0.2, sphere1->GetCenter().z + 1.7));
 	sphere3->SetMaterial(silverM);
 	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.2, Vector3d(sphere1->GetCenter().x - 1, sphere1->GetCenter().y + 0.8, sphere1->GetCenter().z + 1.2));
 	sphere4->SetMaterial(blueM);
-	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.6, Vector3d(floorPlane->GetCenter().x - 3, 0.8, floorPlane->GetCenter().z - 2));
+	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.6, Vector3d(floorPlane->GetCenter().x + 2, 0.8, floorPlane->GetCenter().z - 1));
 	sphere5->SetMaterial(mirrorM);
 	std::shared_ptr<Sphere> sphere6 = std::make_shared<Sphere>(0.35, Vector3d(sphere2->GetCenter().x + 0.25, sphere1->GetCenter().y + 0.4, sphere1->GetCenter().z + 5.5));
 	sphere6->SetMaterial(glassM);
@@ -76,14 +76,14 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 
 std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 {
-	//lightSources.reserve(5);
+	lightSources.reserve(3);
 	Vector3d light1Position(-2, 3, 1);
 	Vector3d light2Position(2.5, 2, -4.6);
 	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, Color(255), 3, Light::POINT);
 	std::shared_ptr<Light> light2 = std::make_shared<Light>(light2Position, Color(255), 3, Light::POINT);
 	std::shared_ptr<Light> light3 = std::make_shared<Light>(light1Position, Color(0, 0, 255), 1, Light::POINT);
-	//lightSources.emplace_back(light1);
-	lightSources.emplace_back(light2);
+	lightSources.emplace_back(light1);
+	//lightSources.emplace_back(light2);
 	//lightSources.emplace_back(light3);
 
 	return lightSources;

@@ -15,5 +15,7 @@ public:
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
 	std::string err;
+	Triangle tri;
+	//Vector3d normal;
 	//Vector3d normal;
 };
