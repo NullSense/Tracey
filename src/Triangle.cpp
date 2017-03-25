@@ -17,7 +17,7 @@ Vector3d Triangle::GetNormalAt(const Vector3d &)
 	return -normal; // Has to be inverted for some reason
 }
 
-FPType Triangle::GetIntersection(const Ray &ray)
+FPType Triangle::GetIntersection(const Ray &ray, FPType u, FPType v)
 {
 	Vector3d v0v1 = v1 - v0;
 	Vector3d v0v2 = v2 - v0;
@@ -29,7 +29,7 @@ FPType Triangle::GetIntersection(const Ray &ray)
 		return false;
 
 	FPType invDet = 1 / det;
-	FPType u, v;
+	u, v;
 	Vector3d tvec = ray.GetOrigin() - v0;
 	u = tvec.Dot(pvec) * invDet;
 	if(u < 0 || u > 1)

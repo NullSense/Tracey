@@ -3,14 +3,19 @@
 # Final images
 This scene rendered in 38s, with 6x6 supersampling at 1080p.
 
-
-2 Light sources; 1 refractive, 3 reflective, 2 matte spheres and 4 planes (3 matte, 1 reflective with tile texture)
+2 Light sources
 ![6](https://i.imgur.com/6QQnu3d.png)
+
+# .obj file model rendering (1128 seconds)
+4968 triangles, 1080p, 2x SS, 2 light sources
+![9](https://i.imgur.com/gBiSLIH.png)
+
 
 # Features:
 
 - [x] Multithreading
 - [x] Triangle meshes (.obj)
+- [x] Vertice normal interpolation (meshes)
 - [x] Supersampling anti-aliasing
 - [x] Blinn-Phong shading (ambient, diffuse and specular terms)
 - [x] Hard shadows
@@ -38,9 +43,6 @@ This scene rendered in 38s, with 6x6 supersampling at 1080p.
 - [x] Triangles
 - [ ] Disks (WIP)
 - [ ] Boxes (WIP)
-
-# .obj file model rendering
-![9](https://i.imgur.com/L7GrwcT.png)
 
 # Ray tracing introduction (with screenshots)
 Ray tracing is a 3d rendering technique that attemps to generate photorealistic images by tracing rays that are shot from every pixel of the image and applying mathematical and physical concepts to accomplish techniques described below.

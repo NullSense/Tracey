@@ -2,8 +2,11 @@
 
 using FPType = double;
 
-constexpr unsigned int WIDTH = 212;
-constexpr unsigned int HEIGHT = 212;
+//constexpr unsigned int WIDTH = 212;
+//constexpr unsigned int HEIGHT = 212;
+
+//constexpr unsigned int WIDTH = 400;
+//constexpr unsigned int HEIGHT = 300;
 
 // 800 x 600
 //constexpr unsigned int WIDTH = 800;
@@ -14,8 +17,8 @@ constexpr unsigned int HEIGHT = 212;
 //constexpr unsigned int HEIGHT = 720;
 
 // 1920 x 1080p
-//constexpr unsigned int WIDTH = 1920;
-//constexpr unsigned int HEIGHT = 1080;
+constexpr unsigned int WIDTH = 1920;
+constexpr unsigned int HEIGHT = 1080;
 
 // 2560 x 1440p
 //constexpr unsigned int WIDTH = 2560;
@@ -57,12 +60,12 @@ constexpr unsigned int HEIGHT = 212;
 //constexpr unsigned int HEIGHT = 2880;
 
 constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
-constexpr FPType AMBIENT_LIGHT = 0.7;
+constexpr FPType AMBIENT_LIGHT = 0.6;
 constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
 constexpr FPType BIAS = 1e-8;
-constexpr unsigned SUPERSAMPLING = 1;
+constexpr unsigned SUPERSAMPLING = 2;
 constexpr unsigned DEPTH = 10; // not checking for hall of mirrors effect try allocating more memory
-constexpr unsigned FOV = 60;
+constexpr unsigned FOV = 55;
 
 constexpr bool REFRACTIONS_ON = true;
 constexpr bool REFLECTIONS_ON = true;

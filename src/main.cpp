@@ -395,10 +395,10 @@ void Render(bitmap_image *image, const unsigned x, const unsigned y, const Color
 void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, const unsigned aaIndex, Color tempColor[], const Matrix44f &cameraToWorld, 
 						   const std::vector<std::shared_ptr<Object>> &sceneObjects, const std::vector<std::shared_ptr<Light>> &lightSources)
 {
-	Camera camera(Vector3d(-1, 1, 3), Vector3d(0, 0, -1));
+	Camera camera(Vector3d(0, 1.8, 5), Vector3d(0, 0, -1));
 
 	Vector3d camRayDir;
-	cameraToWorld.MultDirMatrix(Vector3d(xCamOffset + 0.3, yCamOffset - 0.2, -1), camRayDir);
+	cameraToWorld.MultDirMatrix(Vector3d(xCamOffset, yCamOffset - 0.1, -1), camRayDir);
 	camRayDir.Normalize();
 	camera.SetTo(camRayDir);
 	// Shoot ray into evey pixel of the image
