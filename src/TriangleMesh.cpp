@@ -15,9 +15,11 @@ TriangleMesh::TriangleMesh(const char *file)
 
 FPType TriangleMesh::GetIntersection(const Ray &ray)
 {
+	FPType distLowest = 1000, intersection;
 	for(auto &shape : shapes)
 	{
 		size_t index_offset = 0;
+		bool polygon_hit = false;
 		for(size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f) // faces (triangles)
 		{
 			int fv = shape.mesh.num_face_vertices[f];
@@ -29,15 +31,25 @@ FPType TriangleMesh::GetIntersection(const Ray &ray)
 			tri.v0 = Vec3d(attrib.vertices[3 * idx0.vertex_index + 0], attrib.vertices[3 * idx0.vertex_index + 1], attrib.vertices[3 * idx0.vertex_index + 2]);
 			tri.v1 = Vec3d(attrib.vertices[3 * idx1.vertex_index + 0], attrib.vertices[3 * idx1.vertex_index + 1], attrib.vertices[3 * idx1.vertex_index + 2]);
 			tri.v2 = Vec3d(attrib.vertices[3 * idx2.vertex_index + 0], attrib.vertices[3 * idx2.vertex_index + 1], attrib.vertices[3 * idx2.vertex_index + 2]);
-			//normal = (v1 - v0).Cross(v2 - v0).Normalize();
-			if(tri.GetIntersection(ray))
-				return tri.GetIntersection(ray);
+
+			if(intersection = tri.GetIntersection(ray))
+			{
+				if(intersection < distLowest)
+				{
+					polygon_hit = true;
+					distLowest = intersection;
+				}
+			}
 			index_offset += fv;
 		}
+		if(polygon_hit)
+			return distLowest;
+		else
+			return -1;
 	}
 }
 
 Vector3d TriangleMesh::GetNormalAt(const Vector3d &)
 {
-	return (v1 - v0).Cross(v2 - v0).Normalize();
+	return ((tri.v1 - tri.v0).Cross(tri.v2 - tri.v0).Normalize());
 }

@@ -4,7 +4,7 @@
 #include "tiny_obj_loader.h"
 #include <iostream>
 
-class TriangleMesh: public Triangle
+class TriangleMesh: public Object
 {
 public:
 	TriangleMesh(const char *file);
@@ -16,6 +16,5 @@ public:
 	std::vector<tinyobj::material_t> materials;
 	std::string err;
 	Triangle tri;
-	//Vector3d normal;
-	//Vector3d normal;
+	Vector3d v0, v1, v2;
 };

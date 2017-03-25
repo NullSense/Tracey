@@ -4,7 +4,7 @@
 #include "Color.h"
 #include "Material.h"
 
-class Object: public Material
+class Object
 {
 public:
 	Object() noexcept;
@@ -13,4 +13,6 @@ public:
 	virtual FPType GetIntersection(const Ray &ray);
 
 	virtual Vector3d GetNormalAt(const Vector3d &intersectionPosition);
+
+	Material material;
 };

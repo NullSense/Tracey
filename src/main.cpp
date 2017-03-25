@@ -148,10 +148,10 @@ Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, c
 	if(REFLECTIONS_ON && /*depth <= DEPTH && */indexOfClosestObject != -1) // Not checking depth for infinite mirror effect
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
-		FPType reflection = sceneObject->GetReflection();
-		if(reflection > 0 && sceneObject->GetRefraction() != GLOBAL_REFRACTION)
+		FPType reflection = sceneObject->material.GetReflection();
+		if(reflection > 0 && sceneObject->material.GetRefraction() != GLOBAL_REFRACTION)
 		{
-			if(sceneObject->GetSpecular() > 0 && sceneObject->GetSpecular() <= 1)
+			if(sceneObject->material.GetSpecular() > 0 && sceneObject->material.GetSpecular() <= 1)
 			{
 				Vector3d normal = sceneObject->GetNormalAt(position);
 				Ray reflectionRay = GetReflectionRay(normal, sceneDirection, position);
@@ -200,8 +200,8 @@ Color GetRefractions(const Vector3d &position, const Vector3d &dir, const std::v
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
 
-		FPType ior = sceneObject->GetRefraction();
-		if(ior > 0 && sceneObject->GetReflection() > 0)
+		FPType ior = sceneObject->material.GetRefraction();
+		if(ior > 0 && sceneObject->material.GetReflection() > 0)
 		{
 			Vector3d normal = sceneObject->GetNormalAt(position);
 			Vector3d refractionDir = GetRefraction(dir, normal, ior);
@@ -260,17 +260,16 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 	if(indexOfClosestObject != -1 && depth <= DEPTH) // not checking depth for infinite mirror effect (not a lot of overhead)
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
-		//std::cout << indexOfClosestObject << std::endl;
 		Vector3d normal = sceneObject->GetNormalAt(intersection);
-		//std::cout << "normal: " << normal.x << " " << normal.y << " " << normal.z << std::endl;
+		
 		// Checkerboard pattern floor
-		if(sceneObject->GetSpecial() == 2)
+		if(sceneObject->material.GetSpecial() == 2)
 		{
 			unsigned square = int(floor(intersection.x)) + int(floor(intersection.z)); // (floor() rounds down)
 			if(square % 2 == 0) // black tile
-				sceneObject->SetColor(Color(0));
+				sceneObject->material.SetColor(Color(0));
 			else // white tile
-				sceneObject->SetColor(Color(255));
+				sceneObject->material.SetColor(Color(255));
 		}
 
 		Color ambient;
@@ -283,7 +282,7 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 		// Ambient
 		if(AMBIENT_ON)
 		{
-			ambient = sceneObject->GetColor() * AMBIENT_LIGHT * sceneObject->GetAmbient();
+			ambient = sceneObject->material.GetColor() * AMBIENT_LIGHT * sceneObject->material.GetAmbient();
 			finalColor += ambient;
 		}
 
@@ -335,14 +334,14 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 				if(DIFFUSE_ON && shadowed == false)
 				{
 					//diffuse = sceneObject->GetColor().Average(lightSource->GetColor()) * 0.18 * M_PI * lightSource->GetIntensity() * std::fmax(0, lambertian) / distance;
-					diffuse = sceneObject->GetColor().Average(lightSource->GetColor()) * sceneObject->GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0) / distance;
+					diffuse = sceneObject->material.GetColor().Average(lightSource->GetColor()) * sceneObject->material.GetDiffuse() * lightSource->GetIntensity() * std::fmax(lambertian, 0) / distance;
 					finalColor += diffuse;
 				}
 
 				// Specular
 				if(shadowed == false && SPECULAR_ON)
 				{
-					if(sceneObject->GetSpecular() > 0 && sceneObject->GetSpecular() <= 1 && sceneObject->GetRefraction() != GLOBAL_REFRACTION)
+					if(sceneObject->material.GetSpecular() > 0 && sceneObject->material.GetSpecular() <= 1 && sceneObject->material.GetRefraction() != GLOBAL_REFRACTION)
 					{
 						Vector3d V = -direction;
 						// Blinn-Phong
@@ -351,21 +350,21 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 
 						phong = pow(NdotH, 500);
 						specular = lightSource->GetColor() * std::fmax(0, phong) * lightSource->GetIntensity(); // sceneObject->GetSpecular(); add or no?
-						finalColor += specular * sceneObject->GetSpecular();
+						finalColor += specular * sceneObject->material.GetSpecular();
 					}
 				}
 			}
 		}
 
 		// perfect mirrors
-		if(REFLECTIONS_ON && sceneObject->GetRefraction() == 0 && sceneObject->GetReflection() > 0)
+		if(REFLECTIONS_ON && sceneObject->material.GetRefraction() == 0 && sceneObject->material.GetReflection() > 0)
 		{
 			Color reflections = GetReflections(intersection, direction, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
 			finalColor += reflections;
 		}
 
 		//Reflections & Refractions
-		if(REFRACTIONS_ON && sceneObject->GetRefraction() > 0 && sceneObject->GetReflection() > 0)
+		if(REFRACTIONS_ON && sceneObject->material.GetRefraction() > 0 && sceneObject->material.GetReflection() > 0)
 		{
 			Color refractions = GetRefractions(intersection, direction, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
 			finalColor += refractions;
@@ -413,12 +412,13 @@ void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, con
 	{
 		intersections.emplace_back(sceneObject->GetIntersection(camRay));
 	}
+
 	int indexOfClosestObject = ClosestObjectIndex(intersections);
+
 	// If it doesn't register a ray trace set that pixel to be black (ray missed everything)
 	if(indexOfClosestObject == -1)
-	{
 		tempColor[aaIndex] = Color(0);
-	}
+
 	else // Ray hit an object
 	{
 		if(intersections[indexOfClosestObject] > BIAS) // If intersection at that position > accuracy, get color of object
@@ -447,7 +447,7 @@ void launchThread(const unsigned start, const unsigned end, bitmap_image *image)
 	Scene scene; // For some reason, when these objects are taken out of the threads, visual bugs occur
 	std::vector<std::shared_ptr<Object>> sceneObjects = scene.InitObjects();
 	std::vector<std::shared_ptr<Light>> lightSources = scene.InitLightSources();
-
+	
 	FPType aspectRatio = WIDTH / FPType(HEIGHT);
 	for(unsigned z = start; z < end; z++)
 	{
