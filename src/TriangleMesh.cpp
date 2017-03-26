@@ -21,7 +21,7 @@ TriangleMesh::TriangleMesh(const char *file)
 
 FPType TriangleMesh::GetIntersection(const Ray &ray)
 {
-	FPType distLowest = 1000000, intersection, u=0, v=0;
+	FPType distLowest = 1000000, intersection;
 	bool polygon_hit = false;
 	for(auto &shape : shapes)
 	{
@@ -43,21 +43,20 @@ FPType TriangleMesh::GetIntersection(const Ray &ray)
 			n1 = Vec3d(attrib.normals[3 * idx1.normal_index + 0], attrib.normals[3 * idx1.normal_index + 1], attrib.normals[3 * idx1.normal_index + 2]);
 			n2 = Vec3d(attrib.normals[3 * idx2.normal_index + 0], attrib.normals[3 * idx2.normal_index + 1], attrib.normals[3 * idx2.normal_index + 2]);
 
-			st0 = Vec3d(attrib.texcoords[3 * idx0.texcoord_index + 0], attrib.texcoords[3 * idx0.texcoord_index + 1], attrib.texcoords[3 * idx0.texcoord_index + 2]);
+			/*st0 = Vec3d(attrib.texcoords[3 * idx0.texcoord_index + 0], attrib.texcoords[3 * idx0.texcoord_index + 1], attrib.texcoords[3 * idx0.texcoord_index + 2]);
 			st1 = Vec3d(attrib.texcoords[3 * idx1.texcoord_index + 0], attrib.texcoords[3 * idx1.texcoord_index + 1], attrib.texcoords[3 * idx1.texcoord_index + 2]);
-			st2 = Vec3d(attrib.texcoords[3 * idx2.texcoord_index + 0], attrib.texcoords[3 * idx2.texcoord_index + 1], attrib.texcoords[3 * idx2.texcoord_index + 2]);
-			texCoords = st0 * (1 - uv.x - uv.y) + st1 * uv.x + st2 * uv.y;
+			st2 = Vec3d(attrib.texcoords[3 * idx2.texcoord_index + 0], attrib.texcoords[3 * idx2.texcoord_index + 1], attrib.texcoords[3 * idx2.texcoord_index + 2]);*/
 
-			if(intersection = tri.GetIntersection(ray, u, v))
+			if(intersection = tri.GetIntersection(ray, uv.x, uv.y))
 			{
 				if(intersection < distLowest)
 				{
 					polygon_hit = true;
 					distLowest = intersection;
+					normal = n0 * (1 - uv.x - uv.y)+ n1 * uv.x + n2 * uv.y;
 				}
 			}
 			index_offset += fv;
-			normal = n0 * (1 - uv.x - uv.y)+ n1 * uv.x + n2 * uv.y;
 		}
 	}
 	if(polygon_hit)
@@ -69,5 +68,10 @@ FPType TriangleMesh::GetIntersection(const Ray &ray)
 Vector3d TriangleMesh::GetNormalAt(const Vector3d &)
 {
 	return normal;
-	//return ((tri.v1 - tri.v0).Cross(tri.v2 - tri.v0).Normalize());
+}
+
+Vector3d TriangleMesh::GetTexCoords(Vector3d&, const Vector3d&)
+{
+	return 0;
+	//return st0 * (1 - uv.x - uv.y) + st1 * uv.x + st2 * uv.y;
 }

@@ -2,7 +2,6 @@
 #define _USE_MATH_DEFINES
 #define TINYOBJLOADER_IMPLEMENTATION
 
-
 #include "bitmap_image.hpp"
 #include "TriangleMesh.h"
 #include "Scene.h"
@@ -130,12 +129,10 @@ Vector3d GetRefraction(const Vector3d &incident, const Vector3d &normal, const F
 	//return k < 0 ? 0 : eta * incident + (eta * cosi - sqrtf(k)) * n;
 	if(k < 0)
 	{
-		//std::swap(etai, etat); n = -normal;
-		//return a;
-		//Ray reflRay = GetReflectionRay(normal, incident, a);
-		//return reflRay.GetDirection();
-		return -1;
-		//return normal;
+		//return 0;
+		a = incident * eta + normal * (eta * cosi - sqrt(k));
+		Ray reflRay = GetReflectionRay(normal, incident, a);
+		return reflRay.GetDirection();
 	}
 	else
 		return a;
@@ -196,7 +193,7 @@ Color GetReflections(const Vector3d &position, const Vector3d &sceneDirection, c
 Color GetRefractions(const Vector3d &position, const Vector3d &dir, const std::vector<std::shared_ptr<Object>> &sceneObjects,
 					 const int &indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, int depth)
 {
-	if(indexOfClosestObject != -1/* && depth <= DEPTH*/)
+	if(indexOfClosestObject != -1)
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
 
@@ -204,38 +201,37 @@ Color GetRefractions(const Vector3d &position, const Vector3d &dir, const std::v
 		if(ior > 0 && sceneObject->material.GetReflection() > 0)
 		{
 			Vector3d normal = sceneObject->GetNormalAt(position);
-			Vector3d refractionDir = GetRefraction(dir, normal, ior);
-			Vector3d offset = refractionDir * BIAS;
-			Ray refractionRay(position + offset, refractionDir);
+			Vector3d refractionDir = GetRefraction(dir, normal, ior).Normalize();
+			Ray refractionRay(position, refractionDir);
 
 			std::vector<FPType> refractionIntersections;
 			refractionIntersections.reserve(10024);
 			for(const auto &object : sceneObjects)
-			{
 				refractionIntersections.emplace_back(object->GetIntersection(refractionRay));
-			}
 
 			if(refractionIntersections.size() > 0)
 			{
 				int closestObjectWithRefraction = ClosestObjectIndex(refractionIntersections);
 				if(closestObjectWithRefraction != -1)
 				{
-					Color refractionColor;
+					Color refractionColor = 0;
 					FPType kr = fresnel(dir, normal, ior);
+					bool outside = dir.Dot(normal) < 0;
+					Vec3d bias = normal * BIAS;
 
+					Color reflectionColor = GetReflections(position, dir, sceneObjects, indexOfClosestObject, lightSources, depth);
 					// compute refraction if it is not a case of total internal reflection
 					if(kr < 1)
 					{
-						Vector3d refractionDirection = refractionRay.GetDirection().Normalize();
-						Vector3d refractionIntersectionPosition = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
-						//Vector3d refractionRayOrig = outside ? refractionIntersectionPosition - bias : refractionIntersectionPosition + bias;
+						Vector3d refractionIntersection = refractionRay.GetOrigin() + (refractionRay.GetDirection() * (refractionIntersections[closestObjectWithRefraction]));
+						Vector3d refractionRayOrig = outside ? refractionIntersection - bias : refractionIntersection + bias;
 
-						refractionColor = Trace(refractionIntersectionPosition, refractionDirection, sceneObjects, closestObjectWithRefraction, lightSources, depth + 1);
+						refractionColor = Trace(refractionRayOrig, refractionRay.GetDirection(), sceneObjects, closestObjectWithRefraction, lightSources, depth + 1);
 					}
-					else
-						return Color(0);
+					else // TIR
+						refractionColor += reflectionColor;
+						//return 0;
 
-					Color reflectionColor = GetReflections(position, dir, sceneObjects, indexOfClosestObject, lightSources, depth);
 					// mix the two
 					Color refraReflColor = reflectionColor * kr + refractionColor * (1 - kr);
 					return refraReflColor;
@@ -369,6 +365,27 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 			Color refractions = GetRefractions(intersection, direction, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
 			finalColor += refractions;
 		}
+
+
+		Color co;
+		if(sceneObject->material.GetSpecial() == 1) // Sphere checkerboard
+		{
+			FPType scale = 4;
+			FPType pattern = (fmod(sceneObject->GetTexCoords(normal, intersection).x * scale, 1) > 0.5) ^ (fmod(sceneObject->GetTexCoords(normal, intersection).y * scale, 1) > 0.5);
+			co += sceneObject->material.GetColor() * pattern * std::fmax(0.f, normal.Dot(-direction));
+		}
+
+		if(sceneObject->material.GetSpecial() == 3) // Triangle checkerboard
+		{
+			//std::cout << "test";
+			FPType NdotView = std::fmax(0.f, normal.Dot(-direction));
+			const int M = 4;
+			FPType checker = (fmod(sceneObject->GetTexCoords(normal, intersection).x * M, 1.0) > 0.5) ^ (fmod(sceneObject->GetTexCoords(normal, intersection).y * M, 1.0) > 0.5);
+			FPType c = 0.3 * (1 - checker) + 0.7 * checker;
+
+			co += sceneObject->material.GetColor() * c * NdotView; //Vec3f(uv.x, uv.y, 0); 
+		}
+		finalColor += co;
 
 		finalColor.Clip();
 		return finalColor;

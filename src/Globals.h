@@ -65,7 +65,7 @@ constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
 constexpr FPType BIAS = 1e-8;
 constexpr unsigned SUPERSAMPLING = 2;
 constexpr unsigned DEPTH = 10; // not checking for hall of mirrors effect try allocating more memory
-constexpr unsigned FOV = 55;
+constexpr unsigned FOV = 50;
 
 constexpr bool REFRACTIONS_ON = true;
 constexpr bool REFLECTIONS_ON = true;

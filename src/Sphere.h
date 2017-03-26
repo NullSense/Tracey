@@ -12,6 +12,7 @@ public:
 	FPType GetIntersection(const Ray &ray);
 	FPType GetRadius() const;
 	Vector3d GetCenter() const;
+	Vector3d GetTexCoords(Vector3d &normal, const Vector3d &hitPoint);
 
 private:
 	FPType radius;

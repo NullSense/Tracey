@@ -50,6 +50,17 @@ FPType Sphere::GetIntersection(const Ray &ray)
 	return -1;
 }
 
+Vector3d Sphere::GetTexCoords(Vector3d &normal, const Vector3d &hitPoint)
+{
+	normal = hitPoint - center;
+	normal.Normalize();
+
+	Vector3d tex;
+	tex.x = (1 + atan2(normal.z, normal.x) / M_PI) * 0.5;
+	tex.y = acos(normal.y) / M_PI;
+	return tex;
+}
+
 FPType Sphere::GetRadius() const
 {
 	return radius;

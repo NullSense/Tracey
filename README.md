@@ -6,10 +6,19 @@ This scene rendered in 38s, with 6x6 supersampling at 1080p.
 2 Light sources
 ![6](https://i.imgur.com/6QQnu3d.png)
 
-# .obj file model rendering (1128 seconds)
-4968 triangles, 1080p, 2x SS, 2 light sources
-![9](https://i.imgur.com/gBiSLIH.png)
+# .obj file model rendering
 
+948 seconds (15.8 mins)
+4968 triangles, 4k, 1x SS, 2 light sources
+![9](https://i.imgur.com/BQ2MuRl.png)
+
+2615 seconds (43.5 mins)
+15704 triangles, 1080p, 2x SS, 2 light sources
+![10](https://i.imgur.com/WS1W9rb.png)
+
+227 seconds
+1143 triangles, 1080p, 2x SS, 2 light sources
+![11](https://i.imgur.com/0nabCcq.png)
 
 # Features:
 
