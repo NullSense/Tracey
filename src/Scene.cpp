@@ -3,7 +3,7 @@
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
 	//sceneObjects.reserve(15000);
-	std::shared_ptr<TriangleMesh> triMesh = std::make_shared<TriangleMesh>("obj/elephav.obj");
+	std::shared_ptr<TriangleMesh> triMesh = std::make_shared<TriangleMesh>("obj/tea.obj");
 	triMesh->material = orangeM;
 
 	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector3d(0, 0, 0), Vector3d(0, 1, 0));

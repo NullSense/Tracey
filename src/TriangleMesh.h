@@ -17,8 +17,7 @@ public:
 	std::vector<tinyobj::material_t> materials;
 	std::string err;
 	Triangle tri;
-	Vector3d v0, v1, v2;
-	Vector3d uv;
 	Vector3d n0, n1, n2, normal;
-	Vector3d st0, st1, st2;
+	Vector3d uv;
+	Vector3d st0, st1, st2, texCoords;
 };
