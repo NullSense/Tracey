@@ -16,6 +16,12 @@
 std::atomic<int> numPrimaryRays;
 std::atomic<int> numPrimaryHitRays;
 std::atomic<int> numSecondaryRays;
+std::atomic<int> numSecondaryHitRays;
+int triangleCount;
+int bboxTests;
+int bboxIntersections;
+int triangleTests;
+int triangleIntersections;
 
 Color Trace(const Vector3d &position, const Vector3d &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, 
 				 const int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, const int &depth);
@@ -313,6 +319,7 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 					{
 						if(secondaryIntersection > BIAS) // If shadow ray intersects with some object along the way
 						{
+							std::atomic_fetch_add(&numSecondaryHitRays, 1);
 							if(secondaryIntersection <= distance)
 							{
 								shadowed = true;
@@ -530,9 +537,15 @@ int main()
 
 	auto timeEnd = std::chrono::high_resolution_clock::now();
 	auto passedTime = std::chrono::duration<FPType, std::milli>(timeEnd - timeStart).count();
-	printf("Total number of primary rays                  : %i\n", int(numPrimaryRays));
-	printf("Total number of primary rays that intersected : %i\n", int(numPrimaryHitRays));
-	printf("Total number of secondary rays                : %i\n", int(numSecondaryRays));
+	std::cout << std::endl << "Triangles: " << triangleCount / std::thread::hardware_concurrency() << std::endl;
+	std::cout << "BBox tests: " << bboxTests << std::endl;
+	std::cout << "BBox intersections: " << bboxIntersections << std::endl;
+	std::cout << "Triangle tests: " << triangleTests << std::endl;
+	std::cout << "Triangle intersections: " << triangleIntersections << std::endl;
+	printf("Total number of primary rays                    : %i\n", int(numPrimaryRays));
+	printf("Total number of primary rays that intersected   : %i\n", int(numPrimaryHitRays));
+	printf("Total number of secondary rays                  : %i\n", int(numSecondaryRays));
+	printf("Total number of secondary rays that intersected : %i\n", int(numSecondaryHitRays));
 	std::cout << "Time: " << passedTime / 1000 << " seconds" << std::endl;
 	
 	std::cout << "\nPress enter to exit...";

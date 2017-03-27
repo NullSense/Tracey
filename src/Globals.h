@@ -1,5 +1,10 @@
 #pragma once
 
+extern int triangleCount;
+extern int bboxTests;
+extern int bboxIntersections;
+extern int triangleTests;
+extern int triangleIntersections;
 using FPType = double;
 
 //constexpr unsigned int WIDTH = 212;

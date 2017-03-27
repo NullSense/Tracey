@@ -5,6 +5,7 @@
 #include "Globals.h"
 #include <iostream>
 #include <memory>
+#include <atomic>
 
 class TriangleMesh: public Object
 {

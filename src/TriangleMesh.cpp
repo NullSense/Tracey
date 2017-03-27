@@ -11,7 +11,7 @@ TriangleMesh::TriangleMesh(const char *file)
 	if(!ret)
 		exit(1);
 
-	int triangleCount = 0;
+	//int triangleCount = 0;
 	Vec3d vert;
 	for(auto &shape : shapes)
 	{
@@ -29,13 +29,14 @@ TriangleMesh::TriangleMesh(const char *file)
 			index_offset += fv;
 		}
 	}
-	std::cout << std::endl << "Triangles: " << triangleCount << std::endl;
 }
 
 FPType TriangleMesh::GetIntersection(const Ray &ray)
 {
+	bboxTests++;
 	if(bbox.GetIntersection(ray))
 	{
+		bboxIntersections++;
 		FPType distLowest = 1000000, intersection;
 		bool polygon_hit = false;
 
@@ -60,8 +61,10 @@ FPType TriangleMesh::GetIntersection(const Ray &ray)
 				n2 = Vec3d(attrib.normals[3 * idx2.normal_index + 0], attrib.normals[3 * idx2.normal_index + 1], attrib.normals[3 * idx2.normal_index + 2]);
 
 				intersection = tri.GetIntersection(ray, uv.x, uv.y);
+				triangleTests++;
 				if(intersection)
 				{
+					triangleIntersections++;
 					if(intersection < distLowest)
 					{
 						polygon_hit = true;
@@ -72,14 +75,14 @@ FPType TriangleMesh::GetIntersection(const Ray &ray)
 						else
 							normal = (tri.v1 - tri.v0).Cross(tri.v2 - tri.v0);
 
-						normal.Normalize(); // normal shading
-						/*if(attrib.texcoords.size())
+						normal.Normalize();
+						if(attrib.texcoords.size() && this->material.GetSpecial() > 0)
 						{
 							st0 = Vec3d(attrib.texcoords[3 * idx0.texcoord_index + 0], attrib.texcoords[3 * idx0.texcoord_index + 1], attrib.texcoords[3 * idx0.texcoord_index + 2]);
 							st1 = Vec3d(attrib.texcoords[3 * idx1.texcoord_index + 0], attrib.texcoords[3 * idx1.texcoord_index + 1], attrib.texcoords[3 * idx1.texcoord_index + 2]);
 							st2 = Vec3d(attrib.texcoords[3 * idx2.texcoord_index + 0], attrib.texcoords[3 * idx2.texcoord_index + 1], attrib.texcoords[3 * idx2.texcoord_index + 2]);
 							texCoords = st0 * (1 - uv.x - uv.y) + st1 * uv.x + st2 * uv.y;
-						}*/
+						}
 					}
 				}
 				index_offset += fv;
