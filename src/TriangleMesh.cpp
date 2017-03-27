@@ -19,12 +19,12 @@ TriangleMesh::TriangleMesh(const char *file)
 		for(size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f) // faces (triangles)
 		{
 			int fv = shape.mesh.num_face_vertices[f];
-			triangleCount++;
+			//triangleCount++;
 			for(size_t v = 0; v < fv; v++)
 			{
 				tinyobj::index_t &idx = shape.mesh.indices[index_offset + v]; // v0
 				vert = Vec3d(attrib.vertices[3 * idx.vertex_index + 0], attrib.vertices[3 * idx.vertex_index + 1], attrib.vertices[3 * idx.vertex_index + 2]);
-				bbox.extendBy(vert);
+				bbox.extendBy(vert - BIAS);
 			}
 			index_offset += fv;
 		}
@@ -33,10 +33,10 @@ TriangleMesh::TriangleMesh(const char *file)
 
 FPType TriangleMesh::GetIntersection(const Ray &ray)
 {
-	bboxTests++;
+	//bboxTests++;
 	if(bbox.GetIntersection(ray))
 	{
-		bboxIntersections++;
+		//bboxIntersections++;
 		FPType distLowest = 1000000, intersection;
 		bool polygon_hit = false;
 
@@ -61,10 +61,10 @@ FPType TriangleMesh::GetIntersection(const Ray &ray)
 				n2 = Vec3d(attrib.normals[3 * idx2.normal_index + 0], attrib.normals[3 * idx2.normal_index + 1], attrib.normals[3 * idx2.normal_index + 2]);
 
 				intersection = tri.GetIntersection(ray, uv.x, uv.y);
-				triangleTests++;
+				//triangleTests++;
 				if(intersection)
 				{
-					triangleIntersections++;
+					//triangleIntersections++;
 					if(intersection < distLowest)
 					{
 						polygon_hit = true;

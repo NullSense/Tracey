@@ -2,26 +2,27 @@
 
 # Final images
 
-5.8 min, 1080p, glass smoothed bunny
-![](https://i.imgur.com/GwRq7cu.png)
+3.4h, 1080p, 2x2 Supersampling, glass smoothed bunny
+![](https://i.imgur.com/5ZxjTSb.png)
 
 # .obj file model rendering
 
 | Smoothed stanford bunny (4968 triangles)  | Not smoothed stanford bunny (4968 triangles)     |
 | ----------------------------------------- | ------------------------------------------------ |
-|              4.4 min, 1080p, 1x SS        | 4.4 min, 4k, 1x SS                               |
+| 4.4 min, 1080p, 1x SS, no bounding box    | 4.4 min, 4k, 1x SS, no bounding box			   |
 | ![](https://i.imgur.com/blsFPMU.png)      | ![](https://i.imgur.com/BQ2MuRl.png)             |
 
 
 | Smoothed elephant (1143 triangles)    | Not smoothed elephant (1143 triangles)   |
 | ------------------------------------- | ---------------------------------------- |
-|           1min, 1080p, 1x SS          | 1min, 1080p, 1x SS                   |
+| 1min, 1080p, 1x SS, no bounding box   | 1min, 1080p, 1x SS, no bounding box      |
 | ![](https://i.imgur.com/GwQsrIi.png)  | ![](https://i.imgur.com/thxZC93.png)     |
 
 # Features:
 - [x] Multithreading
 - [x] Triangle meshes (.obj)
 - [x] Vertex normal interpolation (meshes)
+- [x] Triangle mesh bounding boxes
 - [x] Supersampling anti-aliasing
 - [x] Blinn-Phong shading (ambient, diffuse and specular terms)
 - [x] Hard shadows
@@ -42,6 +43,7 @@
 - [ ] Transparent shadows
 - [ ] Motion blur
 - [ ] Depth of field
+- [ ] Caustics
 - [ ] Speedup structures (kd-trees, etc.)
 
 # Geometric primitives:

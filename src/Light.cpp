@@ -1,17 +1,11 @@
 #include "Light.h"
 
 Light::Light()
-	:position {0}
-	, color {Color(255)}
-	, intensity {1}
-	, light_type {POINT}
+	:position {0}, color {Color(255)}, intensity {1}, light_type {POINT}
 {}
 
 Light::Light(Vector3d position_, Color color_, FPType intensity_, enum LIGHT_TYPES)
-	:position {position_}
-	, color {color_}
-	, intensity {intensity_}
-	, light_type{POINT}
+	:position {position_}, color {color_}, intensity {intensity_}, light_type{POINT}
 {}
 
 void Light::SetPosition(const Vector3d &position_)

@@ -1,10 +1,5 @@
 #pragma once
 
-extern int triangleCount;
-extern int bboxTests;
-extern int bboxIntersections;
-extern int triangleTests;
-extern int triangleIntersections;
 using FPType = double;
 
 //constexpr unsigned int WIDTH = 212;
@@ -69,7 +64,7 @@ constexpr FPType AMBIENT_LIGHT = 0.6;
 constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
 constexpr FPType BIAS = 1e-8;
 constexpr unsigned SUPERSAMPLING = 1;
-constexpr unsigned DEPTH = 5; // not checking for hall of mirrors effect try allocating more memory
+constexpr unsigned DEPTH = 10; // not checking for hall of mirrors effect try allocating more memory
 constexpr unsigned FOV = 50;
 
 constexpr bool REFRACTIONS_ON = true;

@@ -1,11 +1,8 @@
 #pragma once
-#include "Plane.h"
 #include "Sphere.h"
 #include "material.h"
 #include "Light.h"
 #include "Disk.hpp"
-#include "Triangle.h"
-#include "BBox.h"
 #include "TriangleMesh.h"
 #include <memory>
 #include <vector>

@@ -29,7 +29,8 @@ FPType Sphere::GetIntersection(const Ray &ray)
 	FPType c = delta.Dot(delta) - radius*radius;
 
 	FPType discriminant = b*b - a*c;
-	if (discriminant < FPType(0)) {
+	if(discriminant < FPType(0))
+	{
 		return -1;
 	}
 	//Find solutions to quadratic equation
@@ -37,12 +38,14 @@ FPType Sphere::GetIntersection(const Ray &ray)
 	b = -b / a;
 
 	FPType intersection0 = b - discriminant;
-	if(intersection0 >= FPType(0)) {
+	if(intersection0 >= FPType(0))
+	{
 		return intersection0;
 	}
 
 	FPType intersection1 = b + discriminant;
-	if(intersection1 >= FPType(0)) {
+	if(intersection1 >= FPType(0))
+	{
 		return intersection1;
 	}
 

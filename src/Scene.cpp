@@ -2,47 +2,46 @@
 
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
-	sceneObjects.reserve(70000*3);
-	std::shared_ptr<TriangleMesh> triMesh = std::make_shared<TriangleMesh>("obj/highbunny.obj");
+	auto triMesh = std::make_shared<TriangleMesh>("obj/bunny.obj");
 	triMesh->material = orangeM;
 
-	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector3d(0, 0, 0), Vector3d(0, 1, 0));
+	auto floorPlane = std::make_shared<Plane>(Vector3d(0, 0, 0), Vector3d(0, 1, 0));
 	floorPlane->material = tileFloorM;
-	std::shared_ptr<Plane> topPlane = std::make_shared<Plane>(Vector3d(0, 10, 0), Vector3d(0, -1, 0));
+	auto topPlane = std::make_shared<Plane>(Vector3d(0, 10, 0), Vector3d(0, -1, 0));
 	topPlane->material = blueM;
-	std::shared_ptr<Plane> backPlane = std::make_shared<Plane>(Vector3d(0, 0, 10), Vector3d(0, 0, -1));
+	auto backPlane = std::make_shared<Plane>(Vector3d(0, 0, 10), Vector3d(0, 0, -1));
 	backPlane->material = orangeM;
-	std::shared_ptr<Plane> behindPlane = std::make_shared<Plane>(Vector3d(0, 0, -10), Vector3d(0, 0, 1));
+	auto behindPlane = std::make_shared<Plane>(Vector3d(0, 0, -10), Vector3d(0, 0, 1));
 	behindPlane->material = prettyGreenM;
-	std::shared_ptr<Plane> leftPlane = std::make_shared<Plane>(Vector3d(-12, 0, 0), Vector3d(1, 0, 0));
+	auto leftPlane = std::make_shared<Plane>(Vector3d(-12, 0, 0), Vector3d(1, 0, 0));
 	leftPlane->material = yellowM;
-	std::shared_ptr<Plane> rightPlane = std::make_shared<Plane>(Vector3d(12, 0, 0), Vector3d(-1, 0, 0));
+	auto rightPlane = std::make_shared<Plane>(Vector3d(12, 0, 0), Vector3d(-1, 0, 0));
 	rightPlane->material = maroonM;
 
-	std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(0.5, Vector3d(1, 0.5, -2.5));
+	auto sphere1 = std::make_shared<Sphere>(0.5, Vector3d(1, 0.5, -2.5));
 	sphere1->material = maroonM;
-	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(1.3, Vector3d(-3.2, 1.3, -2.2));
+	auto sphere2 = std::make_shared<Sphere>(1.3, Vector3d(-3.2, 1.3, -2.2));
 	sphere2->material = mirrorM;
-	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.4, Vector3d(0, sphere1->GetCenter().y + 1.5, sphere1->GetCenter().z + 1.7));
+	auto sphere3 = std::make_shared<Sphere>(0.4, Vector3d(0, sphere1->GetCenter().y + 1.5, sphere1->GetCenter().z + 1.7));
 	sphere3->material = checkerSphereM;
-	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.2, Vector3d(sphere1->GetCenter().x - 1, sphere1->GetCenter().y + 1.8, sphere1->GetCenter().z + 1.2));
+	auto sphere4 = std::make_shared<Sphere>(0.2, Vector3d(sphere1->GetCenter().x - 1, sphere1->GetCenter().y + 1.8, sphere1->GetCenter().z + 1.2));
 	sphere4->material = blueM;
-	std::shared_ptr<Sphere> sphere5 = std::make_shared<Sphere>(0.8, Vector3d(floorPlane->GetCenter().x + 2, 1.5, floorPlane->GetCenter().z - 1));
+	auto sphere5 = std::make_shared<Sphere>(0.8, Vector3d(floorPlane->GetCenter().x + 2, 1.5, floorPlane->GetCenter().z - 1));
 	sphere5->material = mirrorM;
-	std::shared_ptr<Sphere> sphere6 = std::make_shared<Sphere>(0.35, Vector3d(floorPlane->GetCenter().x + 0.25, floorPlane->GetCenter().y + 1, floorPlane->GetCenter().z + 4));
+	auto sphere6 = std::make_shared<Sphere>(0.35, Vector3d(floorPlane->GetCenter().x + 0.25, floorPlane->GetCenter().y + 1, floorPlane->GetCenter().z + 4));
 	sphere6->material = glassM;
-	std::shared_ptr<Sphere> sphere7 = std::make_shared<Sphere>(0.4, Vector3d(sphere2->GetCenter().x + 0.55, sphere1->GetCenter().y + 2, sphere1->GetCenter().z + 7));
+	auto sphere7 = std::make_shared<Sphere>(0.4, Vector3d(sphere2->GetCenter().x + 0.55, sphere1->GetCenter().y + 2, sphere1->GetCenter().z + 7));
 	sphere7->material = transparentM;
-	std::shared_ptr<Sphere> sphere8 = std::make_shared<Sphere>(0.5, Vector3d(floorPlane->GetCenter().x - 2.1, 0.5, floorPlane->GetCenter().z + 0.5));
+	auto sphere8 = std::make_shared<Sphere>(0.5, Vector3d(floorPlane->GetCenter().x - 2.1, 0.5, floorPlane->GetCenter().z + 0.5));
 	sphere8->material = mirrorM;
 
-	std::shared_ptr<Disk> disk1 = std::make_shared<Disk>();
+	auto disk1 = std::make_shared<Disk>();
 	disk1->material = waterM;
 
-	std::shared_ptr<Triangle> triangle1 = std::make_shared<Triangle>(Vector3d(-1, -1, -2), Vector3d(-1, 2, -2), Vector3d(0, -1, -2.7));
+	auto triangle1 = std::make_shared<Triangle>(Vector3d(-1, -1, -2), Vector3d(-1, 2, -2), Vector3d(0, -1, -2.7));
 	triangle1->material = prettyGreenM;
 
-	std::shared_ptr<Triangle> triangle2 = std::make_shared<Triangle>(Vector3d(0, -1, -4), Vector3d(2, 3, -4), Vector3d(2, -1, -4));
+	auto triangle2 = std::make_shared<Triangle>(Vector3d(0, -1, -4), Vector3d(2, 3, -4), Vector3d(2, -1, -4));
 	triangle2->material = prettyGreenM;
 
 	/*std::shared_ptr<BBox> box1 = std::make_shared<BBox>(Vector3d(0.3), Vector3d(-1, 0.7, 1));
@@ -82,9 +81,9 @@ std::vector<std::shared_ptr<Light>> Scene::InitLightSources()
 	lightSources.reserve(3);
 	Vector3d light1Position(-2, 3, 1);
 	Vector3d light2Position(0, 2, 3);
-	std::shared_ptr<Light> light1 = std::make_shared<Light>(light1Position, Color(255), 1.25, Light::POINT);
-	std::shared_ptr<Light> light2 = std::make_shared<Light>(light2Position, Color(255), 1.25, Light::POINT);
-	std::shared_ptr<Light> light3 = std::make_shared<Light>(light1Position, Color(0, 0, 255), 1, Light::POINT);
+	auto light1 = std::make_shared<Light>(light1Position, Color(255), 1.25, Light::POINT);
+	auto light2 = std::make_shared<Light>(light2Position, Color(255), 1.25, Light::POINT);
+	auto light3 = std::make_shared<Light>(light1Position, Color(0, 0, 255), 1, Light::POINT);
 	lightSources.emplace_back(light1);
 	lightSources.emplace_back(light2);
 	//lightSources.emplace_back(light3);

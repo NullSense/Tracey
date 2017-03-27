@@ -8,14 +8,14 @@ Disk::Disk()
 }
 
 Disk::Disk(FPType radius_, Vector3d position_, Vector3d normal_)
-	:radius {radius_}, position{position_}, normal{normal_}
+	:position{position_}, normal{normal_}, radius {radius_}
 {}
 
 FPType Disk::GetIntersection(const Ray &ray)
 {
 	if(Plane::GetIntersectionDisk(ray, normal, position))
 	{
-		FPType t = Plane::GetIntersectionDisk(ray, normal, position);
+		auto t = Plane::GetIntersectionDisk(ray, normal, position);
 		Vector3d intersectionPoint = ray.GetOrigin() + ray.GetDirection() * t;
 		Vector3d intersectionToMidDist = intersectionPoint - position;
 		FPType d2 = intersectionToMidDist.Dot(intersectionToMidDist);
