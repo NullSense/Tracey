@@ -5,8 +5,8 @@ using FPType = double;
 //constexpr unsigned int WIDTH = 212;
 //constexpr unsigned int HEIGHT = 212;
 
-constexpr unsigned int WIDTH = 400;
-constexpr unsigned int HEIGHT = 300;
+//constexpr unsigned int WIDTH = 400;
+//constexpr unsigned int HEIGHT = 300;
 
 // 800 x 600
 //constexpr unsigned int WIDTH = 800;
@@ -17,8 +17,8 @@ constexpr unsigned int HEIGHT = 300;
 //constexpr unsigned int HEIGHT = 720;
 
 // 1920 x 1080p
-//constexpr unsigned int WIDTH = 1920;
-//constexpr unsigned int HEIGHT = 1080;
+constexpr unsigned int WIDTH = 1920;
+constexpr unsigned int HEIGHT = 1080;
 
 // 2560 x 1440p
 //constexpr unsigned int WIDTH = 2560;
@@ -74,7 +74,7 @@ constexpr bool SHADOWS_ON = true;
 constexpr bool DIFFUSE_ON = true;
 constexpr bool AMBIENT_ON = true;
 
-constexpr bool SMOOTH_SHADING = false;
+constexpr bool SMOOTH_SHADING = true;
 
 // This ray tracer uses a Left hand coordinate system,
 // with x pointing to the right, y up and z coming out from the screen

@@ -14,7 +14,7 @@ public:
 
 	Vector3d invDir;
 	FPType tMin, tMax;
+	int sign[3];
 private:
 	Vector3d origin, direction;
-	int sign[3];
 };

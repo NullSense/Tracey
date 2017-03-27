@@ -2,8 +2,8 @@
 
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
-	//sceneObjects.reserve(15000);
-	std::shared_ptr<TriangleMesh> triMesh = std::make_shared<TriangleMesh>("obj/tea.obj");
+	sceneObjects.reserve(70000*3);
+	std::shared_ptr<TriangleMesh> triMesh = std::make_shared<TriangleMesh>("obj/bunny.obj");
 	triMesh->material = orangeM;
 
 	std::shared_ptr<Plane> floorPlane = std::make_shared<Plane>(Vector3d(0, 0, 0), Vector3d(0, 1, 0));
@@ -45,10 +45,10 @@ std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 	std::shared_ptr<Triangle> triangle2 = std::make_shared<Triangle>(Vector3d(0, -1, -4), Vector3d(2, 3, -4), Vector3d(2, -1, -4));
 	triangle2->material = prettyGreenM;
 
-	std::shared_ptr<Box> box1 = std::make_shared<Box>(Vector3d(0.3), Vector3d(0.7, 0.7, 1));
+	/*std::shared_ptr<BBox> box1 = std::make_shared<BBox>(Vector3d(0.3), Vector3d(-1, 0.7, 1));
 	box1->material = orangeM;
-	std::shared_ptr<Box> box2 = std::make_shared<Box>(Vector3d(0, -1, -5), Vector3d(1, 0.5, -6));
-	box2->material = orangeM;
+	std::shared_ptr<BBox> box2 = std::make_shared<BBox>(Vector3d(0, 0, 0), Vector3d(2, 0.75, -2));
+	box2->material = orangeM;*/
 
 	//sceneObjects.emplace_back(box1);
 	//sceneObjects.emplace_back(box2);

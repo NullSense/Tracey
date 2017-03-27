@@ -2,7 +2,9 @@
 //#define TINYOBJLOADER_IMPLEMENTATION
 #include "Triangle.h"
 #include "tiny_obj_loader.h"
+#include "Globals.h"
 #include <iostream>
+#include <memory>
 
 class TriangleMesh: public Object
 {

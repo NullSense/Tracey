@@ -5,7 +5,7 @@
 #include "Light.h"
 #include "Disk.hpp"
 #include "Triangle.h"
-#include "Box.h"
+#include "BBox.h"
 #include "TriangleMesh.h"
 #include <memory>
 #include <vector>

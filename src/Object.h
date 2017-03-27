@@ -3,6 +3,7 @@
 #include "Ray.h"
 #include "Color.h"
 #include "Material.h"
+#include "BBox.h"
 
 class Object
 {
@@ -15,4 +16,5 @@ public:
 	virtual Vector3d GetTexCoords(Vector3d &normal, const Vector3d &hitPoint);
 
 	Material material;
+	BBox bbox;
 };

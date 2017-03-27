@@ -21,7 +21,7 @@ Ray::Ray(const Vector3d origin_, const Vector3d direction_)
 	origin = origin_;
 	direction = direction_;
 	tMin = BIAS;
-	tMax = 1000;
+	tMax = 100000;
 
 	invDir.x = 1 / direction_.x;
 	invDir.y = 1 / direction_.y;

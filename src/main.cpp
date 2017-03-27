@@ -11,6 +11,11 @@
 #include <time.h>
 #include <sstream>
 #include <thread>
+#include <atomic>
+
+std::atomic<int> numPrimaryRays;
+std::atomic<int> numPrimaryHitRays;
+std::atomic<int> numSecondaryRays;
 
 Color Trace(const Vector3d &position, const Vector3d &sceneDirection, const std::vector<std::shared_ptr<Object>> &sceneObjects, 
 				 const int indexOfClosestObject, const std::vector<std::shared_ptr<Light>> &lightSources, const int &depth);
@@ -257,16 +262,6 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 	{
 		std::shared_ptr<Object> sceneObject = sceneObjects[indexOfClosestObject];
 		Vector3d normal = sceneObject->GetNormalAt(intersection);
-		
-		// Checkerboard pattern floor
-		if(sceneObject->material.GetSpecial() == 2)
-		{
-			unsigned square = int(floor(intersection.x)) + int(floor(intersection.z)); // (floor() rounds down)
-			if(square % 2 == 0) // black tile
-				sceneObject->material.SetColor(Color(0));
-			else // white tile
-				sceneObject->material.SetColor(Color(255));
-		}
 
 		Color ambient;
 		Color diffuse;
@@ -311,6 +306,7 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 					for(const auto &object : sceneObjects)
 					{
 						secondaryIntersections.emplace_back(object->GetIntersection(shadowRay));
+						std::atomic_fetch_add(&numSecondaryRays, 1);
 					}
 
 					for(const auto &secondaryIntersection : secondaryIntersections)
@@ -366,26 +362,20 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 			finalColor += refractions;
 		}
 
-
-		Color co;
+		if(sceneObject->material.GetSpecial() == 2) // Checkerboard pattern floor
+		{
+			unsigned square = int(floor(intersection.x)) + int(floor(intersection.z)); // (floor() rounds down)
+			if(square % 2 == 0) // black tile
+				sceneObject->material.SetColor(Color(0));
+			else // white tile
+				sceneObject->material.SetColor(Color(255));
+		}
 		if(sceneObject->material.GetSpecial() == 1) // Sphere checkerboard
 		{
 			FPType scale = 4;
 			FPType pattern = (fmod(sceneObject->GetTexCoords(normal, intersection).x * scale, 1) > 0.5) ^ (fmod(sceneObject->GetTexCoords(normal, intersection).y * scale, 1) > 0.5);
-			co += sceneObject->material.GetColor() * pattern * std::fmax(0.f, normal.Dot(-direction));
+			finalColor += sceneObject->material.GetColor() * pattern * std::fmax(0.f, normal.Dot(-direction));
 		}
-
-		if(sceneObject->material.GetSpecial() == 3) // Triangle checkerboard
-		{
-			//std::cout << "test";
-			FPType NdotView = std::fmax(0.f, normal.Dot(-direction));
-			const int M = 4;
-			FPType checker = (fmod(sceneObject->GetTexCoords(normal, intersection).x * M, 1.0) > 0.5) ^ (fmod(sceneObject->GetTexCoords(normal, intersection).y * M, 1.0) > 0.5);
-			FPType c = 0.3 * (1 - checker) + 0.7 * checker;
-
-			co += sceneObject->material.GetColor() * c * NdotView; //Vec3f(uv.x, uv.y, 0); 
-		}
-		finalColor += co;
 
 		finalColor.Clip();
 		return finalColor;
@@ -427,7 +417,10 @@ void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, con
 	// Check if ray intersects with any scene sceneObjects
 	for(const auto &sceneObject : sceneObjects)
 	{
+		//if(sceneObject->bbox.GetIntersection(camRay))
 		intersections.emplace_back(sceneObject->GetIntersection(camRay));
+		
+		std::atomic_fetch_add(&numPrimaryRays, 1);
 	}
 
 	int indexOfClosestObject = ClosestObjectIndex(intersections);
@@ -440,6 +433,7 @@ void EvaluateIntersections(const FPType xCamOffset, const FPType yCamOffset, con
 	{
 		if(intersections[indexOfClosestObject] > BIAS) // If intersection at that position > accuracy, get color of object
 		{
+			std::atomic_fetch_add(&numPrimaryHitRays, 1);
 			// If ray hit something, set position position to ray-object intersection
 			Vector3d intersection((camera.GetFrom() + (camera.GetTo() * intersections[indexOfClosestObject])));
 			Color intersectionColor = Trace(intersection, camera.GetTo(), sceneObjects, indexOfClosestObject, lightSources);
@@ -475,15 +469,15 @@ void launchThread(const unsigned start, const unsigned end, bitmap_image *image)
 		{
 			for(unsigned j = 0; j < SUPERSAMPLING; j++)
 			{
+				// Heigh cannot be bigger than width
 				aaIndex = j*SUPERSAMPLING + i;
 				// Supersampling anti-aliasing
-				if(SUPERSAMPLING != 1) // Heigh cannot be bigger than width
+				if(SUPERSAMPLING != 1) 
 				{
 					xCamOffset = (2 * (x + (0.5 + i) / (SUPERSAMPLING)) / FPType(WIDTH) - 1) * aspectRatio * scale;
 					yCamOffset = (1 - 2 * (y + (j + 0.5) / SUPERSAMPLING) / FPType(HEIGHT)) * scale;
 				}
-				// No Anti-aliasing
-				else // Heigh cannot be bigger than width
+				else // No Anti-aliasing
 				{
 					xCamOffset = (2 * (x + 0.5) / FPType(WIDTH) - 1) * aspectRatio * scale;
 					yCamOffset = (1 - 2 * (y + 0.5) / FPType(HEIGHT)) * scale;
@@ -497,7 +491,6 @@ void launchThread(const unsigned start, const unsigned end, bitmap_image *image)
 
 void CalcIntersections()
 {
-	auto timeStart = std::chrono::high_resolution_clock::now();
 	bitmap_image *image = new bitmap_image(WIDTH, HEIGHT);
 
 	unsigned nThreads = std::thread::hardware_concurrency();
@@ -524,18 +517,23 @@ void CalcIntersections()
 	for(unsigned int i = 0; i < nThreads - 1; i++)
 		tt[i].join();
 
-	auto timeEnd = std::chrono::high_resolution_clock::now();
-	auto passedTime = std::chrono::duration<double, std::milli>(timeEnd - timeStart).count();
-	std::cout << "Time: " << passedTime / 1000 << " seconds" << std::endl;
 
-	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + " render, " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
+	std::string saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + ", " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
 	image->save_image(saveString);
 	std::cout << "Output filename: " << saveString << std::endl;
 }
 
 int main()
 {
+	auto timeStart = std::chrono::high_resolution_clock::now();
 	CalcIntersections();
+
+	auto timeEnd = std::chrono::high_resolution_clock::now();
+	auto passedTime = std::chrono::duration<FPType, std::milli>(timeEnd - timeStart).count();
+	printf("Total number of primary rays                  : %i\n", int(numPrimaryRays));
+	printf("Total number of primary rays that intersected : %i\n", int(numPrimaryHitRays));
+	printf("Total number of secondary rays                : %i\n", int(numSecondaryRays));
+	std::cout << "Time: " << passedTime / 1000 << " seconds" << std::endl;
 	
 	std::cout << "\nPress enter to exit...";
 	std::cin.ignore();
