@@ -30,13 +30,30 @@ void CalcIntersections()
 		tt.emplace_back(std::thread(&RenderThread::LaunchThread, &renderThreads[i], i * chunk, (i + 1) * chunk, image));
 	}
 	tt.emplace_back(std::thread(&RenderThread::LaunchThread, &renderThreads[nThreads-1], (nThreads - 1)*chunk, nThreads*chunk + rem, image));
+	
+	int numPrimaryRays = 0;
+	int numPrimaryHitRays = 0;
+	int numSecondaryRays = 0;
+	int numSecondaryHitRays = 0;
+	for(auto &renThreads : renderThreads)
+	{
+		numPrimaryRays += renThreads.numPrimaryRays;
+		numPrimaryHitRays += renThreads.numPrimaryHitRays;
+		numSecondaryRays += renThreads.numSecondaryRays;
+		numSecondaryHitRays += renThreads.numSecondaryHitRays;
+	}
+	
+	printf("Total number of primary rays                    : %i\n", numPrimaryRays);
+	printf("Total number of primary rays that intersected   : %i\n", numPrimaryHitRays);
+	printf("Total number of secondary rays                  : %i\n", numSecondaryRays);
+	printf("Total number of secondary rays that intersected : %i\n", numSecondaryHitRays);
 
 	for (auto& t : tt)
 		t.join();
 
 	auto saveString = std::to_string(int(WIDTH)) + "x" + std::to_string(int(HEIGHT)) + ", " + std::to_string(SUPERSAMPLING) + "x SS.bmp";
 	image->save_image(saveString);
-	std::cout << "Output filename: " << saveString << std::endl;
+	std::cout << std::endl << "Output filename: " << saveString << std::endl;
 }
 
 int main()
