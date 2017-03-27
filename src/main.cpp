@@ -276,6 +276,21 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 		Color specular;
 		Color finalColor;
 
+		if(sceneObject->material.GetSpecial() == 2) // Checkerboard pattern floor
+		{
+			unsigned square = int(floor(intersection.x)) + int(floor(intersection.z)); // (floor() rounds down)
+			if(square % 2 == 0) // black tile
+				sceneObject->material.SetColor(Color(0));
+			else // white tile
+				sceneObject->material.SetColor(Color(255));
+		}
+		if(sceneObject->material.GetSpecial() == 1) // Sphere checkerboard
+		{
+			FPType scale = 4;
+			FPType pattern = (fmod(sceneObject->GetTexCoords(normal, intersection).x * scale, 1) > 0.5) ^ (fmod(sceneObject->GetTexCoords(normal, intersection).y * scale, 1) > 0.5);
+			finalColor += sceneObject->material.GetColor() * pattern * std::fmax(0.f, normal.Dot(-direction));
+		}
+
 		// Ambient
 		if(AMBIENT_ON)
 		{
@@ -367,21 +382,6 @@ Color Trace(const Vector3d &intersection, const Vector3d &direction, const std::
 		{
 			Color refractions = GetRefractions(intersection, direction, sceneObjects, indexOfClosestObject, lightSources, depth + 1);
 			finalColor += refractions;
-		}
-
-		if(sceneObject->material.GetSpecial() == 2) // Checkerboard pattern floor
-		{
-			unsigned square = int(floor(intersection.x)) + int(floor(intersection.z)); // (floor() rounds down)
-			if(square % 2 == 0) // black tile
-				sceneObject->material.SetColor(Color(0));
-			else // white tile
-				sceneObject->material.SetColor(Color(255));
-		}
-		if(sceneObject->material.GetSpecial() == 1) // Sphere checkerboard
-		{
-			FPType scale = 4;
-			FPType pattern = (fmod(sceneObject->GetTexCoords(normal, intersection).x * scale, 1) > 0.5) ^ (fmod(sceneObject->GetTexCoords(normal, intersection).y * scale, 1) > 0.5);
-			finalColor += sceneObject->material.GetColor() * pattern * std::fmax(0.f, normal.Dot(-direction));
 		}
 
 		finalColor.Clip();

@@ -5,11 +5,11 @@ Triangle::Triangle()
 	v0 = Vector3d(0, 0, 6);
 	v1 = Vector3d(1, 0, 6);
 	v2 = Vector3d(1, 1, 6);
-	normal = (v1 - v0).Cross(v2 - v0).Normalize();
+	/*normal = (v1 - v0).Cross(v2 - v0).Normalize();*/
 }
 
 Triangle::Triangle(Vector3d &v0_, Vector3d &v1_, Vector3d &v2_)
-	:v0 {v0_}, v1 {v1_}, v2 {v2_}, normal {(v1 - v0).Cross(v2 - v0).Normalize()}
+	:v0 {v0_}, v1 {v1_}, v2 {v2_}/*, normal {(v1 - v0).Cross(v2 - v0).Normalize()}*/
 {}
 
 Vector3d Triangle::GetNormalAt(const Vector3d &)
