@@ -2,7 +2,7 @@
 
 std::vector<std::shared_ptr<Object>> Scene::InitObjects()
 {
-	auto triMesh = std::make_shared<TriangleMesh>("obj/bunny.obj");
+	auto triMesh = std::make_shared<TriangleMesh>("obj/bunny-150.obj");
 	triMesh->material = orangeM;
 
 	auto floorPlane = std::make_shared<Plane>(Vector3d(0, 0, 0), Vector3d(0, 1, 0));

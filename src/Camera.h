@@ -1,17 +1,16 @@
 #pragma once
 #include "Vector3.h"
-#include "Ray.h"
 
 class Camera
 {
 public:
 	Camera();
 	Camera(const Vector3d &from, const Vector3d &to);
-	Vector3d GetFrom();
-	Vector3d GetTo();
-	Vector3d GetForward();
-	Vector3d GetRight();
-	Vector3d GetUp();
+	Vector3d GetFrom() const;
+	Vector3d GetTo() const;
+	Vector3d GetForward() const;
+	Vector3d GetRight() const;
+	Vector3d GetUp() const;
 	void SetTo(const Vector3d &to_);
 	
 private:
@@ -24,41 +23,3 @@ private:
 	Vector3d right = (tmp.Normalize()).Cross(forward);
 	Vector3d up = forward.Cross(right);
 };
-
-Camera::Camera()
-	:from {0}, to {0, 0, -1}
-{}
-
-inline Camera::Camera(const Vector3d &from, const Vector3d &to)
-	: from(from), to(to)
-{}
-
-inline Vector3d Camera::GetFrom()
-{
-	return from;
-}
-
-inline Vector3d Camera::GetTo()
-{
-	return to;
-}
-
-inline Vector3d Camera::GetForward()
-{
-	return forward;
-}
-
-inline Vector3d Camera::GetRight()
-{
-	return right;
-}
-
-inline Vector3d Camera::GetUp()
-{
-	return up;
-}
-
-void Camera::SetTo(const Vector3d &to_)
-{
-	to = to_;
-}
