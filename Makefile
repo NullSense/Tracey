@@ -1,6 +1,6 @@
 SOURCES=$(shell find . -name "*.cpp")
 OBJECTS=$(SOURCES:%.cpp=%.o)
-TARGET=output_test_file
+TARGET=tracey
 CXXFLAGS += -std=c++17
 LDLIBS += -lpthread
 
@@ -16,4 +16,4 @@ clean:
 
 .PHONY: run
 run:
-	./output_test_file
+	./$(TARGET)
