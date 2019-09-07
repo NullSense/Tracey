@@ -1,70 +1,14 @@
 #pragma once
 
-using FPType = double;
-
-//constexpr unsigned int WIDTH = 212;
-//constexpr unsigned int HEIGHT = 212;
-
-//constexpr unsigned int WIDTH = 400;
-//constexpr unsigned int HEIGHT = 300;
-
-// 800 x 600
-//constexpr unsigned int WIDTH = 800;
-//constexpr unsigned int HEIGHT = 600;
-
-// 1280 x 720p
-//constexpr unsigned int WIDTH = 1280;
-//constexpr unsigned int HEIGHT = 720;
-
-// 1920 x 1080p
 constexpr unsigned int WIDTH = 1920;
 constexpr unsigned int HEIGHT = 1080;
 
-// 2560 x 1440p
-//constexpr unsigned int WIDTH = 2560;
-//constexpr unsigned int HEIGHT = 1440;
-
-// 3840 x 2160 4k
-//constexpr unsigned int WIDTH = 3840;
-//constexpr unsigned int HEIGHT = 2160;
-
-// 7680 x 4320 8k
-//constexpr unsigned int WIDTH = 7680;
-//constexpr unsigned int HEIGHT = 4320;
-
-// 15360 x 8640 16k
-//constexpr unsigned int WIDTH = 15360;
-//constexpr unsigned int HEIGHT = 8640;
-
-//constexpr unsigned int WIDTH = 20720;
-//constexpr unsigned int HEIGHT = 13640;
-
-
-
-// ULTRAWIDE
-
-// 2560x1080 (1080p)
-//constexpr unsigned int WIDTH = 2560;
-//constexpr unsigned int HEIGHT = 1080;
-
-// 3440x1440 (1440p)
-//constexpr unsigned int WIDTH = 3440;
-//constexpr unsigned int HEIGHT = 1440;
-
-// 5120x2160 (4k)
-//constexpr unsigned int WIDTH = 5120;
-//constexpr unsigned int HEIGHT = 2160;
-
-// 6880x2880
-//constexpr unsigned int WIDTH = 6880;
-//constexpr unsigned int HEIGHT = 2880;
-
-constexpr FPType ASPECT_RATIO = WIDTH / HEIGHT;
-constexpr FPType AMBIENT_LIGHT = 0.6;
-constexpr FPType GLOBAL_REFRACTION = 1; // 1 = air / vacuum;
-constexpr FPType BIAS = 1e-8;
+constexpr double AMBIENT_LIGHT = 0.6;
+constexpr double GLOBAL_REFRACTION = 1;  // 1 = air / vacuum;
+constexpr double BIAS = 1e-8;
 constexpr unsigned SUPERSAMPLING = 1;
-constexpr unsigned DEPTH = 5; // not checking for hall of mirrors effect try allocating more memory
+constexpr unsigned DEPTH =
+    15;  // not checking for hall of mirrors effect try allocating more memory
 constexpr unsigned FOV = 50;
 
 constexpr bool REFRACTIONS_ON = true;

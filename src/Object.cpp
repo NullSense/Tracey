@@ -1,22 +1,11 @@
 #include "Object.h"
 
-Object::Object() noexcept
-{}
+Object::Object() noexcept {}
 
-Object::~Object()
-{}
+Object::~Object() {}
 
-FPType Object::GetIntersection(const Ray &)
-{
-	return 0;
-}
+double Object::GetIntersection(const Ray &) { return 0; }
 
-Vector3d Object::GetNormalAt(const Vector3d &)
-{
-	return 0;
-}
+Vector3d Object::GetNormalAt(const Vector3d &) { return 0; }
 
-Vector3d Object::GetTexCoords(Vector3d &, const Vector3d &)
-{
-	return 0;
-}
+Vector3d Object::GetTexCoords(Vector3d &, const Vector3d &) { return 0; }

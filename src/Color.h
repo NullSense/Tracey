@@ -1,32 +1,31 @@
 #pragma once
 #include "Globals.h"
 
-class Color
-{
-public:
-	Color();
-	Color(const FPType red_, const FPType green_, const FPType blue_);
-	Color(const FPType color);
+class Color {
+ public:
+  Color();
+  Color(const double red_, const double green_, const double blue_);
+  Color(const double color);
 
-	FPType GetRed();
-	FPType GetGreen();
-	FPType GetBlue();
+  double GetRed();
+  double GetGreen();
+  double GetBlue();
 
-	void SetRed(const FPType red_);
-	void SetGreen(const FPType green_);
-	void SetBlue(const FPType blue_);
+  void SetRed(const double red_);
+  void SetGreen(const double green_);
+  void SetBlue(const double blue_);
 
-	Color Clip();
-	Color Average(const Color &color);
-	Color operator/(const FPType scalar);
-	Color operator*(const Color &color);
-	Color operator*(const FPType scalar);
-	Color operator*=(const FPType scalar);
-	Color operator+(const Color &color);
-	Color operator+=(const Color &color);
+  Color Clip();
+  Color Average(const Color &color);
+  Color operator/(const double scalar);
+  Color operator*(const Color &color);
+  Color operator*(const double scalar);
+  Color operator*=(const double scalar);
+  Color operator+(const Color &color);
+  Color operator+=(const Color &color);
 
-	Color operator+=(const FPType a);
+  Color operator+=(const double a);
 
-private:
-	FPType red, green, blue;
+ private:
+  double red, green, blue;
 };

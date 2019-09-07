@@ -1,87 +1,42 @@
 #pragma once
 #include "Color.h"
 
-class Material: public Color
-{
-public:
-	Material()
-	{}
+class Material : public Color {
+ public:
+  Material() {}
 
-	Material(Color color_, FPType ambient_ = 1, FPType reflective_ = 0, FPType refractive_ = 0, FPType diffusive_ = 1, FPType special_ = 0)
-		:color {color_}
-		, ambient {ambient_}
-		, reflective {reflective_}
-		, refractive {refractive_}
-		, diffusive {diffusive_}
-		, special {special_}
-	{}
+  Material(Color color_, double ambient_ = 1, double reflective_ = 0,
+           double refractive_ = 0, double diffusive_ = 1, double special_ = 0)
+      : color{color_},
+        ambient{ambient_},
+        reflective{reflective_},
+        refractive{refractive_},
+        diffusive{diffusive_},
+        special{special_} {}
 
-	void SetColor(const Color &color_)
-	{
-		color = color_;
-	}
-	void SetDiffuse(const FPType &diffusive_)
-	{
-		diffusive = diffusive_;
-	}
-	void SetReflection(const FPType &reflective_)
-	{
-		reflective = reflective_;
-	}
-	void SetRefraction(const FPType &refractive_)
-	{
-		refractive = refractive_;
-	}
-	void SetSpecial(const FPType &special_)
-	{
-		special = special_;
-	}
+  void SetColor(const Color &color_) { color = color_; }
+  void SetDiffuse(const double &diffusive_) { diffusive = diffusive_; }
+  void SetReflection(const double &reflective_) { reflective = reflective_; }
+  void SetRefraction(const double &refractive_) { refractive = refractive_; }
+  void SetSpecial(const double &special_) { special = special_; }
 
-	Color GetColor()
-	{
-		return color;
-	}
-	FPType GetAmbient()
-	{
-		return ambient;
-	}
-	FPType GetSpecular()
-	{
-		return 1 - diffusive;
-	}
-	FPType GetDiffuse()
-	{
-		return diffusive;
-	}
-	FPType GetReflection()
-	{
-		return reflective;
-	}
-	FPType GetRefraction() const
-	{
-		return this->refractive;
-	}
-	FPType GetSpecial()
-	{
-		return special;
-	}
+  Color GetColor() { return color; }
+  double GetAmbient() { return ambient; }
+  double GetSpecular() { return 1 - diffusive; }
+  double GetDiffuse() { return diffusive; }
+  double GetReflection() { return reflective; }
+  double GetRefraction() const { return this->refractive; }
+  double GetSpecial() { return special; }
 
-	void SetMaterial(const Material &material_)
-	{
-		*this = material_;
-	}
-	Material GetMaterial()
-	{
-		return *this;
-	}
+  void SetMaterial(const Material &material_) { *this = material_; }
+  Material GetMaterial() { return *this; }
 
-private:
-	Color color;
-	FPType ambient;
-	FPType reflective;
-	FPType refractive;
-	FPType diffusive; // The more diffusive it is, the better it scatters light (phong shading radius gets wider)
-	FPType glossy;
-	FPType special; // Tile floor
+ private:
+  Color color;
+  double ambient;
+  double reflective;
+  double refractive;
+  double diffusive;  // The more diffusive it is, the better it scatters light
+                     // (phong shading radius gets wider)
+  double special;    // Tile floor
 };
-
