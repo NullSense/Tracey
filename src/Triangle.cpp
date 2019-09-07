@@ -20,8 +20,9 @@ double Triangle::GetIntersection(const Ray &ray, double &u, double &v) {
   Vec3d pvec = ray.GetDirection().Cross(v0v2);
   double det = v0v1.Dot(pvec);
 
+  if (det < BIAS) return false;
   // ray and triangle are parallel if det is close to 0
-  if (std::abs(det) < BIAS) return false;
+  if (std::fabs(det) < BIAS) return false;
 
   double invDet = 1 / det;
 

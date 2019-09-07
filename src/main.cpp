@@ -426,7 +426,7 @@ void EvaluateIntersections(
     Color tempColor[], const Matrix44f &cameraToWorld,
     const std::vector<std::shared_ptr<Object>> &sceneObjects,
     const std::vector<std::shared_ptr<Light>> &lightSources) {
-  Camera camera(Vector3d(0, 1.8, 7), Vector3d(0, 0, -1));
+  Camera camera(Vector3d(0, 1.8, 6), Vector3d(0, 0, -1));
 
   Vector3d camRayDir;
   cameraToWorld.MultDirMatrix(Vector3d(xCamOffset, yCamOffset - 0.1, -1),
@@ -441,7 +441,6 @@ void EvaluateIntersections(
 
   // Check if ray intersects with any scene sceneObjects
   for (const auto &sceneObject : sceneObjects) {
-    // if(sceneObject->bbox.GetIntersection(camRay))
     intersections.emplace_back(sceneObject->GetIntersection(camRay));
 
     std::atomic_fetch_add(&numPrimaryRays, 1);
@@ -453,7 +452,6 @@ void EvaluateIntersections(
   // missed everything)
   if (indexOfClosestObject == -1)
     tempColor[aaIndex] = Color(0);
-
   else  // Ray hit an object
   {
     if (intersections[indexOfClosestObject] >
@@ -466,12 +464,10 @@ void EvaluateIntersections(
       Vector3d intersection(
           (camera.GetFrom() +
            (camera.GetTo() * intersections[indexOfClosestObject])));
-      Color intersectionColor =
+
+      tempColor[aaIndex] =
           Trace(intersection, camera.GetTo(), sceneObjects,
                 indexOfClosestObject, lightSources);
-      tempColor[aaIndex] =
-          Color(intersectionColor.GetRed(), intersectionColor.GetGreen(),
-                intersectionColor.GetBlue());
     }
   }
 }
@@ -555,6 +551,7 @@ void CalcIntersections() {
   std::string saveString = std::to_string(int(WIDTH)) + "x" +
                            std::to_string(int(HEIGHT)) + ", " +
                            std::to_string(SUPERSAMPLING) + "x SS.bmp";
+
   image->save_image(saveString);
   std::cout << "Output filename: " << saveString << std::endl;
 }

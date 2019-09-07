@@ -7,7 +7,7 @@ TriangleMesh::TriangleMesh(const char *file) {
 
   if (!err.empty()) std::cerr << err << std::endl;
 
-  if (!ret) exit(1);
+  if (!ret || !attrib.normals.size()) exit(1);
 
   std::cout << "Model vertices: " << attrib.vertices.size() << std::endl;
 }

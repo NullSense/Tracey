@@ -1,7 +1,7 @@
 SOURCES=$(shell find . -name "*.cpp")
 OBJECTS=$(SOURCES:%.cpp=%.o)
 TARGET=tracey
-CXXFLAGS += -std=c++17
+CXXFLAGS += -std=c++17 -Ofast
 LDLIBS += -lpthread
 
 .PHONY: all
